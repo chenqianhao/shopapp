@@ -1,0 +1,458 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+    
+        .qiandaoheader { width: 90%; margin: auto; display: block; position: relative; }
+        .qiandaoheader img { width: 100%; }
+        .qiandaoxian { display: block; overflow: hidden; text-align: center; font-size: 1.7rem; color: #fff; font-weight: bold; }
+        .qiandaoxian span { height: 1px; background-color: #fff; display: inline-block; float: left; width: 38%; margin-top: 1.4rem; }
+        .qiandaoxian span:last-child { float: right; }
+        .qiandaoshijian{ width:90%; border-top-left-radius:10px;border-top-right-radius:10px; height:10rem; background-color:#c4ebf2; margin:auto;margin-top: 2rem; position:relative;}
+        .qiandaoshijian span{  position: absolute; background-color: #79d1d3; width: 1.8rem; height: 1.8rem; border-radius: 50%; top: 0.5rem;}
+        .qiandaoshijian span:first-child{ left:10%;}
+        .qiandaoshijian span:nth-child(2){right:10%; }
+        .qiandaoshijian span em{ background-color: #58a7b8; width: 1rem; height: 2.5rem; border-radius: 5px; display: block; position: relative; left: 23%; top: -65%;}
+        .qiandaoshijian h3{  text-align:center; color:#577484; padding-top: 5px;}
+        .qiandaoshijian div{margin-top: 5px;}
+        .qiandaoshijian div b{display: block; text-align:center; position:relative; }
+        .qiandaoshijian div b i{background-color: #617e8e; color: #fff; border-radius: 12px; padding: 0.2rem 1.5rem; font-size: 1.4rem; position:relative;}
+        .qiandaoshijian div b cite{position: absolute; left: -19px; top: -9px; width:3rem; height:3rem; background-color:#fede29; border-radius:50%;}
+        .qiandaoshijian div b cite font{color: #da8b2f; border: 1px solid #da8b2f; border-radius: 50%; width: 2.4rem; height: 2.4rem; margin: auto; margin-top: 0.3rem; font-size: 2rem; line-height: 2.4rem; display: block; text-align: center; padding-left: 0.2rem;} 
+        .qiandaoshijian button{position: absolute; right: 6px; background-color: #ff9b2e; color: #ffeedd; border: 0px; border-radius: 15px; padding: 0.3rem 1rem;box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.3);}
+        .qiandaorili{ width:90%; margin:auto; background-color:#fff;display: block;overflow: hidden;}
+        .qiandaorilixq{display: block; width: 100%; overflow: hidden; background-color: rgb(246, 246, 246);}
+        .qiandaorilixq em{ width:14.2%; float:left; text-align:center; color:#999; font-weight:bold;padding: 0.3rem 0;}
+        .qiandaoday span{width: 14.2%; float: left; text-align: center; margin: 0.2rem 0;}
+        .qiandaoday span i{ width: 2.5rem; height: 2.5rem;  display: block; margin: auto; border-radius: 50%; text-align: center; line-height: 2.5rem; font-size: 1.4rem;}
+        .qiandaoday span i.on{background-color: #94d474; color: #fff;}
+         .qiandaoday span i.on1{background-color: #2faa00; color: #fff;}
+         .qiandaodibu{  width:90%; border-bottom-left-radius:10px;border-bottom-right-radius:10px;background-color:#c4ebf2; margin:auto; padding:1rem;margin-bottom: 3rem;}
+         .qiandaodibu span,.qiandaodibu strong i{ color:#ff6800; font-weight:bold;}
+         .qiandaodibu strong{ float:right;color: #577484;}
+         .qiandaoday span i.on2{background-color: #2faa00 !important; color: #fff;}
+        .qdbtn{margin-top: 1.5rem !important;}
+        .qdbtn button:first-child{ left:6px !important; }
+        .qdbtn button{background-color: #2CC18B; width: 10rem !important;}
+        .qiandaojifensm{width: 90%; margin:auto; margin-top:0.5rem; padding-left:1rem;}
+        .qiandaojifensm ul{color: rgb(51, 51, 51); background-color: rgb(188, 232, 233); padding: 1rem; border-radius: 1rem; font-size: 1.4rem;margin-bottom: 3rem;}
+        .qiandaojifensm ul span{display: block; margin-top: 0.2rem;}
+
+
+
+    </style>
+</head>
+<body style="background: #79d1d3;">
+
+
+
+
+
+
+    <div class="qiandaoheader">
+        <img src="../img/qiandaoheader.png" />
+<!--         <em><font>&#xe619;</font></em> -->
+    </div>
+    <div class="qiandaoxian">
+        <span></span><span></span>签到送积分
+    </div>
+
+
+    <div class="qiandaoshijian">
+        <span><em></em></span>
+        <span><em></em></span>
+        <h3>签到奖励</h3>
+        <div><b><i id="qdjf">我的签到积分:0<cite><font>&#xe66e;</font></cite></i><button tapmode onclick="qiandao();">我要签到</button></b></div>
+                <div class="qdbtn"><button tapmode onclick="show_month_info(1);">查看上一月</button><button tapmode onclick="show_month_info(2);">查看下一月</button></div>
+    </div>
+    <div class="qiandaorili">
+        <div class="qiandaorilixq"><em>日</em><em>一</em><em>二</em><em>三</em><em>四</em><em>五</em><em>六</em></div>
+
+            <div id="day"  class="qiandaoday">
+                
+
+            </div>
+
+    </div>
+
+    <div class="qiandaodibu">
+        <span id="riqi">2015年5月</span><strong>已累计签到<i id="lxqd">18</i>天</strong>
+    </div>
+
+    <div class="qiandaoxian">
+        <span></span><span></span>积分说明
+    </div>
+
+
+    <div class="qiandaojifensm">
+        <ul id="qiandao_desc">
+
+        </ul>
+    </div>
+
+
+    
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/swipe.js"></script>
+<script type="text/javascript">
+
+    month=0;
+    year=0;   
+    Months=0;
+    Years=0;
+    apiready = function(){
+        api.parseTapmode();
+
+        qiandao_desc();
+        var date = new Date();
+        Months = date.getMonth() + 1;
+        month=Months;
+        Years = date.getFullYear();
+        year=Years;
+
+        //alert(year);
+        
+        qiandao_rili(month,year);
+
+        /*api.addEventListener({ 
+            name: 'swipeleft'  //为向左轻扫
+        }, function (ret, err) {
+
+
+            if(month==1){
+                month=12;
+                year-=1;
+            }else{
+                month-=1;
+            }
+            //alert(year+'---'+month);
+            qiandao_rili(month,year);
+        });
+
+        api.addEventListener({ 
+            name: 'swiperight'  //为向右轻扫 
+        }, function (ret, err) {
+    
+            if(year==Years && month==Months){
+                month=month;
+            }else{
+                if(month==12){
+                    month=1;
+                    year+=1;
+                }else{
+                    month+=1;
+                }
+            }
+
+            //alert(year+'---'+month);
+            qiandao_rili(month,year);
+
+        });
+        */
+        var obj = document.getElementById("day");
+        var startPos = "";
+        var isScrolling = 0;
+        obj.addEventListener('touchstart', function (event) {
+            // 如果这个元素的位置内只有一个手指的话
+            if (event.targetTouches.length == 1) {
+                var touch = event.targetTouches[0];
+                isScrolling = 0;
+                startPos = { x: touch.pageX, y: touch.pageY, time: +new Date };
+            }
+        }, false);
+
+
+        obj.addEventListener('touchmove', function (event) {
+            // 如果这个元素的位置内只有一个手指的话
+            if (event.targetTouches.length > 1 || event.scale && event.scale !== 1)
+                return;
+            var touch = event.targetTouches[0];
+
+            endPos = { x: touch.pageX - startPos.x, y: touch.pageY - startPos.y };
+            isScrolling = Math.abs(endPos.x) < Math.abs(endPos.y) ? 1 : 0; //isScrolling为1时，表示纵向滑动，0为横向滑动
+            if (isScrolling === 0) {
+                event.preventDefault(); //阻止触摸事件的默认行为，即阻止滚屏
+            }
+
+
+        }, false);
+
+        obj.addEventListener('touchend', function (event) {
+            var duration = +new Date - startPos.time; //滑动的持续时间
+            if (isScrolling === 0) { //当为水平滚动时
+                if (Number(duration) > 10) {
+
+                    if (endPos.x < -100) {
+
+                        if (month == 1) {
+                            month = 12;
+                            year -= 1;
+                        } else {
+                            month -= 1;
+                        }
+                        qiandao_rili(month, year);
+                    }
+                    else if (endPos.x > 100) {
+
+                        if (year == Years && month == Months) {
+                            month = month;
+                        } else {
+                            if (month == 12) {
+                                month = 1;
+                                year += 1;
+                            } else {
+                                month += 1;
+                            }
+                        }
+                        qiandao_rili(month, year);
+                    }
+                }
+            }
+        }, false);
+    }
+
+
+
+
+
+
+    function show_month_info(id){//1上一月 2下一月
+
+
+
+        if(id==1){
+            if(month==1){
+                month=12;
+                year-=1;
+            }else{
+                month-=1;
+            }
+            qiandao_rili(month,year);
+        }else{
+
+
+            if(year==Years && month==Months){
+                month=month;
+            }else{
+                if(month==12){
+                    month=1;
+                    year+=1;
+                }else{
+                    month+=1;
+                }
+            }
+            //alert(month+'_____'+year);
+            qiandao_rili(month,year);
+        }
+    }
+
+
+
+
+
+    function qiandao(){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('qiandao');
+            return false;
+        }
+        api.ajax({
+            url: serverUrl+'/user.php?act=qiandao',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID,user_id:userid_gs}
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==999){
+                    api.toast({
+                        msg: '签到成功！',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    //window.location.reload();
+                    qiandao_rili(month,year);
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+    }
+
+
+/*
+
+    function rili(month){
+
+        var date = new Date();
+        var d = date.getDate();
+        date.setDate(1);
+        var weekday = new Array(7);
+        weekday[0] = 1;
+        weekday[1] = 2;
+        weekday[2] = 3;
+        weekday[3] = 4;
+        weekday[4] = 5;
+        weekday[5] = 6;
+        weekday[6] = 7;
+        var xqj = weekday[date.getDay()];//得到几天是星期几
+        var Year = date.getFullYear();
+        var Month = date.getMonth() + 1;
+        var day = date.getDay();
+        var monthday = DayNumOfMonth(Year, Month); //得到一个月有多少天
+        function DayNumOfMonth(Year, Month) {
+            Month--;
+            var d = new Date(Year, Month, 1);
+            d.setDate(d.getDate() + 32 - d.getDate());
+            return (32 - d.getDate());
+        }
+    }
+
+*/
+
+
+    function qiandao_rili(){
+
+        //alert(month);
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('qiandao');
+            return false;
+        }
+
+        if(month<1){
+            api.toast({
+                msg: '没有获取到当前月份',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return ;
+        }
+        if(year<1){
+            api.toast({
+                msg: '没有获取到当前年份',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return ;
+        }
+
+        api.ajax({
+            url: serverUrl+'/user.php?act=qiandao_rili',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID,user_id:userid_gs,month:month,year:year}
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==988){
+                   var biaoqian = "";
+                   //alert(parseInt(ret.day_num));
+                   for (var i = 1; i < parseInt(ret.week); i++) {
+                         biaoqian += "<span></span>";
+                   }
+                   for (var i = 1; i <= parseInt(ret.day_num); i++) {
+                        for(var j=0,len=ret.rili.length;j<len;j++){
+                            if(ret.rili[j]['day']==i){
+                                if(ret.rili[j]['is_qiandao']==1){
+                                    biaoqian += "<span><i class=\"on on2 \">" + i + "</i></span>";
+                                }else{
+                                    biaoqian += "<span><i>" + i+ "</i></span>";
+                                }
+                            }
+                        }
+                    }
+                   document.getElementById("day").innerHTML= biaoqian;
+                   if(ret.qdjf==null){
+                        ret.qdjf=0;
+                   }
+                   document.getElementById("qdjf").innerHTML="我的签到积分:"+ret.qdjf+"<cite><font>&#xe66e;</font></cite></i>";
+                   document.getElementById("lxqd").innerHTML=ret.lxqd;
+                   
+                   document.getElementById("riqi").innerHTML=year+"年"+month+"月";
+         
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+    }
+
+
+    function  qiandao_desc(){
+
+
+        api.ajax({
+            url: serverUrl+'/user.php?act=qiandao_desc',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID}
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            //return ;
+            if (ret) {
+                if(ret.code==3455){
+
+                   document.getElementById("qiandao_desc").innerHTML= ret.data;
+
+         
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+
+    }
+
+</script>

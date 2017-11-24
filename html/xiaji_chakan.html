@@ -1,0 +1,306 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telephone=no">
+    <title></title>
+    <link rel="stylesheet" href="../css/daili.css">
+    <style>
+     .agentssubordinate{ margin-top:0.3rem;}
+     table{border-collapse: collapse;border-spacing: 0;table-layout:fixed;width:100%;  }  
+     table td i{overflow: hidden; white-space: nowrap; display: block;}    
+    .agentssubordinate td{ border: 1px solid #ddd;padding: 0 0.6rem;}
+    .agentssubordinate thead{ background-color:#eef2f3; color:#7a9697; }
+    .agentssubordinate thead th{font-size:1.5rem; font-weight:500;border: 1px solid #ddd; border-bottom: 2px solid #B3DE94;padding: 0.8rem 0;}
+    .agentssubordinate td{ color:#656766; font-size:1.32rem;  text-align:center;}
+    .agentssubordinate td img{ width:100%;} 
+    .agentssubordinate thead tr th:nth-child(1){width:18%;}
+    .agentssubordinate thead tr th:nth-child(2){width:19%;}
+    .agentssubordinate thead tr th:nth-child(3){width:24%;}
+    .agentssubordinate thead tr th:nth-child(4){width:15%;}
+    .agentssubordinate thead tr th:nth-child(5){width:24%;}
+    .agentssubordinate tbody tr td:last-child span{ display:block; padding-top:0.2rem; margin: 0.5rem 0 0.2rem 0;font-size:1.25rem;padding:0.2rem 0.3rem;}
+    .agentssubordinate tbody tr td:first-child span{ color:crimson;}
+    .agentssubordinate tbody tr td:last-child span:last-child{background-color:cornflowerblue; color:#fff;border-radius:5px;padding:0.4rem 0;width: 73%;margin: auto;margin-bottom: 0.4rem;}
+    .shenheshibai{background-color:#f5f5f5 !important;color:crimson !important;}
+    .yishenke{background-color:#f5f5f5 !important;color:#23a33f !important;}
+    .tip{font-size: 1.5rem; margin:0.8rem;  color:crimson; }
+    </style>
+</head>
+<body style="background-color: #f5f5f5;">
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft">
+          <a tapmode onclick="api.closeWin();">
+                <i> <font>&#xe619;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">
+           我的代理商
+          </a>
+      </h1>
+            <div class="gsheaderdivright" tapmpde onclick="kefushow('xiaji_chakan');">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+  </header>
+
+
+<!--   <div class="tip" id="tip">提示：您最多可以审核10个代理商</div> -->
+
+<table class="agentssubordinate">
+    <thead>
+        <tr><th class="cola">姓名</th><th>销售额</th><th class="cola">手机</th><th class="cola">代理</th><th class="colb">操作</th></tr>
+    </thead>
+    <tbody id="xiaji_list">
+ 
+<!--        <tr><td><i>卢超卢超卢超卢超卢超</i></td><td>￥100</td><td>13043403750</td><td>2个</td><td><span>查看</span><span class="shenheshibai">审核失败</span></td></tr>
+        <tr><td>卢超</td><td>￥100</td><td>13043403750</td><td>2个</td><td><span>查看</span><span class="yishenke">已审核</span></td></tr>
+        <tr><td>卢超</td><td>￥100</td><td>13043403750</td><td>2个</td><td><span>查看</span><span>审核通过</span></td></tr>
+        <tr><td>卢超</td><td>￥100</td><td>13043403750</td><td>2个</td><td><span>查看</span><span>审核通过</span></td></tr>
+        <tr><td>卢超</td><td>￥100</td><td>13043403750</td><td>2个</td><td><span>查看</span><span>审核通过</span></td></tr> -->
+    </tbody>
+</table>
+
+
+
+    <script id="xiaji-list-template" type="text/x-dot-template">
+
+        {{for(var i=0,len=it.length;i<len;i++){}}
+        <tr>
+        <td><i>{{=it[i].realname}}</i></td>
+        <td><i>￥{{=it[i].total_amount}}</i></td>
+<td><a href="tel:{{=it[i].mobile}}">{{=it[i].mobile}}</a></td>
+        <td>{{=it[i].daili_num}}个</td>
+        <td>
+        <span></span>
+        /* <span tapmode onclick="chakan('{{=it[i].user_id}}','{{=it[i].dengji}}');">查看</span>*/
+/*
+
+        {{if(it[i].is_daili==0){}}
+        <span>未审核</span>
+        {{}else if(it[i].is_daili==1){}}
+        <span class="yishenke">已审核</span>
+        {{}else if(it[i].is_daili==2){}}
+        <span class="shenheshibai">审核失败</span>
+        {{}}}
+*/
+
+        <span class="yishenke">已审核</span>
+        </td>
+        </tr>
+        {{}}}
+
+
+    </script>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    dengjis=4;
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+
+        var user_id=api.pageParam.user_id;
+        var dengji=api.pageParam.dengji;
+
+        if(!user_id || !dengji){
+            api.closeWin();
+            return false;
+        }
+
+        //alert(dengji);
+
+        //读取配置信息
+        //if(id=)
+        get_daili_info_chakan(user_id,dengji);
+
+        // api.setRefreshHeaderInfo({
+        //     visible: true,
+        //     bgColor: 'rgba(0,0,0,0)',
+        //     textColor: '#666',
+        //     textDown: '下拉刷新',
+        //     textUp: '释放刷新'  ,
+        //     showTime: true
+        // }, function(ret, err){
+        //     get_daili_info(userid_gs);
+        //     api.refreshHeaderLoadDone();
+        // });
+
+    }
+
+    function get_daili_info_chakan(user_id,dengji){
+      //alert(dengji);
+      api.ajax({
+          url:serverUrl+'/daili.php?act=get_daili_info_chakan',
+          method:'post',
+          cache:false,
+          timeout:30,
+          dataType:'json',
+          data:{
+              values:{
+                  user_id:user_id,
+                  dengji:dengji,
+                  supplier_id:SUPPLIER_ID
+              }
+          },
+          returnAll:false,
+      },function(ret,err){
+
+         //api.alert({msg:JSON.stringify(ret)});
+          
+          if (ret) {
+
+/*
+              if(ret.info){
+                if(ret.info.number>0){
+                $api.html($api.byId("tip"),"提示：您最多可以审核"+ret.info.number+"个代理商");
+                }
+              }*/
+              
+              if(ret.daili!=''){
+
+                    var template = document.getElementById('xiaji-list-template').innerHTML;
+                    document.getElementById('xiaji_list').innerHTML=doT.template(template)(ret.daili);
+
+              }else{
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+              }
+
+
+          } else {
+              api.alert({
+                  msg:('网络错误')
+              });
+          };
+      });
+
+    }
+/*
+
+    function shenhe(id,user_id,tcbl,sq_dengji){
+
+      if(!id){
+        api.toast({
+            msg: '非法操作!',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      if(!user_id){
+        api.toast({
+            msg: ' 您要审核的用户已经被删除或不存在，请联系客服!',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      if(!sq_dengji){
+        api.toast({
+            msg: '没有获取到您申请的等级!',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      api.confirm({
+          title: '审核下级',
+          msg: '您确定要审核通过此下级么？',
+          buttons: ['确定', '取消']
+      },function( ret, err ){
+          if( ret ){
+               //alert( JSON.stringify( ret ) );
+               if(ret.buttonIndex==1){
+                  //alert(id);
+                  
+                  api.ajax({
+                      url:serverUrl+'/daili.php?act=daili_shenhe',
+                      method: 'post',
+                      timeout: 30,
+                      dataType: 'json',
+                      data:{
+                          values:{
+                              user_id:user_id,
+                              id:id,
+                              sq_dengji:sq_dengji,
+                              supplier_id:SUPPLIER_ID
+                          }
+                      },     
+                      returnAll:false
+                  },function(ret,err){
+                    //api.alert({msg:JSON.stringify(ret)});
+                      if (ret) {
+                          if(ret.code==1804){
+                              var dengji=api.pageParam.dengji;
+                              get_daili_info_sh(user_id,dengji);
+                          }else{
+                              api.toast({
+                                  msg: ret.msg,
+                                  duration: 2000,
+                                  location: 'bottom'
+                              });
+                          }
+                      } else {
+                          api.alert({
+                              msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                          });
+                      };
+                  });
+
+
+               }
+          }else{
+               alert( JSON.stringify( err ) );
+          }
+      });
+
+    }
+
+
+
+
+    function chakan(user_id,dengji){
+
+      if(!user_id){
+        api.toast({
+            msg: ' 您要审核的用户已经被删除或不存在，请联系客服!',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      if(!dengji){
+        api.toast({
+            msg: '没有获取到您申请的等级!',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      api.openWin({
+          name: 'xiajis',
+          url: 'xiajis.html',
+          bounces: false,
+          pageParam: {user_id:user_id,dengji:dengji}
+      });
+    }*/
+</script>

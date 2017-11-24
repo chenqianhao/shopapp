@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<security>
+        <item name="aliPay_partner" value="2088811260876744"/>
+        <item name="aliPay_seller" value="dayeyunalading@163.com"/>
+        <item name="aliPay_rsaPriKey" value="MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBAK3Xf0/B7ji6Y+1jlRu1BHfc1uIP7iwsH7+r5rXGXEwVc9Pb2uhsBbVZLGsdPeyE8/bdASBAKPd1Xp5NgYvZYhcOXACsnU/homILLpO4zY9/gb6APeCGs1A4+Z6LyZUbsvCKmIWVIqMOsX/4098rprtOX2UqIDCBd2evSneciuJrAgMBAAECgYEAn7mLcQW3Uon3PGst2kpEs7jF+uk2JYHZHevcy5FYxlNDnBm6FakCybAIPtacSc+StHQ1D6PDwDIn4H1IFO2D0DUbxg18Ua5zipwPU7ZtLMXktt6FVbgbNpob4fS5IweBFeNawOnDINL91FCO12i3tgY0OOKpn5RffzpL20lErVECQQDehlthpM3Ob9/4tGrMygqcVuN4OsoIRU0Z52PMGhxyY77PsCLCBsRCe1QCTrYf3sQR/u/VkzIIwCh/ShCl6vwjAkEAx/5PWESDtnfmU6+Y2bY5E1abq9PPmFjE3tsC+L5W8vPBzP/GuhOFsheftw7w3pVoqQEMG5nEv/cZzSFBOiVhGQJBAMKJVy4/86R77aPxpkSuhSQ0WdxsGN+uJj91KKvwT9o5FUFgTKKvY7hzNPhnc5TdHTBWXbmrW1yHEWBmkbNbgV0CQQCD3Pbd4RbjGX0hEnd6nL5XNNShX5/R+D2eHtN/xKg5umS+0KpsB/Ev8omZPl2stOB0Bj/AdwuV8svtR47lUr4JAkADPuYKacDmCS9xFx2SEMm3X0FB+lm8Gm4cXADcmWzqwWUCNF/tlOpDSz/Q+sWDZc2nMvJHtk+v24evPp076j+q"/>
+        <item name="aliPay_rsaPubKey" value="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCt139Pwe44umPtY5UbtQR33NbiD+4sLB+/q+a1xlxMFXPT29robAW1WSxrHT3shPP23QEgQCj3dV6eTYGL2WIXDlwArJ1P4aJiCy6TuM2Pf4G+gD3ghrNQOPmei8mVG7LwipiFlSKjDrF/+NPfK6a7Tl9lKiAwgXdnr0p3nIriawIDAQAB"/>
+        <item name="aliPay_notifyURL" value="http://www.httgo.com/guoshu/app/payment/alipay/notify_url.php"/>
+	<item name="wxPay_appId" value="wxb17bc249fd3e4260"/>
+	<item name="wxPay_mchId" value="1345109301"/>
+	<item name="wxPay_partnerKey" value="898djf90987ytrewsgolpcdsewa346o9"/>
+	<item name="wxPay_notifyUrl" value="http://www.httgo.com/guoshu/app/payment/weixin/example/notify.php"/>
+</security>

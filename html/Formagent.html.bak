@@ -1,0 +1,650 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/daili.css">
+</head>
+<body style="background: #ffffff;">
+
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft">
+          <a tapmode onclick="api.closeWin();">
+                <i> <font>&#xe679;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">
+            成为代理商
+          </a>
+      </h1>
+  </header>
+
+
+<div class="classdiv Formagent classinputf">
+<h3>输入详细信息后，方便审核通过</h3>
+<ul>
+<li><span>姓名</span><strong><input  type="text" placeholder="填写本人真实的姓名" id="realname" /></strong></li>
+<li>
+
+<span>性别</span>
+<strong>
+<em>男</em>
+<input id="radio-1-1" class="regular-radio" name="gender" checked="checked" value="1" type="radio">
+<label for="radio-1-1"></label>
+<em>女</em>
+<input id="radio-1-2" class="regular-radio" name="gender" value="2" type="radio">
+<label for="radio-1-2"></label>
+</strong>
+
+</li>
+<li><span>身份证号</span><strong><input  type="text" placeholder="仅支持18身份证号码" id="idcard" /></strong></li>
+<li><span>邮箱</span><strong><input  type="text" placeholder="填写您的邮箱地址" id="email" /></strong></li>
+<li><span>QQ</span><strong><input  type="text" placeholder="填写您QQ联系方式" id="qq" /></strong></li>
+<li><span>手机</span><strong><input  type="text" placeholder="填写您的手机号码" id="mobile" /></strong></li>
+
+<li><span>邀请码</span><strong><input  type="text"  placeholder="可不填" id="yqm" /></strong></li>
+
+
+<li><span>支付密码</span><strong><input  type="password" placeholder="填写您支付密码" id="paywd" /></strong></li>
+
+<!-- <li><span>上传身份证正面</span><strong  class="Formagentfileinput" ><input  type="file" onchange="showPreview(this,1)"/></strong>
+   <img src="" id="portrait_positive"  style="width: 86px; height: 54px; display: none;"  class="Formagentfileinputimg" />
+</li>
+
+<li><span>上传身份证反面</span><strong  class="Formagentfileinput" ><input  type="file" onchange="showPreview(this,2)"/></strong>
+   <img src="" id="portrait_opposite"  style="width: 86px; height: 54px; display: none;"  class="Formagentfileinputimg" />
+</li> -->
+
+<li><span>上传身份证正面</span><strong  class="Formagentfileinput" ><input  type="text" onclick="upload_avator(1)"/></strong>
+   <img src="" id="portrait_positive"  style="width: 86px; height: 54px; display: none;"  class="Formagentfileinputimg" />
+   <input type="hidden" id="positive" />
+</li>
+
+<li><span>上传身份证反面</span><strong  class="Formagentfileinput" ><input  type="text" onclick="upload_avator(2)"/></strong>
+   <img src="" id="portrait_opposite"  style="width: 86px; height: 54px; display: none;"  class="Formagentfileinputimg" />
+   <input type="hidden" id="opposite" />
+</li>
+
+
+</ul>
+</div>
+
+<button class="classbtn Formagentbtn" tapmode onclick="renzheng_taili();">确认</button>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<!-- <script type="text/javascript" src="../script/doT.min.js"></script> -->
+<script type="text/javascript" src="../script/md5.js" ></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        $api.fixIos7Bar(header);
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.openWin ({
+                name: 'login',
+                url: 'login.html',
+                reload: true,
+                bounces: false,
+                pageParam: {back_act: 'daili'},
+                delay:200
+            });
+            return false;
+        }
+
+    }
+
+
+</script>
+
+
+
+
+
+
+ <script type="text/javascript">
+     // var image1 = '';
+     // var image2 = '';
+     // var portrait_positive = document.getElementById("portrait_positive");
+     // var portrait_opposite = document.getElementById("portrait_opposite");
+
+
+    //头像上传
+    function upload_avator(id){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs || userid_gs<1){
+            api.openWin({
+                name: 'login',
+                url: './login.html',
+                bounces: false,
+                pageParam: {back_act: 'Formagent'}
+            });
+            return false;
+        }
+
+        if(!id){
+            api.toast({
+                msg: '非法操作',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        //library            //图片库
+        //camera            //相机
+        //album            //相册
+        api.confirm({
+            title: '选择身份证',
+            msg: '您想要从哪里选取图片 ?',
+            buttons:["优雅自拍", "手机相册"]
+        },function(ret,err){
+
+            //api.alert({msg:JSON.stringify(ret)});
+            if(ret.buttonIndex == 1){
+                sourceType="camera";
+            }else if(ret.buttonIndex == 2){
+                sourceType="library";
+            }
+
+            // else if(ret.buttonIndex == 3){
+            //     sourceType="album";
+            // }
+            api.getPicture({
+                sourceType: sourceType,
+                encodingType: 'jpg',
+                mediaValue: 'pic',
+                destinationType: 'base64',
+                allowEdit: true,
+                quality: 50,
+                targetWidth:100,
+                targetHeight:100,
+                saveToPhotoAlbum: false
+            }, function(rets, err){ 
+                if (rets) {
+                    api.showProgress({title: '身份证上传中……', modal: false});
+                    //alert(rets.base64Data);
+                    api.ajax({
+                        url:serverUrl+'/daili.php?act=upload_avator',
+                        method:'post',
+                        cache:false,
+                        timeout:30,
+                        dataType:'json',
+                        data: {
+                            values:{
+                                type:id,
+                                user_id:userid_gs,
+                                supplier_id:SUPPLIER_ID,
+                                idcard:rets.base64Data
+                            }
+                        },       
+                        returnAll:false,
+                    },function(ret,err){
+                        //api.alert({msg:JSON.stringify(ret)});
+                        if(ret){
+                            
+                             if(ret.code==1073){//头像上传成功
+                                // alert(ret.data);
+                                if(ret.type==1){
+                                    document.getElementById("portrait_positive").src = serverUrl+'/'+ret.idcard;
+     
+                                    document.getElementById("portrait_positive").style.display = "block";  
+
+                                    document.getElementById("positive").value= ret.idcard;
+
+                                                  
+                                }else{
+                                    document.getElementById("portrait_opposite").src = serverUrl+'/'+ret.idcard;
+                                    document.getElementById("portrait_opposite").style.display = "block"; 
+                                    document.getElementById("opposite").value= ret.idcard;                
+                                }
+                                api.toast({msg: ret.msg});
+                                //改变用户中心的头像（暂时不做，可以发送监听事件）
+                                api.hideProgress();
+                             }else{
+                                api.toast({msg: ret.msg});
+                                api.hideProgress();
+                                //window.location.reload();
+                                return false;
+                            }
+                        }else{
+                            api.toast({msg: "获取身份证失败！"});
+                        }
+                        api.hideProgress();
+                   })  
+
+                } else{
+                    api.alert({msg:err.msg});
+                };
+            });  
+
+        });
+
+    }
+
+
+
+
+
+/*     
+     function showPreview(source,id) {
+         var file = source.files[0];
+         if (window.FileReader) {
+             var fr = new FileReader();
+             fr.onloadend = function (e) {
+
+                if(id==1){
+                    document.getElementById("portrait_positive").src = e.target.result;
+                    image1 = e.target.result;  
+                    portrait_positive.style.display = "block";                  
+                }else{
+                    document.getElementById("portrait_opposite").src = e.target.result;
+                    image2 = e.target.result;   
+                    portrait_opposite.style.display = "block";                 
+                }
+                 
+                 uploadImage(id);
+             };
+             fr.readAsDataURL(file);
+         }
+     }
+     function uploadImage(id) {
+        if(id==1){
+            image=image1;
+        }else if(id==2){
+            image=image2;
+        }else{
+            api.toast({
+                msg: '非法文件上传!',
+                duration: 2000,
+                location: 'bottom'
+            });
+        }
+        alert(image);
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.toast({
+                msg: '请先登陆！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+
+        api.ajax({
+            url: serverUrl+'/daili.php?act=upload_idcard',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                  image:image,
+                  type:id,
+                  supplier_id:SUPPLIER_ID,
+                  user_id:userid_gs
+                }
+            }  
+        },function(ret,err){
+            api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                // TODO 
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+     }*/
+
+     function renzheng_taili(){
+
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.openWin ({
+                name: 'login',
+                url: 'login.html',
+                reload: true,
+                bounces: false,
+                pageParam: {back_act: 'daili'},
+                delay:200
+            });
+            return false;
+        }
+
+
+        //姓名
+        var realname=$api.val($api.byId('realname'))?$api.val($api.byId('realname')):'';
+        var New = document.getElementsByName("gender");
+        var strNew='';
+        for (var i = 0; i < New.length; i++) {
+            if (New.item(i).checked) {
+                strNew = New.item(i).getAttribute("value");
+                break;
+            } else {
+                continue;
+            }
+        }
+        //性别
+        var sex = strNew ? strNew : '';
+        //身份证
+        var idcard=$api.val($api.byId('idcard'))?$api.val($api.byId('idcard')):'';
+        var email=$api.val($api.byId('email'))?$api.val($api.byId('email')):'';
+        var qq=$api.val($api.byId('qq'))?$api.val($api.byId('qq')):'';
+        var yqm=$api.val($api.byId('yqm'))?$api.val($api.byId('yqm')):'';
+        var mobile=$api.val($api.byId('mobile'))?$api.val($api.byId('mobile')):'';
+        var positive=$api.val($api.byId('positive'))?$api.val($api.byId('positive')):'';
+        var opposite=$api.val($api.byId('opposite'))?$api.val($api.byId('opposite')):'';
+        var paywd=$api.val($api.byId('paywd'))?$api.val($api.byId('paywd')):'';
+        var ec_salt=api.pageParam.ec_salt?api.pageParam.ec_salt:'';
+
+        var paypwd = hex_md5(paywd+ec_salt);
+        if(realname==''){
+            api.toast({
+                msg: '请先填写真实姓名！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        if(sex==''){
+            api.toast({
+                msg: '请先选择性别！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        if(idcard==''){
+            api.toast({
+                msg: '请先填写身份证号码！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+
+        if(!checkCardId(idcard)){
+            api.toast({
+                msg: '请填写正确的身份证号码！',
+                duration: 2000,
+                location: 'bottom'
+            }); 
+            return false;           
+        }
+
+
+        if(email==''){
+            api.toast({
+                msg: '请先填写邮箱！',
+                duration: 2000,
+                location: 'bottom'
+            });
+        }
+
+        if(qq==''){
+            api.toast({
+                msg: '请先填写QQ号码！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        if(mobile==''){
+            api.toast({
+                msg: '请先填写邮箱！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+
+        if(email!=''){
+            if(!checkEmail(email)){
+                api.toast({
+                    msg: '邮箱格式不正确',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                return false;
+            }
+        }
+
+        if(!checkPhone(mobile)){
+            api.toast({
+                msg: '请填写正确的手机号码！',
+                duration: 2000,
+                location: 'bottom'
+            }); 
+            return false;           
+        }
+
+        if(positive==''){
+            api.toast({
+                msg: '请先上传身份证正面！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        if(opposite==''){
+            api.toast({
+                msg: '请先上传身份证反面！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        if(paywd==''){
+            api.toast({
+                msg: '请先输入支付密码！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+
+        //alert("aaaa"+realname+"bbb"+sex+"ccc"+idcard+"ddd"+email+"eee"+qq+"fff"+yqm+"ggg"+mobile+"hhh"+positive+"iii"+opposite+"jjj"+paywd);
+
+        //return false;
+
+        api.ajax({
+            url:serverUrl+'/daili.php?act=renzheng_taili',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values:{
+                    realname:realname,
+                    sex:sex,
+                    idcard:idcard,
+                    email:email,
+                    qq:qq,
+                    yqm:yqm,
+                    mobile:mobile,
+                    positive:positive,
+                    opposite:opposite,
+                    paywd:paypwd,
+                    user_id:userid_gs,
+                    supplier_id:SUPPLIER_ID
+                }
+            },
+            returnAll:false
+        },function(ret,err){
+            if (ret) {
+                // TODO 
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+
+
+
+
+     }
+
+
+
+   //验证身份证号码
+    function checkCardId(socialNo){  
+      
+          if(socialNo == "")  
+          {  
+            alert("输入身份证号码不能为空!");  
+            return (false);  
+          }  
+      
+          if (socialNo.length != 15 && socialNo.length != 18)  
+          {  
+            alert("输入身份证号码格式不正确!");  
+            return (false);  
+          }  
+              
+         var area={11:"北京",12:"天津",13:"河北",14:"山西",15:"内蒙古",21:"辽宁",22:"吉林",23:"黑龙江",31:"上海",32:"江苏",33:"浙江",34:"安徽",35:"福建",36:"江西",37:"山东",41:"河南",42:"湖北",43:"湖南",44:"广东",45:"广西",46:"海南",50:"重庆",51:"四川",52:"贵州",53:"云南",54:"西藏",61:"陕西",62:"甘肃",63:"青海",64:"宁夏",65:"新疆",71:"台湾",81:"香港",82:"澳门",91:"国外"};   
+             
+           if(area[parseInt(socialNo.substr(0,2))]==null) {  
+            alert("身份证号码不正确(地区非法)!");  
+                return (false);  
+           }   
+                  
+          if (socialNo.length == 15)  
+          {  
+             pattern= /^\d{15}$/;  
+             if (pattern.exec(socialNo)==null){  
+                alert("15位身份证号码必须为数字！");  
+                return (false);  
+            }  
+            var birth = parseInt("19" + socialNo.substr(6,2));  
+            var month = socialNo.substr(8,2);  
+            var day = parseInt(socialNo.substr(10,2));  
+            switch(month) {  
+                case '01':  
+                case '03':  
+                case '05':  
+                case '07':  
+                case '08':  
+                case '10':  
+                case '12':  
+                    if(day>31) {  
+                        alert('输入身份证号码不格式正确!');  
+                        return false;  
+                    }  
+                    break;  
+                case '04':  
+                case '06':  
+                case '09':  
+                case '11':  
+                    if(day>30) {  
+                        alert('输入身份证号码不格式正确!');  
+                        return false;  
+                    }  
+                    break;  
+                case '02':  
+                    if((birth % 4 == 0 && birth % 100 != 0) || birth % 400 == 0) {  
+                        if(day>29) {  
+                            alert('输入身份证号码不格式正确!');  
+                            return false;  
+                        }  
+                    } else {  
+                        if(day>28) {  
+                            alert('输入身份证号码不格式正确!');  
+                            return false;  
+                        }  
+                    }  
+                    break;  
+                default:  
+                    alert('输入身份证号码不格式正确!');  
+                    return false;  
+            }  
+            var nowYear = new Date().getYear();  
+            if(nowYear - parseInt(birth)<15 || nowYear - parseInt(birth)>100) {  
+                alert('输入身份证号码不格式正确!');  
+                return false;  
+            }  
+            return (true);  
+          }  
+            
+          var Wi = new Array(  
+                    7,9,10,5,8,4,2,1,6,  
+                    3,7,9,10,5,8,4,2,1  
+                    );  
+          var   lSum        = 0;  
+          var   nNum        = 0;  
+          var   nCheckSum   = 0;  
+            
+            for (i = 0; i < 17; ++i)  
+            {  
+                  
+      
+                if ( socialNo.charAt(i) < '0' || socialNo.charAt(i) > '9' )  
+                {  
+                    alert("输入身份证号码格式不正确!");  
+                    return (false);  
+                }  
+                else  
+                {  
+                    nNum = socialNo.charAt(i) - '0';  
+                }  
+                 lSum += nNum * Wi[i];  
+            }  
+      
+            
+            if( socialNo.charAt(17) == 'X' || socialNo.charAt(17) == 'x')  
+            {  
+                lSum += 10*Wi[17];  
+            }  
+            else if ( socialNo.charAt(17) < '0' || socialNo.charAt(17) > '9' )  
+            {  
+                alert("输入身份证号码格式不正确!");  
+                return (false);  
+            }  
+            else  
+            {  
+                lSum += ( socialNo.charAt(17) - '0' ) * Wi[17];  
+            }  
+      
+              
+              
+            if ( (lSum % 11) == 1 )  
+            {  
+                return true;  
+            }  
+            else  
+            {  
+                alert("输入身份证号码格式不正确!");  
+                return (false);  
+            }  
+              
+    } 
+
+  //检测手机号是否正确
+  function checkPhone(phone){
+    var reg = /^1\d{10}$/;
+    return reg.test(phone);
+  }
+  //检测邮箱是否正确
+  function checkEmail(email){
+    var reg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+    return reg.test(email);
+  }
+
+
+
+</script>
+</body>
+</html>

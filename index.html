@@ -1,0 +1,809 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>首页框架</title>
+    <link rel="stylesheet" href="css/aui.css" />
+    <link rel="stylesheet" href="css/header.css" />
+
+    <style>
+        #main { -webkit-box-flex: 1; -webkit-flex: 1; flex: 1; }
+        .topbar { background: #f2f2f2; height: 50px; border-bottom: 1px solid #DDDFE3; line-height: 50px; text-align: center; display: none; color: #323237; }
+        .activebar { display: block; }
+        .active { color: red; }
+        .aui-nav .aui-bar-tab .aui-iconfont, .aui-nav .aui-bar-tab p { color: green; }
+        .aui-nav .aui-bar-tab .active-warnings .aui-iconfont, .aui-nav .aui-bar-tab .active-warnings p { color: red; }
+        .gouwuche span { position: relative; }
+        .gouwuche em {position: absolute; background: #ff2626; color: #fff; height: 1.8rem; width: 1.8rem; border-radius: 100%; text-align: center; font-size: 1.3rem; line-height: 2rem; top: 0.3rem; }
+        .indexherder .actives { display: none; }
+        .aui-bar-warnings { background-color: green; }
+        .aui-btn-warnings { color: #ffffff; background-color: green; border: 1px solid #f1c40f; }
+        .aui-btn-warnings.active, .aui-btn-warnings:active { color: #fff; background-color: red; border: 1px solid red; }
+        .indexherder .aui-title { width: 63%; margin: auto; left: 0px !important; right: 0px !important; }
+        .indexherder { background-color: #fff; background: #efefef url("img/header-bg.png") repeat-x 0 0; background-size: 100% 4.6rem; height: 4.6rem !important; line-height: 4.6rem !important; box-shadow: 0px 2px 2px 1px rgba(0, 0, 0,0.2); padding-right:10px;}
+        .indexherder .aui-pull-right { color: #ff5050; }
+        .indexlogo { background: transparent url("img/logo.png") no-repeat scroll right center / 65px auto; width: 69px; height: 4.6rem; display: inline-block;margin-top: -1px; }
+        .indexherder div input { width: 100%; border-radius: 15px; color: #b6b6b6; position: relative;  background-color: #fff; border: 1px solid #eaeaea; font-size: 1.5rem; height: 3.2rem; line-height: 3.2rem; padding-left: 12%; margin-bottom: 0.35rem; margin-left: 6%; }
+        .indexherder div font { position: absolute; left: 9%; color: rgb(196, 196, 196); font-size: 22px; top: 1px; }
+        .aui-pull-right font{font-size:26px;color:#585858;font-weight:500;}
+    </style>
+</head>
+<body>
+    <div id="aui-header">
+        <header>
+   <div class="indexherder">
+       <span class="aui-pull-left">
+         <i class="indexlogo"></i>
+       </span>
+       <div class="aui-title" tapmode onclick="openMyWin('search')">
+           <input name="keywords" placeholder="搜索你想找的商品" value="">
+           <font class="iconfont">&#xe69a;</font>
+       </div>
+          <span class="aui-pull-right" tapmode onclick="openScans();">
+                <font class="iconfont">&#xe69d;</font>
+
+       </span>
+   </div>
+</header>
+    </div>
+    <!-- <div id="wrap"> -->
+    <div id="main">
+    </div>
+     <footer class="aui-nav" id="aui-footer">
+        <ul class="aui-bar-tab">
+            <li  id="tabbar1" class="active-warnings" tapmode onclick="randomSwitchBtn(this,'首页',0)">
+                <span class="aui-iconfont"><i class="iconfont">&#xe699;</i></span>
+                <p>首页</p>
+            </li>
+            <li id="tabbar2" tapmode onclick="randomSwitchBtn(this,'分类',1)">
+                <span class="aui-iconfont"><i class="iconfont">&#xe69e;</i></span>
+                <p>分类</p>
+            </li>
+            <li id="tabbar3" tapmode onclick="randomSwitchBtn(this,'果实',2)">
+                <span class="aui-iconfont"><i class="iconfont">&#xe69f;</i></span>
+                <p>果实</p>
+            </li>
+            <li id="tabbar4" class="gouwuche" tapmode onclick="randomSwitchBtn(this,'购物车',3)">
+                <span class="aui-iconfont"><i class="iconfont">&#xe69c;</i>
+                <em id="countnum">0</em>
+                </span>
+
+
+                <p>购物车</p>
+            </li>
+            <li id="tabbar5" tapmode onclick="randomSwitchBtn(this,'我的果园',4)">
+                <span class="aui-iconfont"><i class="iconfont">&#xe69b;</i></span>
+                <p>我的果园</p>
+            </li>
+        </ul>
+    </footer>
+
+
+
+
+
+
+    <!-- </div> -->
+</body>
+<script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript" src="script/common.js"></script>
+<script type="text/javascript">
+    var mkeyTime=new Date().getTime();
+    apiready = function () {
+        //api.clearCache();
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+
+        //get_cache_update();
+
+/*        var chromeDebug = api.require('chromeDebug');
+        chromeDebug.openDebug(function(ret, err) {
+            alert(JSON.stringify(ret));
+            if (212 == ret.code) {
+                alert(JSON.stringify(ret));
+            } else {
+                alert( JSON.stringify( err ) );
+            }
+        });
+
+
+*/
+
+        api.addEventListener({//加入购物车，不关闭商品页面
+            name: 'cart_goods'
+        }, function(ret, err){
+            api.hideProgress();
+            cart_number();
+        });
+
+
+
+        var zhuge = api.require('zhuge');
+        zhuge.openLog();
+        zhuge.openDebug();
+        zhuge.initZhuge();
+
+
+        //创建美洽
+        var mq = api.require('meiQia');
+        //配置初始化美洽需要的appkey
+        var param = {
+            appkey:"cb547974ea63cfc3b2d7a347eb135e14"
+        };
+        //初始化美洽
+        mq.initMeiQia(param, function (ret, err){
+            if (ret) {
+                //初始化成功
+                //alert(JSON.stringify(ret));
+            }else{
+                //初始化失败
+                //alert(JSON.stringify(err));
+                mq.initMeiQia(param, function (ret, err){});
+            }
+        })
+
+
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        var footer_h = $api.offset($api.byId('aui-footer')).h;
+
+
+        var ajpush = api.require('ajpush');
+
+        api.addEventListener({
+        name : 'appintent'
+        }, function(ret, err) {
+            if (ret && ret.appParam.ajpush) {
+                //注意：以下是点击了消息，然后出来的信息，并打开加载相应的数据
+
+                //api.alert({msg:JSON.stringify(ret.appParam.ajpush)});
+                var ajpush = ret.appParam.ajpush;
+                var jsonStr =  JSON.parse(ajpush.extra);
+                var type = jsonStr.type;
+                var topic_id = jsonStr.txt;
+                var update = jsonStr.update;
+                var downlode_url_android = jsonStr.url_android;
+                var downlode_url_ios = jsonStr.url_ios;
+
+                if(update && update==1){
+                    api.confirm({
+                        title: '确定要更新安装app么？',
+                        msg: '更新APP',
+                        buttons:['确定', '取消']
+                    },function(ret,err){
+                        if(ret.buttonIndex == 1){
+                            var systemType = api.systemType;
+                            //alert(downlode_url_android);
+                            if(systemType=='android'){//安卓支持fill本地文件，可能需要加一个下载函数
+                                    api.download({
+                                        url : downlode_url_android,
+                                        report : true
+                                    }, function(ret, err) {
+                                        if (ret && 0 == ret.state) {/* 下载进度 */
+                                            api.toast({
+                                                msg : "正在下载应用" + ret.percent + "%",
+                                                duration : 2000
+                                            });
+                                        }
+                                        if (ret && 1 == ret.state) {/* 下载完成 */
+                                            var savePath = ret.savePath;
+                                            api.installApp({
+                                                appUri : savePath
+                                            });
+                                        }
+                                    });
+
+/*
+                                  api.installApp({
+                                        appUri:downlode_url_android
+                                  });*/
+                            }else{
+                                  api.installApp({
+                                        appUri:downlode_url_ios
+                                  });
+                            }
+
+                            // api.openFrame({
+                            //     name: 'update',
+                            //     url: downlode_url,
+                            //     bounces: false,
+                            //     rect: {
+                            //         x: 0,
+                            //         y: 0,
+                            //         w: 'auto',
+                            //         h: 'auto'
+                            //     }
+                            // });
+
+                        }
+                    });
+
+                }
+
+                if(type && type!==''){
+                    // if(type=="banner"){
+                    //     api.openWin ({
+                    //         name: type,
+                    //         url: './'+type+'.html',
+                    //         pageParam: {topic_id: topic_id},
+                    //         rect:{
+                    //             x:0,
+                    //             y:0,
+                    //             w:'auto',
+                    //             h:'auto'
+                    //         },
+                    //         scrollToTop:true,
+                    //         showProgress:true,
+                    //         bounces: false,
+                    //         delay:200
+                    //     });
+                    // }else{
+                        api.openWin ({
+                            name: type,
+                            url: type+'.html',
+                            reload:true,
+                            pageParam: {topic_id: topic_id},
+                            rect:{
+                                x:0,
+                                y:0,
+                                w:'auto',
+                                h:'auto'
+                            },
+                            scrollToTop:true,
+                            showProgress:true,
+                            bounces: false,
+                            delay:200
+                        });
+                    // }
+                }
+            }
+        })
+        //通知极光推送SDK当前应用恢复到前台。
+        api.addEventListener({name:'resume'}, function(ret,err) {
+            //var ajpush = api.require('ajpush');
+            ajpush.onResume();
+        });
+
+        //监听应用进入后台，通知jpush暂停事件
+        api.addEventListener({name:'pause'}, function(ret,err) {
+            //var ajpush = api.require('ajpush');
+            ajpush.onPause();
+        });
+
+
+        ajpush.init(function(ret) {
+            if (ret && ret.status) {   //注意安卓系统必须要这样
+            }
+        });
+
+
+        cart_number();
+
+        api.addEventListener({name: 'keyback'}, function(ret, err){
+              //如果当前时间减去标志时间大于2秒，说明是第一次点击返回键，反之为2秒内点了2次，则退出。
+                if((new Date().getTime() - mkeyTime) > 2000){
+                 mkeyTime = new Date().getTime();
+                        api.toast({
+                    msg: '再按一次退出程序',
+                    duration:2000,
+                    location: 'bottom'
+                        });
+                }else{
+                        api.closeWidget();
+                }
+
+        });
+
+
+        api.addEventListener({
+            name: 'cart'
+        }, function(ret, err){
+            //alert(JSON.stringify(ret.value.user_id));
+            cart_number();
+        });
+
+        api.addEventListener({
+            name: 'login'
+        }, function(ret, err){
+            cart_number();
+        });
+
+        api.addEventListener({
+            name: 'layout'
+        }, function(ret, err){
+            if(JSON.stringify(ret.value)){
+                cart_number();
+            }
+        });
+
+
+
+
+        var yindao=$api.getStorage("yindaos");
+        if(yindao){
+            api.closeFrameGroup({
+                name: 'yindao'
+            });
+            shouyeqidong();
+        }else{
+            api.openFrameGroup({
+                name: 'yindao',
+                scrollEnabled: true,
+                slidBackEnabled:false,
+                rect: {
+                    x:0,
+                    y:0,
+                    w:'auto',
+                    h:'auto'
+                },
+                index: 0,
+                frames: [{
+                    name: 'yd1',
+                    bounces:false,
+                    slidBackEnabled:false,
+                    url: 'html/yd/yd1.html'
+                },{
+                    name: 'yd2',
+                    bounces:false,
+                    slidBackEnabled:false,
+                    url: 'html/yd/yd2.html'
+                },{
+                    name: 'yd3',
+                    bounces:false,
+                    slidBackEnabled:false,
+                    url: 'html/yd/yd3.html'
+                },{
+                    name: 'yd4',
+                    bounces:false,
+                    slidBackEnabled:false,
+                    url: 'html/yd/yd4.html'
+                }]
+            }, function(ret, err){
+                var name  = ret.name;
+                var index = ret.index;
+                //alert(index);
+                //alert("aaaaa");
+            });
+
+            return ;
+        }
+
+    }
+
+
+
+    function shouyeqidong(){
+        var header = $api.byId('aui-header');
+        var headerPos = $api.offset(header);
+        var body_h = $api.offset($api.dom('body')).h;
+        var footer_h = $api.offset($api.byId('aui-footer')).h;
+
+        var aaa=api.pageParam.aaa;
+        if(!aaa){
+            aaa=0;
+        }
+
+        //alert(aaa);
+
+        api.openFrameGroup({
+            name: 'guoshu_group',
+            scrollEnabled: false,
+            slidBackEnabled:false,
+            rect: { x: 0, y: headerPos.h+5, w: 'auto', h: body_h - headerPos.h - footer_h-5 },
+            index: aaa,
+            preload: 3,
+            frames:
+            [{
+                name: 'main',
+                url: 'html/main.html',
+                slidBackEnabled:false,
+                opaque: true
+            }, {
+                name: 'cat_list',
+                url: 'html/cat_list.html',
+                slidBackEnabled:false,
+                opaque: true
+            }, {
+                name: 'guoshi',
+                slidBackEnabled:false,
+                opaque: true,
+                url: 'html/guoshi.html'
+            }, {
+                name: 'cart',
+                slidBackEnabled:false,
+                opaque: true,
+                fixon:"root",
+                url: 'html/cart.html'
+            }, {
+                name: 'usercenter',
+                slidBackEnabled:false,
+                opaque: true,
+                url: 'html/usercenter.html'
+            }]
+        }, function (ret, err) {
+            var footer = $api.byId('aui-footer');
+            var footerAct = $api.dom(footer, '.aui-bar-tab li.active-warnings');
+            $api.removeCls(footerAct, 'active-warnings');
+            var name = ret.name;
+            var index = ret.index;
+            //alert(name);
+            //alert(index);
+            //
+
+            //头部
+//            str2 = '';
+//            str2 += '<header class="aui-bar aui-bar-nav aui-bar-warnings" style="margin-top:-1px;">';
+//            //str2+='    <a class="aui-btn aui-btn-warnings aui-pull-left "><i class="iconfont">&#xe603;</i></a>';
+//            str2 += '    <div class="aui-title" id="header-title" style="color:#fff;">首页</div>';
+//            //str2+='    <a class="aui-pull-right">';
+//            //str2+='        <i class="iconfont">&#xe604;</i>';
+//            //str2+='    </a>';
+//            str2 += '</header>';
+
+
+                str2 = '';
+                str2+='   <header class="gsheader">';
+                str2+='    <div class="gsheaderdivleft"></div>';
+                str2+='<h1> <a href="#title-link" class=""  id="header-title">  </a></h1>';
+                str2+='  <div class="gsheaderdivright"> <a href="#" class=""><i><font></font></i>  </a></div>';
+                str2+=' </header>';
+
+
+
+            if (index == 0) {
+                str = '';
+
+                str += '<header>';
+                str += '       <div class="indexherder">';
+                str += '           <span class="aui-pull-left"> ';
+                str += '             <i class="indexlogo"></i>';
+                str += '           </span>';
+                str += '           <div class="aui-title" tapmode onclick="search();">';
+                str += '               <input name="keywords" placeholder="搜索你想找的商品" value="">';
+                str += '               <font class="iconfont">&#xe69a;</font>';
+                str += '           </div>';
+                str += '              <span class="aui-pull-right" tapmode onclick="openScans();">';
+                str += '  <font class="iconfont">&#xe69d;</font>             ';
+                str += '           </span> ';
+                str += '       </div>';
+                str += '    </header>';
+
+
+                document.getElementById('aui-header').innerHTML = str;
+
+                $api.addCls($api.byId('tabbar1'), 'active-warnings');
+
+            } else if (index == 1) {
+//                document.getElementById('aui-header').innerHTML = str2;
+//                $api.text($api.byId('header-title'), '分类');
+//                $api.addCls($api.byId('tabbar2'), 'active-warnings');
+                    str = '';
+                    str +='<header class="gsheader gsheaderjr">';
+                    str +='<div class="gsheaderdivleft"  tapmpde onclick="kefushow()"><a href="#" class=""><i class="indexheaderlogo"> </i></a></div>';
+                    str +='     <h1 class="header-title">';
+                    str +='   <a href="#title-link" class="">      ';
+                    str +=' <input name="keywords" placeholder="搜索你想找的商品" value="" type="text" onclick="search();"><font>&#xe63f;</font>';
+                    str +='</a>';
+                    str +=' </h1>';
+                    str +=' <div class="gsheaderdivright gsheaderdivrightxg">';
+                    str +='<a href="#" class="">';
+                    str +='<i>搜索</i>';
+                    str +=' </a>';
+                    str +='</div>';
+                    str +='</header>';
+
+                document.getElementById('aui-header').innerHTML = str;
+
+                $api.addCls($api.byId('tabbar2'), 'active-warnings');
+
+            } else if (index == 2) {
+
+
+
+                document.getElementById('aui-header').innerHTML = str2;
+                $api.text($api.byId('header-title'), '果实');
+
+                $api.addCls($api.byId('tabbar3'), 'active-warnings');
+            } else if (index == 3) {
+                document.getElementById('aui-header').innerHTML = str2;
+                $api.text($api.byId('header-title'), '购物车');
+                $api.addCls($api.byId('tabbar4'), 'active-warnings');
+            } else if (index == 4) {
+                document.getElementById('aui-header').innerHTML = str2;
+                $api.text($api.byId('header-title'), '我的果园');
+                $api.addCls($api.byId('tabbar5'), 'active-warnings');
+            }
+
+
+            get_cache_update();//检测更新缓存
+        });
+
+
+        $api.addEvt($api.byId('back'), 'click', function () {
+            api.closeWin();
+        });
+
+
+
+
+
+
+    }
+
+
+    function closegroup(aaa){
+        // api.closeFrameGroup({
+        //     name: 'guoshu_group'
+        // });
+
+        api.setFrameGroupIndex({
+            name: 'guoshu_group',
+            index: aaa,
+            scroll: true
+        });
+    }
+
+
+    function setgroupindex(index){
+        api.setFrameGroupIndex({
+            name: 'guoshu_group',
+            index: index,
+            scroll: true
+        });
+    }
+
+
+
+    function opengroup(aa){
+        if(!aa){
+            aa=0;
+        }
+
+        api.openFrameGroup({
+            name: 'guoshu_group',
+            scrollEnabled: false,
+            rect: { x: 0, y: headerPos.h, w: 'auto', h: body_h - headerPos.h - footer_h },
+            index: aa,
+            preload: 3,
+            frames:
+            [{
+                name: 'main',
+                url: 'html/main.html',
+                opaque: true
+            }, {
+                name: 'cat_list',
+                url: 'html/cat_list.html',
+                opaque: true
+            }, {
+                name: 'guoshi',
+                opaque: true,
+                url: 'html/guoshi.html'
+            }, {
+                name: 'cart',
+                opaque: true,
+                url: 'html/cart.html'
+            }, {
+                name: 'usercenter',
+                opaque: true,
+                url: 'html/usercenter.html'
+            }]
+        }, function (ret, err) {
+            var footer = $api.byId('aui-footer');
+            var footerAct = $api.dom(footer, '.aui-bar-tab li.active-warnings');
+            $api.removeCls(footerAct, 'active-warnings');
+            var name = ret.name;
+            var index = ret.index;
+            //alert(name);
+            //alert(index);
+            //
+
+            //头部
+//            str2 = '';
+//            str2 += '<header class="aui-bar aui-bar-nav aui-bar-warnings">';
+//            //str2+='    <a class="aui-btn aui-btn-warnings aui-pull-left "><i class="iconfont">&#xe603;</i></a>';
+//            str2 += '    <div class="aui-title" id="header-title">首页</div>';
+//            //str2+='    <a class="aui-pull-right">';
+//            //str2+='        <i class="iconfont">&#xe604;</i>';
+//            //str2+='    </a>';
+//            str2 += '</header>';
+
+
+                str2 = '';
+                str2+='   <header class="gsheader">';
+                str2+='    <div class="gsheaderdivleft"> </div>';
+                str2+='<h1> <a href="#title-link" class="" id="header-title">   果实</a></h1>';
+                str2+='  <div class="gsheaderdivright"> <a href="#" class=""><i><font></font></i>  </a></div>';
+                str2+=' </header>';
+
+
+
+            if (index == 0) {
+                str = '';
+
+                str += '<header>';
+                str += '       <div class="indexherder">';
+                str += '           <span class="aui-pull-left"> ';
+                str += '             <i class="indexlogo"></i>';
+                str += '           </span>';
+                str += '           <div class="aui-title" tapmode onclick="search();">';
+                str += '               <input name="keywords" placeholder="搜索你想找的商品" value="">';
+                str += '               <font class="iconfont">&#xe605;</font>';
+                str += '           </div>';
+                str += '              <span class="aui-pull-right" tapmode onclick="openScans();">';
+                str += '  <font class="iconfont">&#xe606;</font>             ';
+                str += '           </span> ';
+                str += '       </div>';
+                str += '    </header>';
+
+
+                document.getElementById('aui-header').innerHTML = str;
+
+                $api.addCls($api.byId('tabbar1'), 'active-warnings');
+
+            } else if (index == 1) {
+                document.getElementById('aui-header').innerHTML = str2;
+                $api.text($api.byId('header-title'), '分类');
+                $api.addCls($api.byId('tabbar2'), 'active-warnings');
+            } else if (index == 2) {
+                document.getElementById('aui-header').innerHTML = str2;
+                $api.text($api.byId('header-title'), '果实');
+
+                $api.addCls($api.byId('tabbar3'), 'active-warnings');
+            } else if (index == 3) {
+                document.getElementById('aui-header').innerHTML = str2;
+                $api.text($api.byId('header-title'), '购物车');
+                $api.addCls($api.byId('tabbar4'), 'active-warnings');
+            } else if (index == 4) {
+                document.getElementById('aui-header').innerHTML = str2;
+                $api.text($api.byId('header-title'), '我的果园');
+                $api.addCls($api.byId('tabbar5'), 'active-warnings');
+            }
+        });
+
+    }
+
+
+
+    function randomSwitchBtn(obj, name, index) {
+        $api.text($api.byId('header-title'), name);
+        var footer = $api.byId('aui-footer');
+        var footerAct = $api.dom(footer, '.aui-bar-tab li.active-warnings');
+        $api.removeCls(footerAct, 'active-warnings');
+        $api.addCls(obj, 'active-warnings');
+        api.setFrameGroupIndex({
+            name: 'guoshu_group',
+            index: index
+        });
+    }
+
+
+    function search() {
+        openMyWin('search');
+    }
+    function login() {
+        openMyWin('login');
+    }
+
+
+  function openScans(){
+
+        var FNScanner = api.require('FNScanner');
+        FNScanner.openScanner({
+            autorotation: true,
+        },function( ret, err ){
+            // if( ret ){
+            //     alert( JSON.stringify( ret ) );
+            // }else{
+            //     alert( JSON.stringify( err ) );
+            // }
+             if(ret.content==''){
+                api.alert({msg: '没有扫描到任何内容！'});
+             }else{
+
+                if(ret.content!=undefined){
+                	//api.alert({msg:JSON.stringify(ret.content)});
+                    //判断用户是否登录
+			        var user_id=$api.getStorage('userid_gs');
+			        if(!user_id || user_id<1){
+			            api.toast({
+			                msg: '请先登陆',
+			                duration: 2000,
+			                location: 'bottom'
+			            });
+			            showusercenter('goods',goods_id);
+			            return false;
+			        }
+
+			        api.ajax({
+			            url: serverUrl+'/goods.php?act=get_goods_sn',
+			            method: 'post',
+			            timeout: 30,
+			            dataType: 'json',
+			            returnAll:false,
+			            data:{
+			                values: {
+			                    goods_sn:ret['content'],
+			                    supplier_id:SUPPLIER_ID
+			                }
+			            }
+			        },function(rets,err){
+			            api.hideProgress();
+			            //api.alert({msg:JSON.stringify(rets)});
+			            //return;
+			            if (rets) {
+			               if(rets.code==1153){
+							    api.openWin ({
+							        name: "goods",
+							        url: './html/goods.html',
+							        pageParam: {goods_id:rets.goods_id},
+							        rect:{
+							            x:0,
+							            y:0,
+							            w:'auto',
+							            h:'auto'
+							        },
+							        bounces: false,
+							        reload:true,
+							        delay:200
+							    });
+			                }else{
+			                    api.toast({
+			                        msg: rets.msg,
+			                        duration: 3000,
+			                        location: 'bottom'
+			                    });
+			                }
+			            }else {
+			                api.alert({
+			                    msg:('网络错误！')
+			                });
+			            };
+			        });
+
+/*                    var strscarn=ret['content'].substr(0,47);
+                    var finalgoods_id=ret['content'].substr(47);
+                    // api.alert({
+                    //     msg: ret['content'].substr(0,47)
+                    // });
+
+                    if(strscarn==="http://www.httgo.com/mobile/carts.php?goods_sn="){
+                        // api.alert({
+                        //     msg: ret['msg'].substr(47)
+                        // });
+                        //判断用户是否登录
+                        var usr = $api.getStorage('usr');
+                        if(usr){
+                            user_id=usr.user_id?usr.user_id:0;
+                        }else{
+                            user_id=0;
+                        }
+
+                        if(user_id<1){
+                            api.alert({msg: '请先登录'});
+                            api.openWin({
+                                name: 'login',
+                                url: './login.html',
+                                bounces: false
+                            });
+                            return false;
+                        }
+                        //加入购物车，并跳转到购物车页面（已知user_id,goods_sn）
+
+                        //api.alert({msg: finalgoods_id});
+
+                        buy_now(finalgoods_id);
+                    }*/
+
+                }
+                //alert(subshe);
+             }
+        });
+
+    }
+
+
+
+</script>
+</html>

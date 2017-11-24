@@ -1,0 +1,263 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/daili.css">
+    <style>
+    .gsnocommissionlist{ margin-top:2rem;}
+    .gsnocommissionlist font,.gsnocommissionlist span{ display:block; text-align:center;}
+    .gsnocommissionlist font{ font-size:8rem; color:#bfbfbf; }
+    .gsnocommissionlist span{color: #c1c1c1;font-size: 1.5rem;}
+    </style>
+    
+</head>
+<body style="background: #ffffff;">
+
+
+  <header class="gsheader" id="header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();">
+              <i> <font>&#xe619;</font></i>
+        </a>
+    </div>
+    <h1>
+      <a>
+        佣金收益记录
+      </a>
+    </h1>
+  </header>
+    
+
+
+
+<!--  <div class="classdiv commissionlist">
+<ul id="daili_yongji"> -->
+<!-- <li><span><font>&#xe685;</font><em>代理佣金收益</em><i>+1.00元</i></span><strong>2016年-04月-17日-星期三</strong></li>
+<li><span><font>&#xe685;</font><em>代理佣金收益</em><i>+1.00元</i></span><strong>2016年-04月-17日-星期三</strong></li>
+<li><span><font>&#xe685;</font><em>代理佣金收益</em><i>+1.00元</i></span><strong>2016年-04月-17日-星期三</strong></li>
+<li><span><font>&#xe685;</font><em>代理佣金收益</em><i>+1.00元</i></span><strong>2016年-04月-17日-星期三</strong></li> -->
+
+<!--     <div class="gsnocommissionlist">
+    <font>&#xe6ab;</font>
+    <span>你还没有佣金记录</span>
+    </div>
+
+</ul>
+</div> -->
+
+
+
+    <script type="text/x-dot-template" id="daili-yongjin-template">
+
+
+    /*
+        {{for(var i=0,len=it.length;i<len;i++){}}
+
+
+        <li>
+            <span>
+
+            <font>&#xe685;</font>
+            <!--
+            {{if(it[i].avator==null){}}
+              <font>&#xe685;</font>
+            {{}else{}}
+              <img src="{{=serverUrl+'/'+it[i].avator}}" />
+            {{}}}
+            -->
+            
+            <em>{{=it[i].remark}}</em>
+
+            {{if(it[i].expend>0){}}
+              <i>-{{=it[i].expend}}元</i>
+            {{}else{}}
+              <i>+{{=it[i].income}}元</i>
+            {{}}}
+
+            </span>
+
+            <strong>{{=it[i].addtime}}</strong>
+        </li>
+
+        {{}}}  
+        */
+    </script>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+
+        var userid_gs=$api.getStorage('userid_gs');
+        var headerPos = $api.offset(header);
+        if(!userid_gs){
+            showusercenter('commissionlist');
+            return false;
+        }
+
+        var account_id=api.pageParam.account_id;
+        if(!account_id || account_id<1){
+           api.toast({
+               msg: '非法入口！',
+               duration: 2000,
+               location: 'bottom'
+           });
+           api.closeWin();
+           return;
+        }
+        api.openFrame({
+            name: 'commissionlist_list',
+            url: 'commissionlist_list.html',
+            bounces: true,
+            reload:true,
+            pageParam: { account_id: account_id},
+            rect: {
+                x: 0,
+                y: headerPos.h+5,
+                w: 'auto',
+                h: 'auto'
+            }
+        });
+
+
+
+/*        get_daili_account_log(userid_gs,page,account_id);
+
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            page+=4;
+            get_daili_account_log(userid_gs,page,account_id);
+            api.refreshHeaderLoadDone();
+        });
+
+
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+                page+=4;
+                get_daili_account_log(userid_gs,page,account_id);
+                api.refreshHeaderLoadDone();
+        }); 
+*/
+
+    }
+
+/*
+    function get_daili_account_log(user_id,page,account_id){
+
+        if(!user_id || user_id<1){
+          api.toast({
+              msg: '请先登陆！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          api.closeWin({
+              name: 'commissionlist'
+          });
+          return false;
+        }
+
+
+        if(account_id==6){
+          api.ajax({
+              url: serverUrl + '/daili.php?act=get_daili_dfyj_log',
+              method: 'post',
+              timeout: 30,
+              dataType: 'json',
+              returnAll: false,
+              data: {
+                  values: {
+                      page: page,
+                      supplier_id: SUPPLIER_ID,
+                      account_id: account_id,
+                      user_id: user_id
+                  }
+              }
+          }, function (ret, err) {
+              if (ret) {
+                  //api.alert({msg:JSON.stringify(ret)});
+                  //return ;
+                  if (ret.code == 1013) {
+                      if (ret.info != '') {
+                          var template = document.getElementById('daili-yongjin-template').innerHTML;
+                          document.getElementById('daili_yongji').innerHTML = doT.template(template)(ret.info);
+                      } else { 
+                      
+                      }
+                  } else {
+                      api.toast({
+                          msg: ret.msg,
+                          duration: 2000,
+                          location: 'bottom'
+                      });
+                  }
+
+              } else {
+                  api.alert({
+                      msg: ('错误码：' + err.code + '；错误信息：' + err.msg + '网络状态码：' + err.statusCode)
+                  });
+              };
+          });
+        }else{
+          api.ajax({
+              url: serverUrl + '/daili.php?act=get_daili_account_log',
+              method: 'post',
+              timeout: 30,
+              dataType: 'json',
+              returnAll: false,
+              data: {
+                  values: {
+                      page: page,
+                      supplier_id: SUPPLIER_ID,
+                      account_id: account_id,
+                      user_id: user_id
+                  }
+              }
+          }, function (ret, err) {
+              if (ret) {
+                  //api.alert({msg:JSON.stringify(ret)});
+                  if (ret.code == 1013) {
+                      if (ret.info != '') {
+                          var template = document.getElementById('daili-yongjin-template').innerHTML;
+                          document.getElementById('daili_yongji').innerHTML = doT.template(template)(ret.info);
+                      } else { 
+                      
+                      }
+                  } else {
+                      api.toast({
+                          msg: ret.msg,
+                          duration: 2000,
+                          location: 'bottom'
+                      });
+                  }
+
+              } else {
+                  api.alert({
+                      msg: ('错误码：' + err.code + '；错误信息：' + err.msg + '网络状态码：' + err.statusCode)
+                  });
+              };
+          });
+
+        }
+
+    }
+*/
+</script>

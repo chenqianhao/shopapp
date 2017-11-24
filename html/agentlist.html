@@ -1,0 +1,185 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telephone=no">
+    <title></title>
+    <link rel="stylesheet" href="../css/daili.css">
+</head>
+<body style="background: #ffffff;">
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft">
+          <a tapmode onclick="api.closeWin();">
+                <i> <font>&#xe619;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">
+                我的代理
+          </a>
+      </h1>
+          <div class="gsheaderdivright" tapmpde onclick="kefushow('agentlist');">
+          <a><i><font>&#xe635;</font></i></a>
+      </div>
+  </header>
+    <div class="agentlist classdiv">
+        <ul id="daililist">
+<!--             <li>
+                <img src="../img/touxiang.jpg" /><span>卢超</br><i>一级代理</i></span> </li>
+            <li>
+                <img src="../img/touxiang.jpg" /><span>卢超</br><i>一级代理</i></span> </li>
+            <li>
+                <img src="../img/touxiang.jpg" /><span>卢超</br><i>一级代理</i></span> </li> -->
+
+
+        </ul>
+    </div>
+
+
+<script type="text/x-dot-template" id="dailiinfo-template">
+        {{for(var i=0,len=it.length;i<len;i++){}}
+        <li>
+            {{if(it[i].avator==null){}}
+              <img src="../img/touxiang.jpg" />
+            {{}else{}}
+              <img src="{{=serverUrl+'/'+it[i].avator}}" />
+            {{}}}
+            <span>{{=it[i].user_name}}</br><i>
+
+
+            {{ if(it[i].dengji==1){ }}
+              一级代理
+            {{ }else if(it[i].dengji==2){ }}
+              二级代理
+            {{ }else if(it[i].dengji==3){ }}
+              三级代理
+            {{ }else{ }}
+              普通消费者
+            {{ } }}
+            
+            </i></span> 
+        </li>
+        {{}}}    
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+        var user_id=api.pageParam.user_id;
+        if(!user_id || user_id<1){
+          api.toast({
+              msg: '请先登陆！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          api.closeWin({
+              name: 'agentlist'
+          });
+          return false;
+        }
+
+        var two_daili=api.pageParam.two_daili;
+        var three_daili=api.pageParam.three_daili;
+        var four_daili=api.pageParam.four_daili;
+
+        //合并代理
+        var daili=''
+
+        if(two_daili != ''){
+          //alert(two_daili);
+          daili+=two_daili;
+        }
+        if(three_daili != ''){
+          if(daili!==''){
+            daili+=','+three_daili;
+          }else{
+            daili+=three_daili;
+          }
+        }
+        if(four_daili != ''){
+          if(daili!==''){
+            daili+=','+four_daili;
+          }else{
+            daili+=four_daili;
+          }
+        }    
+
+        if(daili!=''){
+          getdailiinfo(user_id,daili);
+      } else {
+          document.getElementById('daililist').innerHTML = "<em><font>&#xe6a1;</font></em><b>您还没有成功推广的代理哦，请再接再励！</b>";
+
+          //$api.html($api.byId("daililist"),"您还没有成功推广的代理哦，请再接再励！");
+        }
+    }
+
+    function getdailiinfo(user_id,daili){
+
+        if(!user_id || user_id<1){
+          api.toast({
+              msg: '请先登陆！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          api.closeWin({
+              name: 'agentlist'
+          });
+          return false;
+        }
+
+        if(trim(daili)=='' || daili==undefined){
+            //   $api.html($api.byId("daililist"),"您还没有成功推广的代理哦，请再接再励！"); 
+            document.getElementById('daililist').innerHTML = "<em><font>&#xe6a1;</font></em><b>您还没有成功推广的代理哦，请再接再励！</b>";  
+          return false;    
+        }
+
+        //alert(daili);
+
+        api.ajax({
+            url: serverUrl+'/daili.php?act=getdailiinfo',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                  daili:daili,
+                  supplier_id:SUPPLIER_ID,
+                  user_id:user_id
+                }
+            }            
+        },function(ret,err){
+            if (ret) {
+              //api.alert({msg:JSON.stringify(ret.info)});
+              if(ret.code==1009){
+                   var template = document.getElementById('dailiinfo-template').innerHTML;
+                   document.getElementById('daililist').innerHTML=doT.template(template)(ret.info);
+              }else{
+                api.toast({
+                    msg: ret.msg,
+                    duration: 2000,
+                    location: 'bottom'
+                });
+              }
+
+
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+
+    }
+</script>

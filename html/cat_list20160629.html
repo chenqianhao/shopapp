@@ -1,0 +1,501 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+</head>
+<body style="background: #fff;">
+<!-- 
+        <header class="gsheader">
+      <div class="gsheaderdivleft">
+          <a>
+                <i> <font>&#xe619</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">
+            <input name="keywords" placeholder="搜索你想找的商品" value=""><font>&#xe63f</font>
+          </a>
+      </h1>
+      <div class="gsheaderdivright">
+          <a>
+                <i>搜索</i>
+          </a>
+      </div>
+  </header> 
+-->
+<div id="listmain"></div>
+
+<script type="text/x-dot-template" id="body-template">
+    
+        <div class="gscategoryleft">
+            <ul id="cat_list_first">
+        {{ for(var obj1 in  it) { }}
+            {{if(it[obj1].parent_id==0){ }}
+                <li id="cbl_{{= it[obj1]['id'] }}" tapmode onclick="xs(this,{{= it[obj1]['id'] }});">
+                {{= it[obj1]['name'] }} /*{{= it[obj1]['id'] }}*/</li>
+           {{ } }}                
+        {{ } }}
+<!--
+    <li>今日特价</li>
+    <li class="on">国产鲜果</li>
+    <li>进口鲜果</li>
+    <li>时令鲜果</li>
+    <li>礼品礼盒</li> 
+-->
+
+            </ul>
+        </div>
+
+<!--
+   {{ for(var obj1 in  it) { }}
+        <div class="gscategoryright" id="xisyc_{{= it[obj1]['id'] }}">
+           <div class="gscategoryrighttopimg"><img src="{{=serverUrl+it[obj1]['cat_pic']}}" /></div>
+           {{for(var obj2 in it[obj1]['cat_id']){ }}
+            <div class="gscategoryh_sub_item">         
+                <h3 tapmode onclick="openNewWin({{= it[obj1]['cat_id'][obj2]['id']}},2);">aaaa{{= it[obj1]['cat_id'][obj2]['name'] }}</h3>
+                <ul>
+                    {{for(var obj3 in it[obj1]['cat_id'][obj2]['cat_id']){}} 
+                    <li tapmode onclick="openNewWin({{= it[obj1]['cat_id'][obj2]['cat_id'][obj3]['id']}},3);">
+                        <img src="{{=serverUrl_img+'/'+it[obj1]['cat_id'][obj2]['cat_id'][obj3]['cat_pic']}}" /><span>aaa<em>bbb{{= it[obj1]['cat_id'][obj2]['cat_id'][obj3]['name']}}</em></span>
+                    </li>
+                    {{}}}
+                </ul>
+            </div>
+            {{ } }}
+        </div>
+    {{ } }}
+-->
+
+
+
+
+    {{ for(var obj1 in  it) { }}
+        <div class="gscategoryright" id="xisyc_{{= it[obj1]['id'] }}">
+           <div class="gscategoryrighttopimg"><img src="{{= it[obj1]['cat_pic'] }}"  tapmode onclick="openNewWin_cat({{= it[obj1]['id']}},1);"/></div>
+       
+            <div class="gscategoryh_sub_item">       
+             
+                <ul>      
+                    {{for(var obj2 in it[obj1]['cat_id']){ }}              
+                  <li tapmode onclick="openNewWin_cat({{= it[obj1]['cat_id'][obj2]['id']}},2);">
+                        <img src="{{= it[obj1]['cat_id'][obj2]['cat_pic'] }}" /><span><em>{{= it[obj1]['cat_id'][obj2]['name'] }}</em></span>
+                    </li>
+                            {{ } }}
+                </ul>
+            </div>
+        </div>
+    {{ } }}
+
+ 
+
+</script>
+
+    </body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+
+
+<script type="text/javascript">
+
+    cat_list_all=[];
+    cat_pic_1=[];
+    biao_0=0;
+    biao_1=0;
+    biao_2=0;
+
+    //urlsss='';
+
+
+    apiready = function(){
+        api.parseTapmode();
+
+
+        //getcat_list();
+        read_cache_show("catlist");
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            //getcat_list();
+            read_cache_show("catlist");
+            api.refreshHeaderLoadDone();
+        });
+
+    }
+
+
+
+    function read_catlist_cache(){
+        var db = api.require('db');
+        db.openDatabase({
+            name: 'catlist'
+        }, function(ret, err){
+            db.selectSql({
+                name: "catlist",
+                sql: 'SELECT catlist FROM catlisttable'
+            }, function(retsss, errsss){
+
+                if( retsss.status ){
+                    //alert( JSON.stringify( retsss ) );
+                    if(retsss.data!='' && retsss.data!=undefined){
+                        var data_info_list=$api.strToJson(retsss.data[0]["catlist"]);
+                        var template = document.getElementById('body-template').innerHTML;
+                        document.getElementById('listmain').innerHTML=doT.template(template)(data_info_list);
+                        var first_li=document.getElementById("cat_list_first").getElementsByTagName("li")[0];
+                        var liid=first_li.id.replace("cbl_","");
+                        xs(first_li,liid);
+                    }else{//没有获取到缓存，从服务器从新获取
+                        getcat_lists();
+                    }
+                }else{
+                    //alert( JSON.stringify( errsss ) );
+                    //getcat_lists();
+                }
+            });
+        });
+    }
+
+
+
+/*
+    banner_cache=0;
+    banner_number=10;
+    banner_info = [];
+    topic_ids=[];
+    topic_imgs=[];*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //获取网络数据生存缓存
+    function getcat_lists(){
+        // api.showProgress({
+        //     title: '栏目加载中...',
+        //     modal: false
+        // });
+        //alert("到栏目了");
+        api.ajax({
+            url:serverUrl+'/category.php?act=get_cat_list',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID}
+            },
+        },function(ret,err){
+            api.hideProgress();
+            if(ret){
+                //api.alert({msg:JSON.stringify(ret)});
+                api.hideProgress();
+
+                if(ret.code==92){
+                     cat_list_all=ret.data;
+                     cat_list_alls=ret.data;
+                     for(var obj1 in ret.data){
+                        var urls=serverUrl_img+'/'+ret.data[obj1]['cat_pic'];
+                        cat_pic_cache_update(urls,obj1);//放到一个函数里面执行值不重复了
+                        for(var obj2 in ret.data[obj1]['cat_id']){
+                            var urlss=serverUrl_img+'/'+ret.data[obj1]['cat_id'][obj2]['cat_pic']+'?a='+obj1+"&b="+obj2;
+                            
+                            cat_pic_cache_updates(urlss,obj1,obj2);
+                        }
+                     }
+                    //api.alert({msg:JSON.stringify(cat_list_all)});
+                    setTimeout("showalert()", 100);//延迟赋值才成功了
+                    
+
+                }else{
+                    api.toast({
+                        msg: value.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+
+            }else{
+
+            }
+       })          
+    }
+
+
+
+    function cat_pic_cache_update(urls,obj1){
+
+        api.imageCache({
+            url: urls,
+            thumbnail:false  //不使用缩略图
+        }, function(ret, err){
+            //api.alert({msg:JSON.stringify(ret)});
+            var path_url='';
+            if(ret.status){
+                path_url=ret.url;
+            }else{
+                path_url=urls;
+            }
+            cat_list_all[obj1]['cat_pic']=path_url;
+            return ;
+
+        });
+
+    }
+
+
+
+    function cat_pic_cache_updates(urls,obj1,obj2){
+
+        api.imageCache({
+            url: urls,
+            thumbnail:false  //不使用缩略图
+        }, function(ret, err){
+            //api.alert({msg:JSON.stringify(ret)});
+            var path_url='';
+            if(ret.status){
+                path_url=ret.url;
+            }else{
+                path_url=urls;
+            }
+
+            cat_list_all[obj1]['cat_id'][obj2]['cat_pic']=path_url;
+            //alert(cat_list_all[biao_1]['cat_id'][biao_2]['cat_pic']);
+            return ;
+           
+        });
+
+        
+
+    }
+
+
+
+
+
+
+    function testtest(obj1){
+        for(var obj1 in cat_list_all){
+            var url=cat_list_all[obj1]['cat_pic'];
+
+            if(url.substr(0,1) !='/'){
+                showalert();
+                return ;
+            }
+
+            for(var obj2 in cat_list_all[obj1]['cat_id']){
+                var urls=cat_list_all[obj1]['cat_id'][obj2]['cat_pic'];
+                if(urls.substr(0,1) !='/'){
+                    showalert();
+                    return ;
+                }
+            }
+         }
+
+        //api.alert({msg:JSON.stringify(cat_list_all)});
+        //依次传入数据库，表名，字段名称，数据，字段长度
+        //database和type保持一致
+
+        make_cache_done("catlist","catlisttable","catlist",cat_list_all,1000);
+        //getcat_lists();
+
+
+        var template = document.getElementById('body-template').innerHTML;
+        document.getElementById('listmain').innerHTML=doT.template(template)(cat_list_all);   
+        var first_li=document.getElementById("cat_list_first").getElementsByTagName("li")[0];
+        var liid=first_li.id.replace("cbl_","");
+        xs(first_li,liid);
+
+
+    }
+
+    //判断是否缓存完成
+    function showalert(){
+        //api.alert({msg:JSON.stringify(cat_list_all)});
+        
+        for(var obj1 in cat_list_all){
+            var url=cat_list_all[obj1]['cat_pic'];
+            //alert(url);
+            //alert(url.substr(0,1));
+            if(url.substr(0,1) !='/'){
+                url=serverUrl_img+'/'+url;
+                //alert(url);
+                cat_pic_cache_update(url,obj1);
+            }
+
+            for(var obj2 in cat_list_all[obj1]['cat_id']){
+                var urls=cat_list_all[obj1]['cat_id'][obj2]['cat_pic'];
+                if(urls.substr(0,1) !='/'){
+                    urls=serverUrl_img+'/'+urls;
+                    //alert(obj1+"___"+obj2);
+                    cat_pic_cache_updates(urls,obj1,obj2);
+                }
+            }
+         }
+
+         //alert(cat_list_all);
+        //api.alert({msg:JSON.stringify(cat_list_all)});
+
+        setTimeout("testtest()", 100);//延迟赋值才成功了
+
+
+
+
+
+    }
+
+
+/*
+    function showalerts(){
+        api.alert({msg:JSON.stringify(cat_list_alls)});
+    }
+
+
+*/
+
+
+
+    function getcat_list(){
+        api.showProgress({
+            title: '栏目加载中...',
+            modal: false
+        });
+        
+        api.ajax({
+            url:serverUrl+'/category.php?act=get_cat_list',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            data: {
+                values:{
+                    supplier_id:SUPPLIER_ID
+                }
+            },
+            returnAll:false,//此处去掉多余的信息一边后面的循环取值
+        },function(value,err){
+            //api.alert({msg:JSON.stringify(value.data)});
+            if(value){
+                if(value.code==92){
+                    var template = document.getElementById('body-template').innerHTML;
+                    document.getElementById('listmain').innerHTML=doT.template(template)(value.data);   
+
+                    var first_li=document.getElementById("cat_list_first").getElementsByTagName("li")[0];
+                    //var ss=$api.byId('cbl_748');
+                    //xs(ss,748);
+                    var liid=first_li.id.replace("cbl_","");
+                    //alert(liid);
+                   xs(first_li,liid);
+                }else{
+                    api.toast({
+                        msg: value.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else{
+/*                api.alert({
+                    msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                    //alert(JSON.stringify(err))
+                  });*/
+
+/*
+                api.alert({
+                    msg:('没有加载到任何栏目！')
+                });
+*/
+
+            }
+            api.hideProgress();
+       });        
+    }
+
+    function xs(e,id){
+
+
+        //alert(id);
+        var f=e.parentNode.childNodes;
+        for (var i = 0; i < f.length; i++) {
+            if(f[i]!=e){
+                $api.removeCls(f[i], 'on');
+            }else{
+                $api.addCls(f[i], 'on');             
+            }
+        }    
+        var b=document.getElementById('xisyc_'+id+'');
+       //addClass(b,'disp');
+        var c=document.getElementsByClassName('gscategoryright');
+        for (var i = 0; i < c.length; i++) {
+            if(c[i]!=b){
+                c[i].style.display="none";
+            }else{
+                c[i].style.display="block";
+            }
+        }
+
+
+        
+    }
+
+
+function openNewWin_cat (type,lm) {
+
+    //lm的值1一级栏目点击进入  2二级栏目点击进入 3表示从三级栏目进入
+    var url='';
+
+/*
+    if(lm==3){
+        //alert(type);
+        url='categorys';
+    }else{
+        url='category';
+    }
+*/
+    url='catlist';
+    api.openWin ({
+        name: url,
+        url: url+'.html',
+        pageParam: {cat_id:type,lm:lm},
+        reload:true,
+        rect:{
+            x:0,
+            y:0,
+            w:'auto',
+            h:'auto'
+        },
+        bounces: false,
+        delay:300
+    });
+}
+
+</script>

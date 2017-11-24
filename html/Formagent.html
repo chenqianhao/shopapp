@@ -1,0 +1,85 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/daili.css">
+    <style>
+        .ffi1::before{  content:""; }
+    </style>
+
+</head>
+<body style="background: #ffffff;">
+
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft">
+          <a tapmode onclick="api.closeWin();">
+                <i> <font>&#xe619;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a>
+            成为代理商
+          </a>
+      </h1>
+
+          <div class="gsheaderdivright" tapmpde onclick="kefushow('Formagent');">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+  </header>
+
+
+
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<!-- <script type="text/javascript" src="../script/doT.min.js"></script> -->
+<script type="text/javascript" src="../script/md5.js" ></script>
+<script type="text/javascript">
+
+
+    apiready = function () {
+        api.parseTapmode();
+
+        var header = $api.byId('header');
+        var headerPos = $api.offset(header);
+        fixStatusBar(header);
+        var userid_gs = $api.getStorage('userid_gs');
+        if (!userid_gs) {
+            showusercenter('allorder');
+            return false;
+        }
+
+
+        var dengji = api.pageParam.dengji; //此处应该传上级的等级
+        var is_daili = api.pageParam.is_daili;
+        var dengjis = api.pageParam.dengjis; //自己的等级
+
+        var yqm = api.pageParam.yqm ? api.pageParam.yqm : ''; //自己的等级
+
+
+		//查询是否申请过代理商
+		
+
+        api.openFrame({
+            name: 'Formagentinfo',
+            url: 'Formagentinfo.html',
+            bounces: true,
+            reload: true,
+            pageParam: { dengji: dengji, is_daili: is_daili, dengjis: dengjis, yqm: yqm },
+            rect: {
+                x: 0,
+                y: headerPos.h + 5,
+                w: 'auto',
+                h: 'auto'
+            }
+        });
+
+    }
+</script>
+</body>
+</html>

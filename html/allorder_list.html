@@ -1,0 +1,914 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+    
+    </style>
+
+</head>
+<body style="background: #f3f4f6;">
+
+
+<!-- <header class="gsheader" id="header">
+     <div class="gsheaderdivleft">
+         <a tapmode onclick="api.closeWin();" class="">
+               <font>&#xe619;</font>返回
+         </a>
+     </div>
+     <h1>
+        订单列表
+     </h1>
+</header> -->
+
+
+
+<!-- <header class="aui-bar aui-bar-nav aui-bar-dark" id="header">
+    <a class="aui-pull-left" tapmode onclick="api.closeWin();" >
+        <span class="aui-iconfont aui-icon-left"></span>返回
+    </a>
+    <div class="aui-title">订单列表</div>
+</header> -->
+
+
+
+
+
+<script id="orderlist-template" type="text/x-dot-template">
+{{for(var i=0,len=it.length;i<len;i++){}}
+
+    <li><span>  {{? it[i].extension_id == 1}}<font class="orderfontTubiao">&#xe6bf;</font> {{?? it[i].extension_id == 2}} <font>&#xe6c0;</font> {{?}}供货商：<i tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}');">{{=it[i].store_name}}</i><em><font tapmode onclick="shanchu({{=it[i].order_id}});">&#xe62d;</font></em></span>
+                <div class="gsorderalllist">
+
+                <!-- <div class="gsorderallimg gsorderallimg1" tapmode onclick="openorderinfo({{=it[i]['order_id'] }});">  -->
+
+                    {{if(it[i].orders_goods.length==1){}}
+ 
+                        {{if(it[i]['orders_goods'][0].goods_id){}}
+                    <div class="gsorderalllist" tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">
+                        <div class="gsorderallimg">
+                            <img src="{{=serverUrl_img+'/'+it[i]['orders_goods'][0].goods_thumb}}" />
+                          </div>
+                        <spanc>{{=it[i]['orders_goods'][0].goods_name}}</spanc>
+                         <spanc class="gsorderalllistggsl"><b>{{=it[i]['orders_goods'][0].goods_attr}}</b><label>×{{=it[i]['orders_goods'][0].goods_number}}</label></spanc>
+                    </div>
+                        {{}}}
+                    
+                    {{}else{}}
+
+
+                    <div class="gsorderalllist">
+                        <div class="gsorderallimg gsorderallimg1" tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i].shipping_fee}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">
+                        {{for(var j=0,lens=it[i].orders_goods.length;j<lens;j++){}}
+                            /*
+                            <img src="{{=serverUrl_img+'/'+it[i]['orders_goods'][j].goods_thumb}}" tapmode onclick="opengoods({{=it[i]['orders_goods'][j].goods_id}});" />
+                            */
+                           <img src="{{=serverUrl_img+'/'+it[i]['orders_goods'][j].goods_thumb}}"  />
+                        {{}}}
+                        </div>
+                    </div>
+             
+                    {{}}}
+
+                    <strong class="allorderlable"><label>{{=it[i]['pay_name']}}</label><em>共<i style="color:#4d4d4d;font-size:1.4rem;">{{=it[i].goods_number}}</i>个商品 实付金额：<i>{{=it[i]['total_fee']}}</i></em></strong>
+                <strong>
+
+                {{? it[i].is_finished==1 &&  (it[i].extension_id==1 || it[i].extension_id==5)}}
+                    <button class="dingdanquxiaobtn">活动结束</button>
+                {{??}}
+
+                    {{? !it[i]['handler'] }}
+                        <button >没有获取到订单状态</button>
+
+<!--                         <button  tapmode onclick="cancleorder({{=it[i]['order_id'] }});">取消订单</button> -->
+
+                        <!-- <button  tapmode onclick="cancleorder({{=it[i]['order_id'] }});">待收款</button> -->
+
+                    {{?? it[i]['handler'] == 1}}
+                        <!-- <button tapmode onclick="queren({{=it[i]['order_id']}});">确认收货</button> -->
+                        <button  tapmode onclick="cancleorder({{=it[i]['order_id'] }});">取消订单</button>
+                    {{?? it[i]['handler'] == 2}}
+                        <button  class="dingdanquxiaobtn">已取消订单</button>
+                    {{?? it[i]['handler'] == 3}}
+<!--                         <button>已确认订单</button> -->
+                        <button tapmode onclick="zhifu({{=it[i]['shipping_fee']}},{{=it[i]['pay_id']}},{{=it[i]['order_id']}},'{{=it[i]["order_sn"]}}','{{=it[i]["total_fee"]}}',{{=it[i]['log_id']}},{{=it[i]['extension_id']}},{{=it[i]['goods_activity_id']}},{{=it[i]['bonus']}});">去付款</button>
+                        <button  tapmode onclick="cancleorder({{=it[i]['order_id'] }});">取消订单</button>
+                    {{?? it[i]['handler'] == 4}}
+                        
+/*
+                        {{? it[i]['handlers'] == 1}}
+                        <button tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">申请退换货</button>
+                        {{?}}
+
+
+                        {{? it[i]['pingjia'] == 1}}
+                        <button  class="dingdanquxiaobtn" >已评价</button> 
+                        {{??}}
+                        <button tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">去评价</button>
+                        {{?}}    
+
+*/
+                        <button class="dingdanquxiaobtn">待发货</button> <button class="dingdanquxiaobtn">已付款</button> 
+
+                    {{?? it[i]['handler'] == 5}}
+                        <button  class="dingdanquxiaobtn">配货中</button>
+                    {{?? it[i]['handler'] == 6}}
+                        
+
+                        {{? it[i]['pay_status'] == 0}}
+                        <button class="dingdanquxiaobtn">待付款</button>/*货到付款的无法执行付款操作*/
+                        {{??}}
+                        <button tapmode onclick="queren({{=it[i]['order_id']}});">确认收货</button>
+
+                            {{? it[i]['shipping_time'] == 0}}
+                            <button tapmode onclick="cancleorder({{=it[i]['order_id'] }});">取消订单</button>/*还没有配送的商品可以取消订单*/
+                            {{?}}
+
+
+                        {{?}}
+
+                        <button  class="dingdanquxiaobtn">已发货</button>
+
+
+                    {{?? it[i]['handler'] == 13}}
+                        <button class="dingdanquxiaobtn">未付款</button>
+                        <button  class="dingdanquxiaobtn">已发货</button>
+
+
+
+                    {{?? it[i]['handler'] == 7}}
+                        
+                        /* <button tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">查看订单</button> */
+
+                        {{? it[i]['handler_id'] == 1}}   /*24小时以内才能申请退换货*/
+
+                        /*
+                        <button tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">申请退换货</button>
+                        */
+
+                        {{?? }}
+                        {{? it[i]['pingjia'] != 1}}
+                        <button  class="dingdanquxiaobtn">已收货</button>
+                        {{?}}
+                        {{?}}
+
+                        {{? it[i]['pingjia'] == 1}}
+                        <button tapmode >已评价</button> 
+                        {{??}}            
+                        <button tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">去评价</button>
+                        {{?}}
+    
+                        {{?? it[i]['handler'] == 8}}
+                        <button class="dingdanquxiaobtn">退货完成</button>
+
+                    {{?? it[i]['handler'] == 9}}
+                            {{if(it[i]['handlers'] == 1){}}
+                                <button class="dingdanquxiaobtn">退货完成</button>
+                            {{}else if(it[i]['handlers'] == 2){}}
+                                <button tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">去评价</button>
+                            {{}else if(it[i]['handlers'] == 3){}}
+                                /*<button class="dingdanquxiaobtn">已评价</button>*/
+                                <button tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">去评价</button>
+                            {{}}}
+  
+                        /*<button class="dingdanquxiaobtn">退货中</button>*/
+
+
+                    {{?? it[i]['handler'] == 14}} 
+
+                            {{if(it[i]['handlers'] == 1){}}
+                                <button class="dingdanquxiaobtn">退货完成</button>
+                            {{}else if(it[i]['handlers'] == 2){}}
+                                <button tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">去评价</button>
+                            {{}else if(it[i]['handlers'] == 3){}}
+                                /*<button class="dingdanquxiaobtn">已评价</button>*/
+
+                                <button tapmode onclick="orderinfo({{=it[i].order_id}},{{=it[i].goods_amount}},{{=it[i]['shipping_fee']}},'{{=it[i].total_fee}}','{{=it[i].order_time}}','{{=it[i].consignee}}','{{=it[i].address}}','{{=it[i].mobile}}','{{=it[i].bonus}}');">去评价</button>
+                            {{}}}
+
+
+                   /*  {{?? it[i]['handler'] == 10}} 
+
+                        <button tapmode onclick="tuihuo({{=it[i]['order_id'] }});">申请退换货</button> */
+
+                    {{?}}
+
+
+                {{?}}
+
+                        <b style="display: block;" class="orederxdtime"><font>下单时间：</font><i>{{=it[i]['order_time'] }}</i></b>
+                        
+                </strong>
+
+
+                {{? it[i]['handler'] == 8}}
+                 <font class="fudong">&#xe62f;</font>
+                {{?? it[i]['handler'] == 11}}
+                <font class="fudong">&#xe62f;</font>
+                {{?? it[i]['handler'] == 9}}
+                    {{? it[i]['handlers'] == 1}}
+                    <font class="fudong">&#xe62f;</font>
+                    {{?? it[i]['handlers'] == 3}}
+                    <font class="fudong">&#xe62f;</font>
+                    {{?}}
+                {{?}}
+    </li>
+
+{{}}}
+
+</script> 
+
+    <div class="classdiv gsorderall" id="alllist" style="display:block;">
+        <ul id="orderlist_app" >
+        </ul>
+    </div>
+
+    <div class="classdiv gsorderallnone" id="noneorderlist" style="display:none;">
+        <span><font>&#xe630;</font><i>您还没有相关订单</i></span>
+    </div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    type_status=0;
+
+    apiready = function(){
+        api.parseTapmode();
+        // var header = $api.byId('header');
+        // fixStatusBar(header);
+
+        if(api.pageParam.type_status>0){
+            type_status=api.pageParam.type_status;
+        }
+        //alert(type_status);
+        getallorder();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: '#ffffff',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: false
+        }, function(ret, err){
+            page+=4;
+            getallorder();
+            api.refreshHeaderLoadDone();
+        });
+
+        
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+                page+=4;//每次下拉刷新增加2条
+                getallorder();
+                api.refreshHeaderLoadDone();
+        }); 
+
+
+        api.addEventListener({
+            name: 'shaidan'
+        }, function(ret, err){
+            getallorder();
+        });
+
+    }
+
+
+
+
+    function getallorder(){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('allorder');            
+            return false;
+        }
+
+        // alert(userid_gs);
+        //alert(serverUrl+'/user.php?act=get_order_list');
+
+        api.ajax({
+            url:serverUrl+'/user.php?act=get_order_list',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    page:page,
+                    user_id:userid_gs,
+                    type_status:type_status,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                //return ;
+
+                if(ret.code==793){
+                    if(ret.order !=''){
+
+                        document.getElementById('alllist').style.display="block";
+                        document.getElementById('noneorderlist').style.display="none";
+                        var template = document.getElementById('orderlist-template').innerHTML;
+                        document.getElementById('orderlist_app').innerHTML=doT.template(template)(ret.order);
+
+                    }
+ 
+                    //return false;
+                }else if(ret.code==792){
+                    document.getElementById('alllist').style.display="none";
+                    document.getElementById('noneorderlist').style.display="block";
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    document.getElementById('alllist').style.display="none";
+                    document.getElementById('noneorderlist').style.display="block";
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+
+
+    }
+
+
+    function openorderinfo(id,goods_amount,shipping_fee,total_fee){
+        //api.alert({msg: id});
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('allorder');
+            return false;
+        }
+
+        if(!id){
+            api.toast({
+                msg: '没有获取到订单号',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        alert(id+"aaa"+goods_amount+"bbb"+shipping_fee+"ccc"+total_fee);
+
+        api.openWin ({
+            name: 'orderinfo',
+            url: 'orderinfo.html',
+            pageParam : {orderid: id,user_id:userid_gs,goods_amount:goods_amount,shipping_fee:shipping_fee,total_fee:total_fee},
+            reload: true,
+            bounces: false,
+            delay:200
+        });
+
+    }
+
+
+
+
+//取消订单(库存)
+    function cancleorder(orderid){
+
+        if(!orderid || orderid<1){
+            api.toast({
+                msg: '订单有误！',
+                duration: 2000,
+                location: 'bottom'
+            });   
+            return false;         
+        }
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('allorder');
+            return false;
+        }
+
+        api.confirm({
+            title: '取消订单确认',
+            msg: '确定要取消订单吗？',
+            buttons: ['确认','取消']
+        }, function(ret, err){
+            if(ret.buttonIndex == 1){
+                //api.alert({msg: orderid}); 
+            api.showProgress({
+                text: '取消订单中……',
+                modal: true
+            });
+            api.ajax({
+                url: serverUrl+'/user.php?act=cancel_order',
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                returnAll:false,
+                data:{
+                    values: {user_id:userid_gs,order_id:orderid,supplier_id:SUPPLIER_ID}
+                }
+            },function(ret,err){
+                if (ret) {
+
+                    //此处的代码后期抽时间再去调试一下
+                    //api.alert({msg:JSON.stringify(ret)});
+                    
+                    if(ret.code==312){
+                        api.alert({msg:ret.msg});
+
+                        window.location.reload();
+                    }else{
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                    }
+    
+                }else {
+                    // api.alert({
+                    //     msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                    // });
+                    api.toast({
+                        msg: '订单取消成功',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+
+                };
+
+                getallorder();
+            });
+
+            api.hideProgress();
+
+            }
+        });
+
+    }
+
+
+/*
+function check_tuangou(order_id){
+
+    var userid_gs=$api.getStorage('userid_gs');
+    if(!userid_gs){
+        showusercenter('allorder');
+        return false;
+    }
+
+
+
+    api.ajax({
+        url: url: serverUrl+'/user.php?act=check_tuangou',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {
+                user_id:userid_gs,
+                order_id:order_id,
+                supplier_id:SUPPLIER_ID
+            }
+        }         
+    },function(ret,err){
+        api.alert({msg:JSON.stringify(ret)});
+        if (ret) {
+            // TODO 
+        } else {
+            api.alert({
+                msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+            });
+        };
+    });
+
+
+
+
+
+}
+*/
+
+
+
+//支付
+function zhifu(shipping_fee,id,order_id,order_sn,goods_amount,log_id,extension_id,goods_activity_id,bonus){
+
+    if(!order_id){
+        api.toast({
+            msg: '订单不存在！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return;
+    }
+
+    var userid_gs=$api.getStorage('userid_gs');
+    if(!userid_gs){
+        showusercenter('allorder');
+        return false;
+    }
+
+    //alert(bonus);
+/*
+    if(bonus>0){
+        goods_amount=parseFloat(goods_amount.substring(1))-parseFloat(bonus);
+    }*/
+
+
+
+    //alert(goods_amount);
+
+    if(extension_id==1){//团购（检查库存）
+        api.ajax({
+            url: serverUrl+'/user.php?act=tuangou_check',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {user_id:userid_gs,order_id:order_id,supplier_id:SUPPLIER_ID,extension_id:extension_id,goods_activity_id:goods_activity_id}
+            }
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==1000){
+                    fukuan(shipping_fee,id,order_id,order_sn,goods_amount,log_id);
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 3500,
+                        location: 'bottom'
+                    });
+                    return ;
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+    }else{
+
+        fukuan(shipping_fee,id,order_id,order_sn,goods_amount,log_id);
+    }
+
+}
+
+
+
+
+
+function  fukuan(shipping_fee,id,order_id,order_sn,goods_amount,log_id){
+
+    goods_amount=goods_amount.substring(1);
+    // alert(goods_amount);
+    // return false;
+    ordersuccess = {};
+    ordersuccess.pay_id=id;
+    ordersuccess.order_id=order_id;
+    ordersuccess.order_sn=order_sn;
+    //alert(order_sn);
+    ordersuccess.order_amount=goods_amount;
+    ordersuccess.log_id=log_id;
+    ordersuccess.shipping_fee=shipping_fee;
+
+    ordersuccess.order_amount=ordersuccess.order_amount;
+    var out_trade_no=ordersuccess.log_id;
+
+    if(id==2){//支付宝
+        var obj = api.require('aliPay');
+        var subject = ordersuccess.order_sn;
+        var body = ordersuccess.log_id;
+        var amount = ordersuccess.order_amount;
+        var tradeNO = out_trade_no;
+        //var tradeNO = (new Date()).valueOf();//订单编号
+        obj.pay({
+                subject:subject,
+                body:body,
+                amount:amount,
+                tradeNO:tradeNO
+            },function(ret,err) {
+                switch (ret.code){
+                    case "6001":
+                            api.toast({msg:"取消支付"});
+                            window.location.reload();
+                            break;
+                    case "9000":
+                            api.toast({msg:"支付完成"});
+                            window.location.reload();
+                            break;
+                    default:
+                        window.location.reload();
+                        break;
+                }
+        });
+
+    }else if(id==4){//银联在线
+        //alert(ordersuccess.order_sn);//注意订单号大于20位数要加引号
+        var unPay = api.require('unionPay');
+        var money=ordersuccess.order_amount*100;  
+        //alert(money);
+        //alert(ordersuccess.log_id);
+        //alert(serverUrl+'/payment/unionpay/app.php');
+        api.ajax({
+            url: serverUrl+'/payment/unionpay/app.php',//从银联测试服务器上获取tn号
+            //url:'http://202.101.25.178:8080/sim/gettn',
+            method: 'post',
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    orderId: ordersuccess.order_sn,
+                    log_id: ordersuccess.log_id,
+                    txnAmt:money
+                }
+            }
+        },function(ret,err){
+            var tnss=ret.tn;
+            //alert(tnss);//201605281752102716068
+            if (tnss) {
+                unPay.pay({
+                    tn: tnss,
+                    devMode: false
+                }, function(rets, err){
+                    // api.alert({msg:JSON.stringify(rets)});
+                    // api.alert({msg:JSON.stringify(err)});
+                    if(rets.result=="success"){
+                        api.alert({msg: '银联支付成功'});
+                         window.location.reload();
+                    }else{
+                        api.alert({msg: '银联支付失败'});
+                         window.location.reload();
+                    }
+                })
+            }else{
+                api.alert({msg: '银联支付失败'});
+                window.location.reload();                
+            }
+        });
+    }else if(id==5){//微信支付
+
+        var wxPay = api.require('wxPay');
+        wxPay.config({
+        }, function(ret, err){
+            if(ret.status){
+                api.showProgress({
+                    title: '微信支付',
+                    text: '正在调用微信客户端，请稍候……',
+                    modal:  true
+                });
+                var order_amount_fee=ordersuccess['order_amount']*100;
+                // alert(out_trade_no);
+                //alert(order_amount_fee); 
+                // alert(ordersuccess.log_id);
+                var order_sn=parseInt(ordersuccess.order_sn);
+                wxPay.pay({
+                     description: order_sn,
+                     totalFee: order_amount_fee,
+                     tradeNo: out_trade_no,
+                     attach: ordersuccess.log_id,
+                     feeType: 'CNY'
+                },function(ret, err){
+                    //api.alert({msg:JSON.stringify(ret)});
+                    //api.alert({msg:JSON.stringify(err)});
+                    api.hideProgress();
+                    if(ret.status){
+                        //alert(ret.result);
+                        api.toast({
+                            msg: "微信支付成功！",
+                            duration: 3000,
+                            location: 'bottom'
+                        });
+                        fanhui();
+                    }else{
+                        alert("微信支付失败！");
+                        window.location.reload();
+                        
+                    }
+                });
+            }else{
+                api.hideProgress();
+                //alert(err.code);
+                alert("微信支付失败！");
+                window.location.reload();
+            }
+        });
+
+    }
+
+
+
+
+}
+
+
+
+
+
+function shanchu(order_id){
+    //alert(order_id);
+
+
+    api.confirm({
+        title: '删除确认',
+        msg: '确定要删除吗？',
+        buttons: ['确认','取消']
+    }, function(ret, err){
+        if(ret.buttonIndex == 1){
+            
+            if(!order_id || order_id<1){
+                api.toast({
+                    msg: '订单有误！',
+                    duration: 2000,
+                    location: 'bottom'
+                });   
+                return false;         
+            }
+            var userid_gs=$api.getStorage('userid_gs');
+            if(!userid_gs){
+                showusercenter('allorder');
+                return false;
+            }
+
+            api.ajax({
+                url: serverUrl+'/user.php?act=shanchu_order',
+                method : 'POST',
+                timeout : '30',
+                dataType : 'json',
+                returnAll : false,
+                cache :true,
+                data:
+                {
+                    values:{
+                        order_id:order_id,
+                        user_id:userid_gs,
+                        supplier_id:SUPPLIER_ID
+                    }
+                }
+            },function(ret, err){
+                    //api.alert({msg:JSON.stringify(ret)});
+                    if (ret){
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        getallorder();
+                    }
+                    else{
+                        api.alert({msg:JSON.stringify(err)});
+                    }
+            })
+
+        }
+    });
+
+
+}
+
+
+
+function tuihuo(order_id){
+
+    if(!order_id || order_id<1){
+        api.toast({
+            msg: '订单有误！',
+            duration: 2000,
+            location: 'bottom'
+        });   
+        return false;         
+    }
+    var userid_gs=$api.getStorage('userid_gs');
+    if(!userid_gs){
+        showusercenter('allorder');
+        return false;
+    }
+
+
+
+    api.openWin({
+        name: 'shouhou_header',
+        url: 'shouhou_header.html',
+        bounces: false,
+        pageParam: {order_id : order_id}
+    });
+
+
+
+/*
+    api.ajax({
+        url: serverUrl+'/user.php?act=tuihuo_order',
+        method : 'POST',
+        timeout : '30',
+        dataType : 'json',
+        returnAll : false,
+        cache :true,
+        data:
+        {
+            values:{
+                order_id:order_id,
+                user_id:userid_gs,
+                supplier_id:SUPPLIER_ID
+            }
+        }
+    },function(ret, err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret){
+                api.toast({
+                    msg: ret.msg,
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                getallorder();
+            }
+            else{
+                api.alert({msg:JSON.stringify(err)});
+            }
+    })
+
+*/
+
+
+
+}
+
+function orderinfo(order_id,goods_amount,shipping_fee,total_fee,order_time,consignee,address,mobile,bonus){
+    //alert(order_id);
+    api.openWin({
+        name: 'orderinfo',
+        url: 'orderinfo.html',
+        reload:true,
+        bounces: false,
+        pageParam: {order_id : order_id,goods_amount:goods_amount,shipping_fee:shipping_fee,total_fee:total_fee,order_time:order_time,bonus:bonus,consignee:consignee,address:address,mobile:mobile}
+    });
+}
+
+
+function queren(order_id){
+
+    //alert(order_id);
+    if(!order_id || order_id<1){
+        api.toast({
+            msg: '订单有误！',
+            duration: 2000,
+            location: 'bottom'
+        });   
+        return false;         
+    }
+    var userid_gs=$api.getStorage('userid_gs');
+    if(!userid_gs){
+        showusercenter('allorder');
+        return false;
+    }
+
+    api.ajax({
+        url: serverUrl+'/user.php?act=queren_order',
+        method : 'POST',
+        timeout : '30',
+        dataType : 'json',
+        returnAll : false,
+        cache :true,
+        data:
+        {
+            values:{
+                order_id:order_id,
+                user_id:userid_gs,
+                supplier_id:SUPPLIER_ID
+            }
+        }
+    },function(ret, err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret){
+                api.toast({
+                    msg: ret.msg,
+                    duration: 3000,
+                    location: 'bottom'
+                });
+
+                orderinfo(order_id);
+                //getallorder();
+            }
+            else{
+                api.alert({msg:JSON.stringify(err)});
+            }
+    })
+
+
+}
+</script>

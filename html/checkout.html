@@ -1,0 +1,858 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style type='text/css'>
+        .gsconfirmordergoodkuaidi i{width: 100%;border-bottom: 1px solid rgb(224, 224, 224);padding-bottom: 0.8rem;}
+        .gsconfirmordergoodkuaidi em{ width:100%;margin-top: 0.8rem;}
+        .gsconfirmordergoodkuaidi div{ width:100%;padding-left:2rem;}
+        .gsconfirmordergoodkuaidi div cite{ width:80%; float:left;font-size:1.4rem;line-height:3rem;}
+        .gsconfirmordergoodkuaidi div b { width: 20%; float: left;padding-top: 0.6rem;}
+        .addaddressfonts{color:#22A33F;font-size:2rem;}
+    </style>
+</head>
+<body style="background: #f1f1f1;">
+
+   <header class="gsheader" id="aui-header">
+        <div class="gsheaderdivleft">
+            <a tapmode onclick="api.closeWin();" class="">
+                  <font>&#xe619;</font>
+            </a>
+        </div>
+        <h1>
+            <a>
+                提交订单
+            </a>
+        </h1>
+
+        <div class="gsheaderdivright" tapmpde onclick="kefushow('checkout');">
+              <a>
+                    <i><font>&#xe635;</font></i>
+              </a>
+        </div>
+    </header>
+
+
+
+
+    <div class="gsconfirmorder" id="address_list" tapmode onclick="openHtmlWin('address');">
+
+    </div>
+
+
+
+<script type="text/x-dot-template" id="select-goods-template">
+{{ for(var i=0,len=it.length;i<len;i++) { }}
+    {{ for(var obj1 in  it[i]) { }}
+        <div class="gsgoodslistsj" tapmode onclick="goods_qingdan({{=obj1}},{{=it[i][obj1]['codes']}});">
+            <h3>
+                {{? it[i][obj1]['codes'] ==1}}
+                    {{= it[i][obj1]['store_name'] }}(秒杀)
+                {{?? it[i][obj1]['codes'] ==2}}
+                    {{= it[i][obj1]['store_name'] }}(团购)
+                    {{=tuang()}}
+                {{?? }}
+                    {{= it[i][obj1]['store_name'] }}                    
+                {{?}}
+
+            </h3>
+
+            {{ if(it[i][obj1]['count'] !=1){ }}
+
+            <spanc>
+            <div>
+                {{for(var obj2 in it[i][obj1]){ }}
+                    {{if(obj2 != "store_name" && obj2 != "codes" && obj2 != "count" && obj2<3){ }}
+
+                <span><img src="{{=serverUrl_img+'/'+it[i][obj1][obj2]['goods_thumb']}}"/><i>×{{=it[i][obj1][obj2]['goods_number']}}</i></span>
+                   {{ } }}
+                {{ } }}
+
+            </div>
+            <em> <font>&#xe616;</font></em>
+            <strong>共{{= it[i][obj1]['count'] }}件<font>&#xe667;</font></strong>
+            </spanc>
+
+            {{ }else{ }}
+
+                {{for(var obj2 in it[i][obj1]){ }}
+                    {{if(obj2 != "store_name" && obj2 != "codes" && obj2 != "count" && obj2<3){ }}
+            <spanc class="goodsone">
+            <div><img src="{{=serverUrl_img+'/'+it[i][obj1][obj2]['goods_thumb']}}"></div>
+            <b><i>{{=it[i][obj1][obj2]['goods_name']}} {{=it[i][obj1][obj2].goods_attr}}</i><lable>×{{=it[i][obj1][obj2]['goods_number']}}</lable></b>
+            <strong>￥{{=it[i][obj1][obj2]['goods_price']}}<font>&#xe667;</font></strong>
+            </spanc>
+                {{ } }}
+                {{ } }}
+
+            {{ } }}
+
+
+        </div>
+    {{ } }}
+{{ } }}
+</script>
+
+
+    
+
+    <div class="gsgoodslist" id="select_goods_list">
+    </div>
+
+
+    <div class="gsgoodslingjuan" id="dpyhq" style=" display:none;">
+    </div>
+
+<script id="dpyhq-template" type="text/x-dot-template">
+
+   
+        <h3>
+            使用店铺优惠券</h3>
+        <ul>
+
+         {{for(var i=0,len=it.length;i<len;i++){}}
+            <li class=" coupon_unit blue " id="{{=it[i].bonus_type_id}}" tapmode onclick="youhuiq(this,{{=it[i].bonus_type_id}},{{=it[i].bonus_id}});">
+                <div class="expe_disc">
+                    <div class="expeNum">
+                        <span class="rmb">￥</span> <span class="actual-number">{{=it[i].type_money}}</span>
+                    </div>
+                    <div class="condi_msg">
+                        {{=it[i].type_name}}</div>
+                </div>
+                <div class="coupon_icon">
+                </div>
+                <div class="oper_msg">
+                    <div class="up">
+                        选</div>
+                    <div class="down">
+                        取</div>
+                </div>
+                <em class="left_m"></em>
+                </li>
+
+             {{}}}
+
+        </ul>
+    
+   
+
+</script>
+
+
+
+
+    <input type="hidden" id="use_bonus_type_id" valeu="0" />
+    <input type="hidden" id="use_bonus_id" valeu="0" />
+
+    <div class="classdiv gsconfirmordergoodpayment">
+        <h3>
+            选择支付方式</h3>
+        <ul id="checkoutall">
+            <li id="hdfk"><span><font>&#xe637</font></span><em>货到付款<br />
+                <i>推荐使用货到付款</i></em><strong><input id="radio-1-1"  class="regular-radio"
+                    value="1" type="radio" checked name="zhifu" /><label for="radio-1-1"></label></strong></li>
+            <li id="alipay_def"><span><font>&#xe636</font></span><em>支付宝支付<br />
+                <i>有支付宝的用户可以在线支付</i></em><strong><input id="radio-1-2"  class="regular-radio"
+                    value="2" type="radio" name="zhifu" /><label for="radio-1-2"></label></strong></li>
+            <li><span><font>&#xe638;</font></span><em>微信支付<br />
+                <i>有微信的用户可以在线支付</i></em><strong><input id="radio-1-3" class="regular-radio"
+                    value="5" type="radio" name="zhifu" /><label for="radio-1-3"></label></strong></li>
+            <li><span><font>&#xe6b0;</font></span><em>银联支付<br />
+                <i>有银联卡的用户可以在线支付</i></em><strong><input id="radio-1-4" class="regular-radio"
+                    value="4" type="radio" name="zhifu" /><label for="radio-1-4"></label></strong></li>
+        </ul>
+    </div>
+    <input type="hidden" value="0.00" id="shipping_fee">
+    <div class="gsconfirmordergoodkuaidi">
+    
+	     <span><i>配送方式</i>
+	        <em>
+					<div>
+		        	<cite>&nbsp;&nbsp;果好恰物流送货上门【满29免运费】</cite>
+		        	<b><input id="radio-2-1" name="shippingvalue"  class="regular-radio" value="1" type="radio" checked /><label for="radio-2-1" onclick="change_shipping_fee(1);"></label></b>
+					</div>
+		
+					<div>
+		        	<cite tapmode onclick="get_location_map();"><font class="addaddressfonts">&#xe648;</font>好太太连锁超市源君店自提【免运费】</cite>
+		         	<b><input id="radio-2-2" name="shippingvalue" class="regular-radio"  value="2" type="radio"  /><label for="radio-2-2" onclick="change_shipping_fee(2);"></label></b>
+		        	</div>
+		        	
+	        </em>
+	     </span>
+     
+        <spanc>订单留言</spanc>
+        <strong>
+            <textarea id="postscript" name="liuyan"></textarea></strong>
+    </div>
+
+
+<div class="classdiv gsconfirmordergoodmoneyinfo" style=" margin-bottom:10rem;">
+        <ul>
+            <li><span>商品总价</span><strong id="zongjia">￥1099.00</strong></li>
+            <li id="zhekou"><span>-折扣</span><strong>¥0.00</strong></li>
+            <li><span>+运费</span><strong id="yunfei">￥0.00</strong></li>
+        </ul>
+        <em>实付款:<b id="shifukuan">￥0.00</b></em>
+    </div>
+
+
+
+    <div class="pay-bar" tapmode onclick="tijiaoorder();">
+        <div class="border-1px-top payb-con">
+            实付款： <span>￥ <span class="big-price" id="shifukuans">159</span> </span>
+        </div>
+        <a class="payb-btn">提交订单 </a>
+    </div>
+</body>
+</html>
+
+
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+
+<script type="text/javascript">
+    shipping_fee_free=1;//0免运费，1不免运费
+    total_price_order='0.00';
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+
+        var address=api.pageParam.address;
+        // if(!address){
+        //     address=0;
+        // }
+
+
+        // api.openFrame({
+        //     name: 'checkout_list',
+        //     url: 'checkout_list.html',
+        //     bounces: true,
+        //     reload:true,
+        //     pageParam: { address: address},
+        //     rect: {
+        //         x: 0,
+        //         y: headerPos.h+5,
+        //         w: 'auto',
+        //         h: 'auto'
+        //     }
+        // });
+
+
+
+        //api.alert({msg:JSON.stringify(address)});
+        if(!address){
+            api.openWin({
+                name: 'address',
+                url: './address.html',
+                reload:true,
+                bounces: false
+            });
+            return false;
+        }
+
+
+        
+
+
+        api.addEventListener({
+            name: 'address'
+        }, function(ret, err){
+            //alert("ccc");
+            api.hideProgress();
+            get_user_default_address();
+        });
+
+
+        str='';
+        str+='<span><font>&#xe632;</font><i>'+address.consignee+'</i><font>&#xe631</font><i>'+address.mobile+'</i></span>';
+        str+='<strong><font>&#xe633;</font>'+address.address+'</strong>';
+        str+='<label>';
+        str+='    <font>&#xe626;</font></label>';
+        str+='<b class="s1-borderT"></b><b class="s1-borderB"></b>';
+        str+='<input type="hidden" id="use_address_id" value="'+address.address_id+'">';
+
+        document.getElementById('address_list').innerHTML=str;
+
+        get_select_goods_list();
+        get_total_money();
+        get_youhuiquan();
+
+    }
+
+
+
+    //获取用户选择的默认地址
+    function get_user_default_address(){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+           api.closeWin({
+               name: 'checkout'
+           });
+        }
+        //alert("aaaaa");
+
+        api.ajax({
+            url:serverUrl+'/cart.php?act=get_user_default_address',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    user_id:userid_gs,
+                    supplier_id:SUPPLIER_ID
+                }
+            }            
+        },function(ret,err){
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                if(ret.code==678){
+                    if(ret.address==''){
+                        api.toast({
+                            msg: '请还没有设置默地址',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        api.openWin({
+                            name: 'address',
+                            url: 'address.html',
+                            reload:true,
+                            bounces: false,
+                            pageParam: {key : 'value'}
+                        });
+                    }else{
+                        str='';
+                        str+='<span><font>&#xe632;</font><i>'+ret.address.consignee+'</i><font>&#xe631</font><i>'+ret.address.mobile+'</i></span>';
+                        str+='<strong><font>&#xe633;</font>'+ret.address.address+'</strong>';
+                        str+='<label>';
+                        str+='    <font>&#xe626;</font></label>';
+                        str+='<b class="s1-borderT"></b><b class="s1-borderB"></b>';
+                        str+='<input type="hidden" id="use_address_id" value="'+ret.address.address_id+'">';
+
+                        document.getElementById('address_list').innerHTML=str;
+
+                    }
+
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+
+                
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+    }
+
+
+    function get_select_goods_list(){
+        
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.closeWin();
+        }
+
+        api.ajax({
+            url:serverUrl+'/cart.php?act=get_select_goods_list',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    //bonus_type_id:bonus_type_id,
+                    user_id:userid_gs,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret.data)});
+                //return false;
+                if(ret.code==720){
+                    var template = document.getElementById('select-goods-template').innerHTML;
+                    document.getElementById('select_goods_list').innerHTML=doT.template(template)(ret.data);
+ 
+                    //return false;
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+
+    }
+
+
+    function goods_qingdan(app_store_id,codes){
+        //alert(app_store_id);
+        if(!app_store_id || app_store_id<1){
+            api.toast({
+                msg: '此商品的商家不存在，请与客服确定后再购买！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        //alert(codes);
+        api.openWin({
+            name: 'ordergoodslist',
+            url: './ordergoodslist.html',
+            reload:true,
+            bounces: false,
+            pageParam: {app_store_id:app_store_id,codes:codes}
+        });
+    }
+
+
+    //获取商品的金额和优惠
+    function get_total_money(){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.closeWin();
+        }
+
+        api.ajax({
+            url:serverUrl+'/cart.php?act=get_total_money',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    user_id:userid_gs,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                if(ret.code==732){
+                    var shipping_fee=0;
+
+/*                    if(shipping_fee_free==0){//如果有团购秒杀免运费
+                        shipping_fee=0;
+                        document.getElementById('yunfei').innerHTML='￥0.00';
+                        document.getElementById('shipping_fee').value=0;
+                        ret.total.total_price=ret.total.total_price;                       
+
+                    }else{
+*/
+						total_price_order=ret.total.total_price;
+
+                        if(ret.total.total_price<29){
+                            shipping_fee=3;
+                            document.getElementById('yunfei').innerHTML='￥3.00';
+                            document.getElementById('shipping_fee').value=3;
+                            ret.total.total_price=ret.total.total_price+3;
+                        }
+              
+                    //}
+                    document.getElementById('zongjia').innerHTML=round2(ret.total.total_price-shipping_fee,2);
+                    document.getElementById('shifukuan').innerHTML=round2(ret.total.total_price,2);
+                    document.getElementById('shifukuans').innerHTML=round2(ret.total.total_price,2);
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+    }
+
+
+//获取优惠券红包
+    function get_youhuiquan(){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.closeWin();
+        }
+
+        api.ajax({
+            url: serverUrl + '/cart.php?act=get_youhuiquan',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll: false,
+            data: {
+                values: {
+                    user_id: userid_gs,
+                    supplier_id: SUPPLIER_ID
+                }
+            }
+        }, function (ret, err) {
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                //return false;
+
+                if (ret.code == 736) {
+                    if (ret.info != null && ret.info != '') {
+
+                        var gwj = document.getElementById("dpyhq").style.display="block";
+                        var template = document.getElementById('dpyhq-template').innerHTML;
+                        document.getElementById('dpyhq').innerHTML = doT.template(template)(ret.info);
+                    }
+
+
+                } else {
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+
+            } else {
+                api.alert({
+                    msg: ('错误码：' + err.code + '；错误信息：' + err.msg + '网络状态码：' + err.statusCode)
+                });
+            };
+        });        
+
+
+    }
+
+
+    function youhuiq(el,id,bonus_id){
+        //alert(id);
+        $api.addCls(el, 'on');
+        var allli=el.parentNode.childNodes;
+        if(!$api.hasCls(el, 'on')){
+            $api.addCls(el, 'on');
+        }
+
+        for(var i=0,len=allli.length;i<len;i++){
+            if(allli[i]!=el){
+              $api.removeCls(allli[i], 'on');
+            }
+        }  
+
+        if(id<1){
+            api.toast({
+                msg: '选中的优惠券有误！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        //选中了红包，重新计算金额
+        //alert(bonus_id);
+        
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.closeWin();
+        }
+
+        api.ajax({
+            url:serverUrl+'/cart.php?act=get_total_bonus',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    user_id:userid_gs,
+                    bonus_type_id:id,
+                    bonus_id:bonus_id,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                //return false;
+                if(ret.code==757){
+                    
+                    document.getElementById('zongjia').innerHTML=round2(parseFloat(ret.zongjiner),2);
+                    document.getElementById('shifukuan').innerHTML=round2(parseFloat(ret.shifukuan),2);
+                    document.getElementById('shifukuans').innerHTML=round2(parseFloat(ret.shifukuan),2);
+                    document.getElementById('zhekou').innerHTML='<span>-优惠券</span><strong>¥'+round2(parseFloat(ret.type_money),2)+'</strong>';
+
+                    document.getElementById('use_bonus_type_id').value=ret.bonus_type_id;
+                    document.getElementById('use_bonus_id').value=ret.bonus_id;
+
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+
+                    document.getElementById('use_bonus_type_id').value='0';
+                    document.getElementById('use_bonus_id').value='0';
+
+                    get_youhuiquan();
+                    get_total_money();
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+    }
+
+
+    function tijiaoorder(){
+        //用户
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.toast({
+                msg: '请先登陆后再来提交订单！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        
+        //地址
+        var address=$api.val($api.byId('use_address_id'))?$api.val($api.byId('use_address_id')):0;
+        //优惠券红包
+        var bonus_type_id = $api.val($api.byId('use_bonus_type_id'))?$api.val($api.byId('use_bonus_type_id')):0;
+        var bonus_id = $api.val($api.byId('use_bonus_id'))?$api.val($api.byId('use_bonus_id')):0;
+
+        //支付
+        var zhifus = document.getElementsByName("zhifu");
+        for(var i=0;i<zhifus.length;i++){
+             if(zhifus[i].checked)
+             var zhifu = zhifus[i].value;
+        }
+        //alert(zhifu);
+        if(!zhifu){
+            var zhifu=1;
+        }
+
+        // alert(zhifu);
+        // return;
+    
+        //配送
+        // var distribution = document.getElementById("distribution").value?document.getElementById("distribution").value:0;
+        //var distribution = 1;
+        var shipping_fee=$api.val($api.byId('shipping_fee'))?$api.val($api.byId('shipping_fee')):'0.00';
+
+
+        //留言
+        var postscript=$api.val($api.byId('postscript'))?$api.val($api.byId('postscript')):'';
+
+       //alert(userid_gs+"\n"+address+"\n"+zhifu+"\n"+distribution+"\n"+postscript);
+       //
+
+
+       if(address<1){
+            api.toast({
+                msg: '请先选择配送地址！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+       }
+       
+       api.showProgress({
+           style: 'style_type',
+           animationType: 'animation_type',
+           title: '订单提交中……',
+           text: '请稍等',
+           modal: true
+       });
+
+
+	    var chkObjs = document.getElementsByName("shippingvalue");
+	    for(var i=0;i<chkObjs.length;i++){
+	        if(chkObjs[i].checked){
+				var shipping_value=chkObjs[i].value;
+	        }
+	    }
+	    
+	    var distribution=shipping_value?shipping_value:1;
+
+		//alert(shipping_fee);
+		//return;
+       api.ajax({
+           url:serverUrl+'/cart.php?act=order_done',
+           method: 'post',
+           timeout: 30,
+           dataType: 'json',
+           returnAll:false,
+           data:{
+                values: {
+                    address_id:address,
+                    bonus_type_id:bonus_type_id,
+                    bonus_id:bonus_id,
+                    zhifu:zhifu,
+                    distribution:distribution,
+                    postscript:postscript,
+                    user_id:userid_gs,
+                    shipping_fee:shipping_fee,
+                    //shippingvalue:shippingvalue,
+                    supplier_id:SUPPLIER_ID
+                }
+           }
+       },function(ret,err){
+            api.hideProgress();
+            // api.alert({msg:JSON.stringify(ret)});
+            // die();
+           if (ret) {
+                api.toast({
+                    msg: ret.msg,
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                if(ret.code==780){
+                    api.sendEvent({
+                        name: 'cart',
+                        extra: {user_id:userid_gs}
+                    }); 
+
+                    var order_pay=$api.getStorage("order_pay");
+                    if(order_pay){
+                        $api.rmStorage("order_pay");
+                    }
+                    $api.setStorage("order_pay",ret.order_pay);
+                    
+                    api.openWin({
+                        name: 'orderdone',
+                        url: './orderdone.html',
+                        bounces: false,
+                        reload:true,
+                        pageParam: {orders : ret.orders,gonggong:ret.gonggong,order_pay:ret.order_pay}
+                    });
+                }else{
+                    get_select_goods_list();
+                }
+               
+           }else {
+               api.alert({
+                   msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+               });
+           };
+       });
+
+
+    }
+
+
+    function tuang(){
+    
+    
+        shipping_fee_free=0;
+        document.getElementById("hdfk").innerHTML='<li id="hdfk"><span><font>&#xe637</font></span><em>货到付款<br /><i>推荐使用货到付款</i></em><strong><input id="radio-1-1"  class="regular-radio" value="1" disabled="true" type="radio"  name="zhifu" /><label for="radio-1-1"></label></strong></li>';
+        document.getElementById("hdfk").style.display="none";
+        document.getElementById("radio-1-2").checked = "checked";
+        get_total_money();
+        
+        
+        return '';
+    }
+    
+    
+    function change_shipping_fee(id){
+    	//alert(id);
+    	if(id==1){
+    		shipping_fee_frees=1;
+    	
+    	}else if(id==2){
+    		shipping_fee_frees=0;
+    	
+    	}
+    	//get_total_money();
+    	//alert(total_price_order);
+    
+        var shipping_fee=0;
+
+		if(shipping_fee_frees==0){
+            shipping_fee=0;
+            document.getElementById('yunfei').innerHTML='￥0.00';
+            document.getElementById('shipping_fee').value=0;
+            total_price_orders=total_price_order;
+		}else{
+	        if(total_price_order<29){
+	            shipping_fee=3;
+	            document.getElementById('yunfei').innerHTML='￥3.00';
+	            document.getElementById('shipping_fee').value=3;
+	            total_price_orders=total_price_order+3;
+	        }
+	    }
+	    document.getElementById('zongjia').innerHTML=round2(total_price_orders-shipping_fee,2);
+	    document.getElementById('shifukuan').innerHTML=round2(total_price_orders,2);
+	    document.getElementById('shifukuans').innerHTML=round2(total_price_orders,2);
+	    
+    }
+    
+    
+    function get_location_map(){
+    
+    	//alert("aaaa");
+    	/*
+    	var somebooks = {book:[{name:"三国演义"},{name:"西游记"},{name:"水浒传"},{name:"红楼梦"}], author:[{name:"罗贯中"},{name:"吴承恩"},{name:"施耐安"},{name:"曹雪芹"}]};
+    	var a='lccao';
+    	var b=1;
+    	var aa=new Array();
+    	aa[0]=somebooks;
+    	aa[1]=a;
+    	aa[2]=b;
+    	*/
+    	
+    	//api.alert({msg:JSON.stringify(aa)});
+		//openGYhearder("map","地图",'',1,'',aa);
+    	openGYhearder("map","地图",'',1,'');
+    	
+    	
+/*    	
+ 		var map = api.require('bMap');
+		map.open({
+		    rect: {
+		        x: 0,
+		        y: 0,
+		        w: 320,
+		        h: 300
+		    },
+		    center: {
+		        lon: 116.4021310000,
+		        lat: 39.9994480000
+		    },
+		    zoomLevel: 10,
+		    showUserLocation: true,
+		    fixedOn: api.frameName,
+		    fixed: true
+		}, function(ret) {
+		    if (ret.status) {
+		        alert('地图打开成功');
+		    }
+		});
+*/		    	
+    
+    	
+    }
+ 
+</script>

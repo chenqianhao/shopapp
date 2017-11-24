@@ -1,0 +1,336 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+</head>
+<body style="background: #f0f0f0;">
+
+   <header class="gsheader" id="aui-header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+               <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        <a href="#title-link" class="">
+              地址管理
+        </a>
+    </h1>
+
+       <div class="gsheaderdivright" tapmpde onclick="kefushow('addressadd');">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+</header>
+
+
+
+
+<div class="classdiv gsaddress">
+<ul id="address_list_app">
+
+
+<div class="gsaddresswudizhi">
+<span><font>&#xe691;</font></span>
+<strong>暂无收货地址</strong>
+</div>
+
+<!-- <li><span><font>&#xe63d</font>卢超   <font>&#xe63c</font>13043403750</span>  <spanc> <font>&#xe63b</font>大冶湛月花园(大门右第二间)</spanc>  <strong><i>
+<cite>
+<input id="radio-1-2" name="paymentValue" class="regular-radio" value="0" type="radio"><label for="radio-1-2"></label>
+</cite>
+
+设置默认</i><em><font>&#xe63a</font>编辑</em><b><font>&#xe639</font>删除</b></strong></li>
+
+
+<li><span><font>&#xe63d</font>卢超   <font>&#xe63c</font>13043403750</span>  <spanc> <font>&#xe63b</font>大冶湛月花园(大门右第二间)</spanc>  <strong><i>
+<cite>
+<input id="radio1" name="paymentValue" class="regular-radio" value="0" type="radio"><label for="radio-1-2"></label>
+</cite>
+
+
+
+设置默认</i><em><font>&#xe63a</font>编辑</em><b><font>&#xe639</font>删除</b></strong></li>
+
+<li><span><font>&#xe63d</font>卢超   <font>&#xe63c</font>13043403750</span>  <spanc> <font>&#xe63b</font>大冶湛月花园(大门右第二间)</spanc>  <strong><i>
+<cite>
+<input id="radio2" name="paymentValue" class="regular-radio" value="0" type="radio"><label for="radio-1-2"></label>
+</cite>
+
+设置默认</i><em><font>&#xe63a</font>编辑</em><b><font>&#xe639</font>删除</b></strong></li> -->
+
+</ul>
+
+</div>
+
+<script id="address-template" type="text/x-dot-template">
+{{for(var i=0,len=it.length;i<len;i++){}}
+
+<li>
+<span>
+<font>&#xe63d</font>{{=it[i].consignee}}<font>&#xe63c</font>{{=it[i].mobile}}</span>  
+<spanc> <font>&#xe63b</font>{{=it[i].address}}</spanc>  
+<strong><i>
+<cite tapemode onclick='def_address({{=it[i].address_id}});'>
+<input id="radio-1-{{=it[i].address_id}}" name="paymentValue" class="regular-radio" value="0" {{if(it[i].def_addr==1){}} checked {{}}} type="radio"><label for="radio-1-{{=it[i].address_id}}" ></label>
+</cite>
+设置默认</i><em tapemode onclick='bianji({{=it[i].address_id}});'><font>&#xe63a</font>编辑</em><b tapmode onclick="del_form({{=it[i].address_id}});"><font>&#xe639</font>删除</b></strong>
+</li>
+{{}}}
+</script> 
+
+
+
+<button class="classbtn gsaddressbtn" typmode onclick="newaddress();">新建地址</button>
+
+
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+        // api.closeWin({
+        //     name: 'checkout',
+        //     animation: {
+        //         type: 'flip',
+        //         subType: 'from_bottom',
+        //         duration: 500
+        //     }
+        // });
+        get_address_list();
+
+
+        api.addEventListener({
+            name: 'address'
+        }, function(ret, err){
+            //alert(JSON.stringify(ret.value.user_id));
+            get_address_list();
+        });
+
+    }
+
+    function get_address_list(){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            // api.openWin ({
+            //     name: 'login',
+            //     url: 'login.html',
+            //     reload: true,
+            //     bounces: false,
+            //     pageParam: {back_act: 'address'},
+            //     delay:200
+            // });
+            showusercenter('address');
+            return false;
+        }
+
+        api.ajax({
+            url:serverUrl+'/cart.php?act=getaddresslist',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    user_id:userid_gs,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret.code)});
+                if(ret.code==614){
+                    var template = document.getElementById('address-template').innerHTML;
+                    document.getElementById('address_list_app').innerHTML=doT.template(template)(ret.address);
+ 
+                    //return false;
+                }else if(ret.code==613){
+                    api.openWin({
+                        name: 'addressadd',
+                        url: 'addressadd.html',
+                        bounces: false,
+                        reload:true,
+                        pageParam: {address_id: 0}
+                    });
+                    //return false;
+
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+    }
+
+
+    //设为默认地址
+    function def_address(address_id){
+        //alert(address_id);
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('address');
+            return false;
+        }
+
+        if(!address_id || address_id<1){
+            api.toast({
+                msg: '请选择正确的地址参数',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return ;
+        }
+        api.ajax({
+            url:serverUrl+'/cart.php?act=set_def_address',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    address_id: address_id,
+                    user_id:userid_gs,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                //api.alert({msg:JSON.stringify(ret.code)});
+                if(ret.code==678){
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    api.sendEvent({
+                        name: 'address'
+                    });
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    window.location.reload();                    
+                }
+
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+    }
+
+    //删除收货地址
+    function del_form(address_id){
+        //alert(address_id);
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('address');
+            return false;
+        }
+
+        if(!address_id || address_id<1){
+            api.toast({
+                msg: '请选择正确的地址参数',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return ;
+        }
+
+
+        api.confirm({
+            title: '删除地址',
+            msg: '您确定要删除此地址么？',
+            buttons:['确定', '取消']
+        },function(ret,err){
+            if(ret.buttonIndex == 1){
+                api.ajax({
+                    url:serverUrl+'/cart.php?act=delete_address',
+                    method: 'post',
+                    timeout: 30,
+                    dataType: 'json',
+                    returnAll:false,
+                    data:{
+                        values: {
+                            address_id: address_id,
+                            user_id:userid_gs,
+                            supplier_id:SUPPLIER_ID
+                        }
+                    }
+                },function(ret,err){
+                    if (ret) {
+
+                        //api.alert({msg:JSON.stringify(ret.code)});
+                       
+                            api.toast({
+                                msg: ret.msg,
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+
+                            api.sendEvent({
+                                name: 'address'
+                            });     
+
+                    }else {
+                        api.alert({
+                            msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                        });
+                    };
+                });
+            }
+        });
+
+    }
+
+//编辑地址
+    function bianji(addressid){
+        // alert(addressid);
+        // return false;
+        api.openWin({
+            name: 'addressedit',
+            url: 'addressedit.html',
+            bounces: false,
+            reload:true,
+            pageParam: {address_id:addressid}
+        }); 
+    }
+//新增地址
+    function newaddress(){
+        api.openWin({
+            name: 'addressadd',
+            url: 'addressadd.html',
+            bounces: false,
+            reload:true,
+            pageParam: {address_id: 0}
+        });        
+    }
+
+
+</script>

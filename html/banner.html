@@ -1,0 +1,76 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+
+
+</head>
+
+<body style="background-color: rgb(91, 218, 111);">
+
+
+  <header class="gsheader" id="header">
+       <div class="gsheaderdivleft">
+          <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+          </a>
+       </div>
+       <h1>
+          精彩推荐活动
+       </h1>
+  </header>
+
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+
+<script>
+    page=4;
+    apiready = function () {
+
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+        
+        var headerPos = $api.offset(header);
+
+        var topic_id = api.pageParam.topic_id;
+        if (!topic_id) {
+            api.closeWin({name:api.winName});
+        }
+
+        //alert(topic_id);
+
+        api.openFrame({
+            name: 'banner_list',
+            url: 'banner_list.html',
+            bounces: false,
+            reload:true,
+            pageParam:{topic_id:topic_id},
+            rect: {
+                x: 0,
+                y: headerPos.h+5,
+                w: 'auto',
+                h: 'auto'
+            }
+        });
+
+
+
+    };
+
+
+
+
+    
+</script>

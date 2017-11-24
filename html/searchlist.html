@@ -1,0 +1,344 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+    <style>
+      .on{
+        display:block;
+        color:red;
+      }
+    </style>
+
+</head>
+<body style="background: #f0f0f0;">
+  <header class="gsheader" id="header">
+      <div class="gsheaderdivleft" tapmode onclick="guanbi();">
+          <a>
+                <i> <font>&#xe619</font></i>
+          </a>
+      </div>
+      <h1 tapmode onclick="startsearch();">
+          <a href="#title-link" class="">
+            <input name="keywords" placeholder="搜索你想找的商品" value="" style="position:relative;"><font style="position: absolute;top:2.5rem;">&#xe63f</font>
+          </a>
+      </h1>
+      <div class="gsheaderdivright">
+          <a>
+                <i><font onclick="qiehuan()" id="qiehuan">&#xe642;</font></i>
+          </a>
+      </div>
+  </header>
+
+
+
+
+
+
+
+    <div class="headersearchpxlist">
+        <ul id="lipaixu">
+            <li tapmode onclick="paixu(this,'xiaoliang');"><span>销量</span> </li>
+            <li onclick="paixu(this,'jiage');"><span>价格</span> </li>
+            <li onclick="paixu(this,'shangjia');"><span>上架</span> </li>
+            <li onclick="paixu(this,'renqi');"><span>人气</span> </li>
+        </ul>
+    </div>
+
+
+    <div class="gssearchlistgoods" id="gssearchlistgoods">
+        <ul id="search-list">
+<!--             <li>
+                <div>
+                    <img src="http://httgo.com/images/201505/thumb_img/6114_thumb_P_1422081829.jpg"></div>
+                <span>立白 冷水速效无磷洗衣粉1.588千克</span><strong> 16.80 </strong></li> -->
+
+        </ul>
+    </div>
+
+
+
+    <script type="text/x-dot-template" id="search-template">
+        {{for(var i=0,len=it.length;i<len;i++){}}
+            <li tapmode 
+            {{? it[i]['codes']==2}}
+            onclick="opentuanguo({{=it[i].act_id}},{{=it[i].goods_id}})"
+                      {{?? }}
+            onclick="opengoods({{=it[i].goods_id}});"
+                      {{?}}
+
+            >
+
+
+               {{ if(it[i].codes !=null){ }}
+                 <div class="hongdong{{=it[i].codes}}"></div>
+                {{ } }}
+
+                <div>
+                <img src="{{=serverUrl_img+'/'+it[i].goods_thumb}}"></div>
+                <span>{{=it[i].goods_name}}</span><strong> ￥{{=it[i].goods_price}} </strong>
+
+            </li>
+        {{}}}    
+    </script>
+
+
+
+
+
+    <div class="gsnosearch" id="nonegooodslist">
+            <span><font class="iconfont">&#xe640</font></span> <strong>抱歉，没有找到符合条件的商品！</strong>
+    </div>
+
+    <script>
+        function qiehuan() {
+            var div = document.getElementById("gssearchlistgoods");
+            var font = document.getElementById("qiehuan");
+            if (div.className == "gssearchlistgoods") {
+                div.className = "gssearchlistgoods1";
+                font.innerHTML = "&#xe641";
+            }
+            else {
+                div.className = "gssearchlistgoods";
+                font.innerHTML = "&#xe642;";
+            }
+        }
+    </script>
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    types='xiaoliang';
+    order="ASC";
+    keywords='';
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+
+        var keywordss=api.pageParam.keywords;
+        if(!keywordss || trim(keywordss)==''){
+          api.toast({
+              msg: '请先输入要搜索的内容！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          api.closeFrame({
+              name: 'searchlist'
+          });
+        }
+        keywords=keywordss;
+
+        var searchvalue=api.pageParam.searchvalue;
+        //alert(searchvalue);
+        if(searchvalue==1){
+          document.getElementById('gssearchlistgoods').style.display="block";
+          document.getElementById('nonegooodslist').style.display="none"; 
+          var data=api.pageParam.data;
+          searchgoodslist(data,1);         
+        }else{
+          //alert("aaaaa");
+          document.getElementById('nonegooodslist').style.display="block";          
+          document.getElementById('gssearchlistgoods').style.display="none";
+          return ;
+        }
+
+
+        // api.setRefreshHeaderInfo({
+        //     visible: true,
+        //     bgColor: 'rgba(0,0,0,0)',
+        //     textColor: '#666',
+        //     textDown: '下拉刷新',
+        //     textUp: '释放刷新'  ,
+        //     showTime: true
+        // }, function(ret, err){
+        //     page+=4;
+        //     alert(types);
+        //     api.refreshHeaderLoadDone();
+        // });
+
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+                page+=4;
+                //alert(types);
+                search(types,order,page,keywords);
+                api.refreshHeaderLoadDone();
+        });
+
+
+    }
+
+    function searchgoodslist(data,id){
+        if(!data || data==''){
+          api.toast({
+              msg: '没有搜索到任何商品',
+              duration: 2000,
+              location: 'bottom'
+          });
+          return false;
+        }
+
+        //设置第一个li高亮显示
+        if(id && id==1){
+          $api.addCls($api.first($api.byId('lipaixu'),'li'), 'on');
+          $api.addCls($api.first($api.byId('lipaixu'),'li'), 'sliangse');          
+        }
+
+
+        var template = document.getElementById('search-template').innerHTML;
+        document.getElementById('search-list').innerHTML=doT.template(template)(data);
+    }
+   
+    function guanbi(){
+      api.closeWin({name: 'search'});
+      api.closeFrame({
+          name: 'searchlist'
+      });
+    }
+
+    function startsearch(){
+      api.openWin({
+          name: 'search',
+          url: './search.html',
+          reload:true,
+          bounces: false
+      });  
+
+      api.closeFrame({
+          name: 'searchlist'
+      });   
+    }
+
+
+// sliangse xliangse on
+    function paixu(e,type){
+      var allli=e.parentNode.childNodes;
+      if(!$api.hasCls(e, 'on')){
+        $api.addCls(e, 'on');
+      }
+
+      if(!$api.hasCls(e, 'xliangse')){
+        $api.removeCls(e, 'sliangse');
+        $api.addCls(e, 'xliangse');
+        order="ASC";
+        types=type;
+        //alert(type+order);
+        search(type,order,page,keywords);
+      }else{
+        $api.removeCls(e, 'xliangse');
+        $api.addCls(e, 'sliangse');
+        order="DESC";
+        types=type;
+        //alert(type+order); 
+        search(type,order,page,keywords);       
+      }
+
+      //把其它li的样式清楚
+      for(var i=0,len=allli.length;i<len;i++){
+        if(allli[i]!=e){
+          $api.removeCls(allli[i], 'on');
+          $api.removeCls(allli[i], 'xliangse');
+          $api.removeCls(allli[i], 'sliangse');
+        }
+      }
+
+    }
+
+    function search(type,order,page,keywords){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+          user_id=0;
+        }else{
+          user_id=userid_gs;
+        }
+
+        if(!keywords || trim(keywords)==''){
+            api.toast({
+                msg: '请先输入要搜索的内容！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeFrame({
+                name: 'searchlist'
+            });
+            return false;
+        }
+
+        if(!type || trim(type)==''){
+           type="xiaoliang";
+        }
+        if(!order || trim(order)==''){
+          order="ASC";
+        }
+       api.showProgress({
+            title: '搜索中...',
+            modal: false
+        });
+        
+      api.ajax({
+          url:serverUrl+'/category.php?act=search_goods',
+          method:'post',
+          cache:false,
+          timeout:30,
+          dataType:'json',
+          data:{
+              values:{
+                user_id:user_id,
+                order:order,
+                type:type,
+                page:page,
+                keywords: keywords,
+                supplier_id:SUPPLIER_ID
+              }
+            },
+          returnAll:false,
+          },function(ret,err){
+          if(ret){
+              api.hideProgress();
+            // api.alert({msg:JSON.stringify(ret)});
+            if(ret.code==122){//搜索成功
+                searchgoodslist(ret.data);
+            }else if(ret.code==123){
+                api.openFrame({
+                    name: 'searchlist',
+                    url: './searchlist.html',
+                    bounces: false,
+                    pageParam: {searchvalue : '0'},
+                    rect: {
+                      x: 0,
+                      y: 0,
+                      w: 'auto',
+                      h: 'auto'
+                    }
+                });
+
+            }else{
+              api.toast({msg: ret.msg, location: 'middle'});
+                    api.hideProgress();
+                  return false;
+            }
+        }else{
+            api.alert({
+                    msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                    });
+              }
+      });
+
+
+
+    }
+
+
+</script>

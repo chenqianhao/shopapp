@@ -1,0 +1,188 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+    .yhqif{ width:100%; display:block; overflow:hidden;  padding:1rem;}
+    .yhqifimg{ width:30%; float:left;}
+    .yhqifimg img{ width:70%; display:block;  margin:auto;}
+    .yhqifinfo{ width:70%; float:left;}
+    .yhqifinfo b,.yhqifinfo span,.yhqifinfo strong{ display:block; }
+    .yhqifinfo span{ color:#4ed96f; margin-top:0.3rem;}
+    .yhqifinfo b{ color:#6a6a6a; font-size:1.4rem; margin:0.2rem 0; color:#fb0634;}
+    .yhqifinfo strong{ color:#6a6a6a; font-size:1.4rem;}
+    .yhqif button{ display: block; margin: auto; margin-top: 1rem; background-color: #4ed96f; color: #fff; width: 35%; padding: 0.5rem 0; border-radius: 5px; border: none; font-size: 1.5rem;}
+    .yhqifh{ width:100%; display:block;   overflow:hidden;}
+    .yhqifgz{width: 92%; display: block; margin-top: 2rem; margin-left: 4%; }
+    .yhqifgz h3{  font-size:1.6rem; padding-bottom:0.3rem; color:#fb0634;}
+    .yhqifgz li i{  color:#eaac03;font-size:1.5rem;}
+     .yhqifgz li b{color:#515151;font-size:1.5rem;}
+ 
+    </style>
+
+</head>
+<body style="background-color: #fff;">
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft">
+          <a href="####" class="" tapmode onclick="api.closeWin();">
+                <i> <font>&#xe619;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">优惠券规则</a>
+      </h1>
+      <div class="gsheaderdivright" tapmode onclick="kefushow('bonus_info');">
+          <a href="#" class="">
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+    </header>
+
+     <div class="yhqif" id="youhui_list">
+
+    <!--
+      <div class="yhqifh">
+         <div class="yhqifimg"><img src="../img/quaninfo.png"/></div>
+         <div class="yhqifinfo">
+           <span>满100减50</span>
+           <b>抽奖奖励</b>
+           <strong>有效期至：2013-02-13</strong>
+         </div>
+      </div>
+
+       
+       
+        <button>立即使用</button>
+        <div class="yhqifgz">
+         <h3>优惠券使用声明</h3>
+         <ul>
+           <li><i>使用范围：</i><b>香蕉品类</b></li>
+           <li><i>使用提示：</i><b>团购秒杀和优惠活动商品不能使用</b></li>
+         </ul>
+        </div> 
+      -->
+
+     </div>
+
+
+
+
+  <script type="text/x-dot-template" id="body-template">
+     <div class="yhqifh">
+        <div class="yhqifimg"><img src="../img/quaninfo.png"/></div>
+        <div class="yhqifinfo">
+          <span>{{=it['type_name']}}</span>
+          <b>抽奖奖励</b>
+          <strong>有效期：{{=getDates(it['use_start_date'])}}至 {{=getDates(it['use_end_date'])}}</strong>
+        </div>
+     </div>
+
+
+    {{ if(it['send_type']==4){ }}
+        <button tapmode onclick="goyouhui({{=it['topic_id']}});">立即使用</button>
+    {{ } }}
+
+    <div class="yhqifgz">
+      <h3>优惠券使用声明</h3>
+      <ul>
+        <li><i>使用范围：</i><b>
+        {{ if(it['send_type']==0){ }}
+            商城所有商品
+        {{ }else if(it['send_type']==4){ }}
+            <span tapmode onclick="goyouhui({{=it['topic_id']}});">指定商品</span>
+        {{ } }}
+
+        </b></li>
+        <li><i>使用提示：</i><b>团购和秒杀活动商品不能使用，每次下单只能使用一次！</b></li>
+      </ul>
+    </div>
+
+  </script> 
+
+
+
+
+</body>
+</html>
+
+
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        var headerPos = $api.offset(header);
+        fixStatusBar(header);
+
+        get_youhui_goods();
+
+
+    }
+
+
+    function get_youhui_goods(){
+      var bonus_type_id=api.pageParam.bonus_type_id;
+      //alert(bonus_type_id);
+
+      if(!bonus_type_id){
+        api.toast({
+            msg: '该优惠券不存在！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      var user_id=$api.getStorage('userid_gs');
+      if(!user_id || user_id<1){
+          api.toast({
+              msg: '请先登陆',
+              duration: 2000,
+              location: 'bottom'
+          });
+          showusercenter('bonus_info');
+          return false;
+      }
+      api.ajax({
+          url: serverUrl+'/user.php?act=get_youhui_goods_info',
+          method: 'post',
+          timeout: 30,
+          dataType: 'json',
+          returnAll:false,
+          data:{
+              values: {user_id:user_id,supplier_id:SUPPLIER_ID,bonus_type_id:bonus_type_id}
+          }            
+      },function(ret,err){
+          //api.alert({msg:JSON.stringify(ret)});
+          //return ;
+          if (ret) {
+              if(ret.code==3403){
+                 var template = document.getElementById('body-template').innerHTML;
+                 document.getElementById('youhui_list').innerHTML=doT.template(template)(ret.data);
+              }else{
+                api.toast({
+                    msg: ret.msg,
+                    duration: 2000,
+                    location: 'bottom'
+                });
+              }
+          } else {
+              api.alert({
+                  msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+              });
+          };
+      });
+
+
+
+
+    }
+</script>

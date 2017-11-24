@@ -1,0 +1,70 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+            .toppiclist{ width:100%; display:block; overflow:hidden;}
+            .toppiclist li{ width:94%; float:left; margin:auto;margin: 0.5rem 3% 0.5rem 3%; position:relative;}
+            .toppiclist li span{ position:absolute; background-color:rgba(0,0,0,0.3); bottom:0px; left:0px; color:#eeeff1; width:100%;  padding:0.3rem 0.5rem 0.2rem 0.5rem;}
+            .toppiclist li span em{ font-size:1.4rem;}
+            .toppiclist li span b{ font-size:1.3rem;  float:right;margin-top: 0.2rem;}
+            .toppiclist img{ width:100%;margin: 0px;padding: 0px;display: block;}
+    </style>
+    <style>
+        
+    </style>
+</head>
+<body style="background-color: #fff;">
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+            <font>&#xe619;</font>
+        </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">活动专题</a>
+      </h1>
+    <div class="gsheaderdivright" tapmode onclick="kefushow('collection');">
+        <a>
+            <i><font>&#xe635;</font></i>
+        </a>
+    </div>
+  </header>
+
+
+
+
+</body>
+</html>
+
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+
+<script type="text/javascript">
+    page=0;
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+        var headerPos = $api.offset(header);
+
+        api.openFrame({
+            name: 'zt_list_info',
+            url: 'zt_list_info.html',
+            bounces: true,
+            reload:true,
+            rect: {
+                x: 0,
+                y: headerPos.h+5,
+                w: 'auto',
+                h: 'auto'
+            }
+        });
+   }
+</script>

@@ -1,0 +1,788 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+    .regular-checkbox {display: none; }
+    .regular-checkbox:checked + label {background-color: #ff6600; border: 1px solid #ff6600; box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1); color: #fff; }
+    .regular-checkbox + label {background-color: #ff6600; border: 1px solid #ff6600; box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05); padding: 1.2rem; border-radius: 50%; display: inline-block; position: relative; }
+    .regular-checkbox:checked + label::after {content: '\e657'; font-size: 2.3rem; position: absolute; top: -2px; left: 0px; color: #fff; font-weight: bold;}
+    </style>
+</head>
+<body style="background: #f3f4f6;">
+
+    <div id="nodenglu">
+        <div class="gscardnone">
+            <span class="iconfont">&#xe658;</span>
+            <em> 购物车还是空的，去挑几件中意的商品吧！</em>
+            <strong tapmode onclick="qsy();"><a >去逛逛</a></strong>
+        </div>
+    </div>
+
+<div id="mainlist" style="display:none;">
+    <div class="classdiv gscardlist">
+        <h3 >
+            <em tapmode onclick="quanxuan();">
+                <input id="checkbox-2-0" class="regular-checkbox big-checkbox" type="checkbox"   />
+            <label for="checkbox-2-0"></label>
+            </em>
+            <!-- <img src="http://test6.httgo.com/guoshu/app/images/logo.png" /> --><i>果好恰</i><font tapmode onclick="qkgwc();"><i>清空购物车</i>&#xe659;</font></h3>
+        <ul id="cart_list_goods">
+
+        </ul>
+    </div>
+
+    <script id="body-template" type="text/x-dot-template">
+            {{for(var key in it){}}
+            <li>
+            <div class="gscardcbx">
+            <input id="checkbox-2-{{=it[key].rec_id}}" class="regular-checkbox big-checkbox" type="checkbox" value="{{=it[key].rec_id}}" {{ if(it[key].is_select==1){ }} checked {{ } }} tapmode onclick="changeselect({{=it[key].rec_id}});">
+            <label for="checkbox-2-{{=it[key].rec_id}}"></label>
+            </div>
+                <div class="gscardlistimg" tapmode onclick="opengoods({{=it[key].goods_id}});">
+                    <img src="{{=serverUrl_img+'/'+it[key].goods_thumb}}" /></div>
+                <div class="gscardlistinfo">
+                    <strong class="classtestover" tapmode onclick="opengoods({{=it[key].goods_id}});">{{=it[key].goods_name}}</strong><strong>{{? it[key].goods_attr !=''}} 规格：{{=it[key].goods_attr}}{{?}}</strong><strong><i>￥{{=it[key].goods_price}}</i>
+                    {{? it[key].codes==1}} <b>秒杀中</b>
+                    {{?? it[key].codes==2}}<b>团购中</b>
+                    {{?? it[key].codes==3}}<b>优惠中</b>
+                    {{?? it[key].codes==4}}<b>促销中</b>
+                    {{??}}
+                    {{?}}
+                   </strong>
+                    <strong><del>￥{{=it[key].market_price}}</del> <span class="lcshopNum lcshopNumcard">
+                        <input class="reduce" value="-" type="button" tapmode onclick="minus_num({{=it[key].rec_id}});" {{? it[key].codes==1 || it[key].codes==2}} disabled="disabled" {{?}} >
+                        <input class="num" id="goods_number_{{=it[key].rec_id}}" readonly="readonly" value="{{=it[key].goods_number}}" type="text">
+                        <input class="add" value="+" type="button" tapmode onclick="add_num({{=it[key].rec_id}});" {{? it[key].codes==1 || it[key].codes==2}} disabled="disabled" {{?}}>
+                         <em class="iconfont carddel" tapmode onclick="dele_cart({{=it[key].rec_id}});">&#xe634;</em>
+                    </span>
+                    </strong>
+                </div>
+            </li>
+        {{}}}
+    </script>
+
+    <div class="gscartcommonbartab">
+        <span><i>共</i><i id="allnum">0</i><i>件</i> <i>总计：</i><font id="total">0.00</font><i>元</i></span>
+        <button tapmode onclick="checkout();">去结算</button>
+    </div>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+
+    apiready = function(){
+        api.parseTapmode();
+        cart_list_app();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            api.hideProgress();
+            cart_list_app();
+            //window.location.reload();
+            api.refreshHeaderLoadDone();
+        });
+
+        api.addEventListener({
+            name: 'cart'
+        }, function(ret, err){
+            api.hideProgress();
+            //alert(JSON.stringify(ret.value.user_id));
+            cart_list_app();
+        });
+
+        api.addEventListener({//加入购物车，不关闭商品页面
+            name: 'cart_goods'
+        }, function(ret, err){
+            api.hideProgress();
+            //cart_number();
+            cart_list_app(1);
+        });
+        api.addEventListener({
+            name: 'login'
+        }, function(ret, err){
+            api.hideProgress();
+            cart_list_app();
+        });
+        api.addEventListener({
+            name: 'layout'
+        }, function(ret, err){
+            if(JSON.stringify(ret.value)){
+                cart_list_app();
+            }
+        });
+    }
+
+    function cart_list_app(id){
+        var userid_gs=$api.getStorage('userid_gs');
+
+        if(!userid_gs){
+            var back_act=$api.getStorage("back_act")?$api.getStorage("back_act"):"carts";
+            showusercenter(back_act);
+
+        }
+
+        if(!id){
+            api.closeFrameGroup({name: 'group_goods'});
+            api.closeWin({
+                name: 'goods'
+            });
+        }
+
+
+
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+        //alert(strs);
+        api.ajax({
+            url:serverUrl+'/cart.php?act=get_cart_list',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {
+                  user_id:userid_gs,
+                  supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if(ret){
+              //api.alert({msg:JSON.stringify(ret)});
+              //return false;
+
+              if(ret.total){
+                if(ret.total.select_num){
+                    document.getElementById("allnum").innerHTML=ret.total.select_num;
+                }else{
+                    document.getElementById("allnum").innerHTML=0;
+                }
+
+                if(ret.total.total_price){
+                    document.getElementById("total").innerHTML=round2(ret.total.total_price,2);
+                }else{
+                    document.getElementById("total").innerHTML='0.00';
+                }
+
+                document.getElementById('nodenglu').style.display='none';
+
+                document.getElementById('mainlist').style.display='block';
+
+              }
+
+
+
+                if(ret.is_selected){
+                    //alert(ret.is_selected);
+                    if(ret.is_selected==1){
+                        document.getElementById("checkbox-2-0").checked=true;
+                    }else{
+                        document.getElementById("checkbox-2-0").checked=false;
+                    }
+                }
+
+                if(ret.code==524){
+                    // api.toast({
+                    //     msg: '购物车中没有商品,请刷新重试',
+                    //     duration: 2000,
+                    //     location: 'bottom'
+                    // });
+
+                    //alert("aaaaaaaa");
+                    document.getElementById('cart_list_goods').innerHTML='购物车中没有商品！';
+
+                    document.getElementById('nodenglu').style.display='block';
+
+                    document.getElementById('mainlist').style.display='none';
+                }else if(ret.code==523){
+
+                    // document.getElementById('nodenglu').style.display='none';
+                    // document.getElementById('mainlist').style.display='block';
+
+                     var template = document.getElementById('body-template').innerHTML;
+                     document.getElementById('cart_list_goods').innerHTML=doT.template(template)(ret.data);
+
+
+                 // api.sendEvent({
+                 //      name: 'cart'
+                 //  });
+
+
+                 }else{
+
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return ;
+                 }
+
+            }else{
+                // api.alert({
+                //     msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                //   });
+            }
+            api.hideProgress();
+       })
+
+    }
+
+
+    function quanxuan(){
+        var muqian=document.getElementById("checkbox-2-0").checked;
+        var allli=document.getElementById("cart_list_goods").getElementsByTagName("input");
+
+        if(!muqian){
+            for(var i=0,len=allli.length;i<len;i++){
+                allli[i].checked=true;
+                if(allli[i].value !="+" && allli[i].value!='-'){
+                    changeselects(allli[i].value,1);
+                }
+            }
+        }else{
+            for(var i=0,len=allli.length;i<len;i++){
+                allli[i].checked=false;
+                if(allli[i].value !="+" && allli[i].value!='-'){
+                    changeselects(allli[i].value,2);
+                }
+            }
+        }
+
+    }
+
+
+//全选
+    function changeselects(id,re_type){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter("carts");
+            return false;
+        }
+
+        if(!id){
+            api.toast({
+                msg: '请先选中商品',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        //alert(id);
+        api.ajax({
+            url:serverUrl+'/cart.php?act=changeselects',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                   user_id:userid_gs,
+                   rec_id:id,
+                   re_type:re_type,
+                   supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                if(ret.code==534 ){
+                    //刷新购物车
+                    //window.location.reload();
+                    cart_list_app();
+
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                // api.alert({
+                //     msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                // });
+            };
+        });
+
+    }
+
+
+
+//单选
+    function changeselect(id){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            // api.openWin ({
+            //     name: 'login',
+            //     url: 'login.html',
+            //     reload: true,
+            //     bounces: false,
+            //     pageParam: {back_act: 'carts'},
+            //     delay:200
+            // });
+            showusercenter('carts');
+            return false;
+        }
+
+
+
+        if(!id){
+            api.toast({
+                msg: '请先选中商品',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        //alert(id);
+        api.ajax({
+            url:serverUrl+'/cart.php?act=changeselect',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                   user_id:userid_gs,
+                   rec_id:id,
+                   supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                if(ret.code==534 || ret.code==533 ){
+                    //刷新购物车
+                    //window.location.reload();
+                    cart_list_app();
+
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                // api.alert({
+                //     msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                // });
+            };
+        });
+
+    }
+
+
+    //删除购物车的商品
+    function dele_cart(rec_id){
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('carts');
+            return false;
+        }
+
+        api.confirm({
+            title: '删除购物车中的商品',
+            msg: '您确定要从购物车中删除此商品吗？',
+            buttons:['确定', '取消']
+        },function(ret,err){
+            if(ret.buttonIndex == 1){
+                api.showProgress({
+                    title: '删除中...',
+                    modal: false
+                });
+                api.ajax({
+                    url:serverUrl+'/cart.php?act=deletecart',
+                    method:'post',
+                    cache:false,
+                    timeout:30,
+                    dataType:'json',
+                    returnAll:false,
+                    data:{
+                        values: {
+                           user_id:userid_gs,
+                           rec_id:rec_id,
+                           supplier_id:SUPPLIER_ID
+                        }
+                    }
+                },function(ret,err){
+                    api.hideProgress();
+                    if(ret){
+                        //api.alert({msg:JSON.stringify(ret)});
+                        if(ret.code==543){
+                            api.toast({
+                                msg: ret.msg,
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+
+                            api.sendEvent({
+                                name: 'cart'
+                            });
+
+                           cart_list_app();
+                        }else{
+                            api.toast({
+                                msg: ret.msg,
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+                        }
+
+                    }else{
+                        // api.alert({
+                        //     msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                        //   });
+                    }
+                    api.hideProgress();
+               })
+            }
+        });
+
+    }
+
+    //清空购物车
+    function qkgwc(){
+        //alert("清空购物车");
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('carts');
+            return false;
+        }
+
+        api.confirm({
+            title: '删除购物车中的商品',
+            msg: '您确定要从购物车中删除此商品吗？',
+            buttons:['确定', '取消']
+        },function(ret,err){
+            if(ret.buttonIndex == 1){
+                api.showProgress({
+                    title: '删除中...',
+                    modal: false
+                });
+                api.ajax({
+                    url:serverUrl+'/cart.php?act=clearcart',
+                    method:'post',
+                    cache:false,
+                    timeout:30,
+                    dataType:'json',
+                    returnAll:false,
+                    data:{
+                        values: {
+                           user_id:userid_gs,
+                           supplier_id:SUPPLIER_ID
+                        }
+                    }
+                },function(ret,err){
+                    api.hideProgress();
+                    if(ret){
+                        //api.alert({msg:JSON.stringify(ret)});
+                        if(ret.code==562){
+                            api.toast({
+                                msg: ret.msg,
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+
+                             api.sendEvent({
+                                  name: 'cart'
+                              });
+
+
+                           cart_list_app();
+                        }else{
+                            api.toast({
+                                msg: ret.msg,
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+                        }
+
+                    }else{
+                        // api.alert({
+                        //     msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                        //   });
+                    }
+                    api.hideProgress();
+               })
+            }
+        });
+    }
+
+
+
+    function minus_num(rec_id){
+        var number=document.getElementById("goods_number_"+rec_id+"").value;
+        if(number < 1){
+            alert('已经到最少数量！');
+            return false;
+        }else if(number==1){
+            //alert('此处为删除购物车操作！');
+            dele_cart(rec_id);
+            return false;
+        }else if (number>1){
+            number--;
+            if(number<0){
+                number=0;
+            }
+            //alert(number);
+            document.getElementById("goods_number_"+rec_id+"").value=number;
+            cart_num_ajax(rec_id,number);
+        }
+    }
+
+
+    function add_num(rec_id){
+        var number=document.getElementById("goods_number_"+rec_id+"").value;
+            number++;
+            if(number<0){
+                number=0;
+            }
+            //alert(number);
+        document.getElementById("goods_number_"+rec_id+"").value=number;
+        cart_num_ajax(rec_id,number);
+    }
+
+
+    function cart_num_ajax(rec_id,number){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            // api.openWin ({
+            //     name: 'login',
+            //     url: 'login.html',
+            //     reload: true,
+            //     bounces: false,
+            //     pageParam: {back_act: 'carts'},
+            //     delay:200
+            // });
+            showusercenter('carts');
+            return false;
+        }
+
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+        api.ajax({
+            url:serverUrl+'/cart.php?act=changenum',//cart_num_ajax
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {
+                    rec_id:rec_id,
+                    number:number,
+                    //goods_id:goods_id,
+                    user_id:userid_gs,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            api.hideProgress();
+            if(ret){
+                //api.alert({msg:JSON.stringify(ret)});
+                // api.toast({
+                //     msg: ret.msg,
+                //     duration: 2000,
+                //     location: 'bottom'
+                // });
+
+                api.sendEvent({
+                    name: 'cart'
+                });
+                cart_list_app();
+            }else{
+                // api.alert({
+                //     msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                //   });
+            }
+
+       })
+    }
+
+
+    function checkout(){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            // api.openWin ({
+            //     name: 'login',
+            //     url: 'login.html',
+            //     reload: true,
+            //     bounces: false,
+            //     pageParam: {back_act: 'carts'},
+            //     delay:200
+            // });
+            showusercenter('carts');
+            return false;
+        }
+
+        if(!userid_gs){
+            api.toast({
+                msg: '请先登陆！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+
+        //此处应该先检测购物车是否有商品
+
+        api.ajax({
+            url:serverUrl+'/cart.php?act=gets_carts_selects',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    user_id:userid_gs,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                if(ret.code==705){
+                    //判断是否符合提交订单的标准
+                    api.ajax({
+                        url:serverUrl+'/cart.php?act=checkout',
+                        method: 'post',
+                        timeout: 30,
+                        dataType: 'json',
+                        returnAll:false,
+                        data:{
+                            values: {
+                                user_id:userid_gs,
+                                supplier_id:SUPPLIER_ID
+                            }
+                        }
+                    },function(ret,err){
+                        if (ret) {
+                           //api.alert({msg:JSON.stringify(ret)});
+                           if(ret.code==602){
+                                api.toast({
+                                    msg: '请先填写收货地址！',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                api.openWin({
+                                    name: 'address',
+                                    url: './address.html',
+                                    reload:true,
+                                    bounces: false
+                                });
+                                return false;
+                           }else if(ret.code==605){
+                                api.openWin({
+                                    name: 'checkout',
+                                    url: './checkout.html',
+                                    bounces: false,
+                                    reload:true,
+                                    pageParam: {address:ret.address}
+                                });
+                           }else{
+                                api.toast({
+                                    msg: ret.msg,
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+
+                                 api.sendEvent({
+                                      name: 'cart'
+                                  });
+
+                                cart_list_app();
+                           }
+                        }else {
+                            // api.alert({
+                            //     msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                            // });
+                        };
+                    });
+
+
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                // api.alert({
+                //     msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                // });
+            };
+        });
+
+
+
+
+
+
+
+
+
+    }
+
+
+    function gets_carts_selects(user_id){
+        if(!user_id || user_id<1){
+            // api.openWin ({
+            //     name: 'login',
+            //     url: 'login.html',
+            //     reload: true,
+            //     bounces: false,
+            //     pageParam: {back_act: 'carts'},
+            //     delay:200
+            // });
+            showusercenter('carts');
+            return false;
+        }
+
+
+
+
+    }
+
+
+
+
+    function qsy(){
+      //进入首页
+        var jsfun = 'closegroup(0);';
+        api.execScript({
+            name: 'root',
+            script: jsfun
+        });
+
+        api.openWin({
+            name: 'root',
+            url: '../index.html',
+            //reload:true,
+            bounces: false,
+            pageParam: {"aaa" : 0}
+        });
+    }
+</script>

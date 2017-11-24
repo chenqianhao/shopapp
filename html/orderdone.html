@@ -1,0 +1,501 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+    <style> .goshopping{background: #00935f;  } </style>
+</head>
+<body style="background-color:#fff;">
+
+
+   <header class="gsheader" id="aui-header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="fanhui();" class="">
+              <font>&#xe619;</font>返回
+        </a>
+    </div>
+    <h1>
+        <a >
+            提交订单
+        </a>
+    </h1>
+  </header>
+
+  <div class="orederduiguo"><font>&#xe692;</font></div>
+  <div class="paymentsuccessful" id="order_list">
+
+  </div>
+
+
+
+
+  <!-- <a href="####" tapmode onclick="qsy();">继续购物</a>
+ -->
+
+    <div id="quzhifu">
+        <button class="classbtn goshopping" tapmode onclick="qsy();">继续购物</button>
+    </div>
+
+
+
+<script id="order-list-template" type="text/x-dot-template">
+        <ul>
+
+            <li><span>感谢您在本地购物！您的订单已提交成功，请记住您的订单号：<em>{{=it.order_sn}}</em></span></li>
+             <li><span>您的订单金额为：<em>{{=(parseFloat(it.order_amount)-parseFloat(it['shipping_fee'])).toFixed(2)}}元</em></span></li>
+             <li><span>支付方式：<em>{{=it.pay_name}}</em></span></li>
+             <li><span>运费：<em>{{=parseFloat(it['shipping_fee']).toFixed(2)}}</em></span></li>
+             <li><span>您的应付总金额为：<em>{{=it.order_amount.toFixed(2)}}元</em></span></li>
+
+        </ul>
+
+
+
+</script>   
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+
+
+        var orders=api.pageParam.orders;
+
+        api.closeWin({
+            name: 'checkout',
+            animation: {
+                type: 'flip',
+                subType: 'from_bottom',
+                duration: 500
+            }
+        });
+
+
+        if(!orders){
+            api.closeWin({
+                name: 'orderdone',
+                animation: {
+                    type: 'flip',
+                    subType: 'from_bottom',
+                    duration: 500
+                }
+            });
+        }
+
+
+        //var gonggong=api.pageParam.gonggong;
+        var order_pay=api.pageParam.order_pay;
+
+        //$api.setStorage('orders',orders);
+        //$api.setStorage('gonggong', gonggong);
+        $api.setStorage('order_pay', order_pay);
+
+        var template = document.getElementById('order-list-template').innerHTML;
+        document.getElementById('order_list').innerHTML = doT.template(template)(order_pay);
+
+        
+        //api.alert({msg:JSON.stringify(order_pay)});
+
+        if(order_pay){
+            if(order_pay.pay_id!=1){
+                document.getElementById('quzhifu').innerHTML='<button class="classbtn goshopping" tapmode onclick="zhifu('+order_pay.pay_id+');">去'+order_pay.pay_name+'支付</button>';
+            }
+        }
+
+    }
+
+
+
+    function qsy(){
+        api.closeWin({name: 'checkout'});
+        api.closeWin({name: 'address'});
+        api.closeWin({name: 'ordergoodslist'});
+        api.closeWin({name: 'carts'});
+        //api.closeWin({name: 'orderdone'});
+
+      //进入首页
+        var jsfun = 'closegroup(0);';
+        api.execScript({
+            name: 'root',
+            script: jsfun
+        });
+
+        api.openWin({
+            name: 'root',
+            url: '../index.html',
+            //reload:true,
+            bounces: false,
+            pageParam: {"aaa" : 0}
+        });
+    }
+
+
+//支付
+
+
+
+
+function zhifu(id){
+
+    if(!id){
+        api.toast({
+            msg: '支付方式不存在！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return;
+    }
+
+    var userid_gs=$api.getStorage('userid_gs');
+    if(!userid_gs){
+        showusercenter('allorder');
+        return false;
+    }
+
+
+    var ordersuccess = $api.getStorage('order_pay');
+    //api.alert({msg:JSON.stringify(ordersuccess)});
+    //alert(ordersuccess["tuan_miaosha"]);
+    //return ;
+
+    if(ordersuccess["tuan_miaosha"]==1){//有秒杀或团购的商品
+       // alert("aaaa");
+        api.ajax({
+            url: serverUrl+'/user.php?act=tuangou_check',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {user_id:userid_gs,supplier_id:SUPPLIER_ID,common_order_sn:ordersuccess.order_sn}
+            }
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==1000){
+                    fukuan(id);
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 3000,
+                        location: 'bottom'
+                    });
+                    return ;
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+    }else{
+
+        fukuan(id);
+    }
+
+
+}
+
+function fukuan(id){
+
+    var ordersuccess = $api.getStorage('order_pay');
+    //api.alert({msg:JSON.stringify(ordersuccess)});
+    if(!ordersuccess){
+        api.alert({msg: '请先去提交订单！'});
+        return false;
+    }
+
+    if(!ordersuccess.pay_log_id){
+        api.alert({msg: '非法订单！'});
+        return false;
+    }
+
+    //ordersuccess.order_amount=parseFloat(ordersuccess.order_amount)+parseFloat(ordersuccess.shipping_fee);
+    ordersuccess.order_amount=ordersuccess.order_amount;
+
+
+    //alert(ordersuccess.order_amount);
+
+    //var out_trade_no=ordersuccess.order_sn+ordersuccess.log_id;
+    //var out_trade_no=ordersuccess.pay_log_id;
+    var out_trade_no=ordersuccess.order_sn;
+
+    //rsaPriKey: 'MIICXgIBAAKBgQCt139Pwe44umPtY5UbtQR33NbiD+4sLB+/q+a1xlxMFXPT29robAW1WSxrHT3shPP23QEgQCj3dV6eTYGL2WIXDlwArJ1P4aJiCy6TuM2Pf4G+gD3ghrNQOPmei8mVG7LwipiFlSKjDrF/+NPfK6a7Tl9lKiAwgXdnr0p3nIriawIDAQABAoGBAJ+5i3EFt1KJ9zxrLdpKRLO4xfrpNiWB2R3r3MuRWMZTQ5wZuhWpAsmwCD7WnEnPkrR0NQ+jw8AyJ+B9SBTtg9A1G8YNfFGuc4qcD1O2bSzF5LbehVW4GzaaG+H0uSMHgRXjWsDpwyDS/dRQjtdot7YGNDjiqZ+UX386S9tJRK1RAkEA3oZbYaTNzm/f+LRqzMoKnFbjeDrKCEVNGedjzBoccmO+z7AiwgbEQntUAk62H97EEf7v1ZMyCMAof0oQper8IwJBAMf+T1hEg7Z35lOvmNm2ORNWm6vTz5hYxN7bAvi+VvLzwcz/xroThbIXn7cO8N6VaKkBDBuZxL/3Gc0hQTolYRkCQQDCiVcuP/Oke+2j8aZEroUkNFncbBjfriY/dSir8E/aORVBYEyir2O4czT4Z3OU3R0wVl25q1tchxFgZpGzW4FdAkEAg9z23eEW4xl9IRJ3epy+VzTUoV+f0fg9nh7Tf8SoObpkvtCqbAfxL/KJmT5drLTgdAY/wHcLlfLL7UeO5VK+CQJAAz7mCmnA5gkvcRcdkhDJt19BQfpZvBpuHFwA3Jls6sFlAjRf7ZTqQ0s/0PrFg2XNpzLyR7ZPr9uHrz6dO+o/qg==',
+
+
+    //alert(ordersuccess.order_sn+'aaa'+ordersuccess.order_amount+'bbb'+ordersuccess.pay_log_id);
+
+    if(id==2){//支付宝
+
+        //var iaf = api.require('aliPay');
+        // var subject = ordersuccess.order_sn;
+        // var body = ordersuccess.pay_log_id;
+        // var amount = ordersuccess.order_amount;
+        // var tradeNO = out_trade_no;
+        // var notifyURL = serverUrl+"/payment/alipay/notify_url.php";
+        //var notifyURL="http://wuyihong1988.imwork.net:15404/create_direct_pay_by_user-JAVA-UTF-8/notify_url.jsp";
+
+        var obj = api.require('aliPay');
+        var subject = ordersuccess.order_sn;
+        var body = ordersuccess.pay_log_id;
+        var amount = ordersuccess.order_amount;
+        var tradeNO = out_trade_no;
+        //var tradeNO = (new Date()).valueOf();//订单编号
+        //alert(out_trade_no);
+
+        obj.pay({
+                subject:subject,
+                body:body,
+                amount:amount,
+                tradeNO:tradeNO
+            },function(ret,err) {
+                switch (ret.code){
+                    case "6001":
+                            api.toast({msg:"取消支付"});
+                            fanhui();
+                            break;
+                    case "9000":
+                            api.toast({msg:"支付完成"});
+                            fanhui();
+                            break;
+                    default:
+                        // api.alert({
+                        //     title: '支付结果',
+                        //     msg: ret.code,
+                        //     buttons: ['确定']
+                        // });
+                        fanhui();
+                        break;
+                }
+        });
+
+/*
+        iaf.pay({
+            partner: '2088811260876744',
+            seller: 'dayeyunalading@163.com',
+            rsaPriKey: 'MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBAK3Xf0/B7ji6Y+1jlRu1BHfc1uIP7iwsH7+r5rXGXEwVc9Pb2uhsBbVZLGsdPeyE8/bdASBAKPd1Xp5NgYvZYhcOXACsnU/homILLpO4zY9/gb6APeCGs1A4+Z6LyZUbsvCKmIWVIqMOsX/4098rprtOX2UqIDCBd2evSneciuJrAgMBAAECgYEAn7mLcQW3Uon3PGst2kpEs7jF+uk2JYHZHevcy5FYxlNDnBm6FakCybAIPtacSc+StHQ1D6PDwDIn4H1IFO2D0DUbxg18Ua5zipwPU7ZtLMXktt6FVbgbNpob4fS5IweBFeNawOnDINL91FCO12i3tgY0OOKpn5RffzpL20lErVECQQDehlthpM3Ob9/4tGrMygqcVuN4OsoIRU0Z52PMGhxyY77PsCLCBsRCe1QCTrYf3sQR/u/VkzIIwCh/ShCl6vwjAkEAx/5PWESDtnfmU6+Y2bY5E1abq9PPmFjE3tsC+L5W8vPBzP/GuhOFsheftw7w3pVoqQEMG5nEv/cZzSFBOiVhGQJBAMKJVy4/86R77aPxpkSuhSQ0WdxsGN+uJj91KKvwT9o5FUFgTKKvY7hzNPhnc5TdHTBWXbmrW1yHEWBmkbNbgV0CQQCD3Pbd4RbjGX0hEnd6nL5XNNShX5/R+D2eHtN/xKg5umS+0KpsB/Ev8omZPl2stOB0Bj/AdwuV8svtR47lUr4JAkADPuYKacDmCS9xFx2SEMm3X0FB+lm8Gm4cXADcmWzqwWUCNF/tlOpDSz/Q+sWDZc2nMvJHtk+v24evPp076j+q',
+            rsaPubKey: 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCt139Pwe44umPtY5UbtQR33NbiD+4sLB+/q+a1xlxMFXPT29robAW1WSxrHT3shPP23QEgQCj3dV6eTYGL2WIXDlwArJ1P4aJiCy6TuM2Pf4G+gD3ghrNQOPmei8mVG7LwipiFlSKjDrF/+NPfK6a7Tl9lKiAwgXdnr0p3nIriawIDAQAB',
+            subject: subject,
+            body: body,
+            amount: amount,
+            tradeNO: tradeNO,
+            notifyURL: notifyURL
+        }, function(ret, err) {
+            api.alert({msg:JSON.stringify(ret)});
+            api.alert({msg:JSON.stringify(err)});
+
+            if(ret.code==9000){
+                //funyoujin(ordersuccess.pay_log_id);//返佣金
+                //api.alert({msg: '支付宝支付成功'});
+                api.toast({
+                    msg: '支付宝支付成功',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+
+                fanhui();
+            }else{
+                //api.alert({msg: '支付宝支付未成功'});
+                api.toast({
+                    msg: '支付宝支付未成功',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                fanhui();
+            }
+
+            // fanhui();
+            
+        });*/
+
+    }else if(id==4){//银联在线
+        var unPay = api.require('unionPay');
+        var money=ordersuccess.order_amount*100;
+        //alert(ordersuccess.order_sn);
+        api.ajax({
+            url: serverUrl+'/payment/unionpay/app.php',//从银联测试服务器上获取tn号
+            //url:'http://202.101.25.178:8080/sim/gettn',
+            method: 'post',
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    orderId: ordersuccess.order_sn,
+                    log_id: ordersuccess.pay_log_id,//ordersuccess.log_id
+                    txnAmt:money
+                }//提交商户后台生成的订单ID 
+            }
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            //api.alert({msg:JSON.stringify(err)});
+            // alert(typeof(ret));
+            var tnss=ret.tn;
+            //alert(tnss);
+            //var tnss=ret;
+            if (tnss) {
+                unPay.pay({
+                    tn:tnss,
+                    devMode: false
+                }, function(rets, err){
+                   //api.alert({msg:JSON.stringify(rets)});
+                    if(rets.result=="success"){
+                        api.toast({
+                            msg: "银联支付成功！",
+                            duration: 3000,
+                            location: 'bottom'
+                        });
+                        fanhui();
+                    }else{
+                        api.toast({
+                            msg: "银联支付失败！",
+                            duration: 3000,
+                            location: 'bottom'
+                        });
+                        fanhui();
+                    }
+                })
+            }else{
+                    api.alert({msg: '银联支付失败'});
+                    fanhui();                
+        }
+        });
+
+    }else if(id==5){//微信支付（云编译有效）
+
+       var wxPay = api.require('wxPay');
+        wxPay.config({
+
+        }, function(ret, err){
+            //api.alert({msg:JSON.stringify(ret)});
+            //api.alert({msg:JSON.stringify(err)});
+            if(ret.status){
+                //alert('配置商户支付参数成功');
+                //var wxPay = api.require('wxPay');
+                
+/*                api.showProgress({
+                    title: '微信支付',
+                    text: '正在调用微信客户端，请稍候……',
+                    modal:  true
+                });*/
+
+                var order_amount_fee=ordersuccess['order_amount']*100;
+                //alert(out_trade_no);
+                var order_sn=parseInt(ordersuccess.order_sn);
+                wxPay.pay({
+                     description: order_sn,
+                     totalFee: order_amount_fee,
+                     tradeNo: out_trade_no,
+                     attach: ordersuccess.pay_log_id
+                },function(ret, err){
+                    //api.alert({msg:JSON.stringify(ret)});
+                    api.hideProgress();
+                    if(ret.status){
+                        //alert("aaaa");
+                        //alert(ret.result);
+                        api.toast({
+                            msg: "微信支付成功！",
+                            duration: 3000,
+                            location: 'bottom'
+                        });
+                        fanhui();
+                    }else{
+                        //api.alert({msg:JSON.stringify(err)});
+                        alert("微信支付失败！");
+                        fanhui();
+                        //alert(err.code+err.msg);
+                    }
+                });
+            }else{
+                api.hideProgress();
+                alert("微信支付失败！");
+                //alert(err.code);
+                fanhui();
+            }
+        });
+
+    }
+
+}
+
+
+//付款成功，用户获取佣金
+function funyoujin(pay_log_ids){
+
+    if(!pay_log_ids){
+        api.toast({
+            msg: '订单有错误，无法获取佣金！',
+            duration: 2000,
+            location: 'bottom'
+        });
+    }
+
+    var userid_gs=$api.getStorage('userid_gs');
+    if(!userid_gs){
+        showusercenter('allorder');
+        return false;
+    }
+
+
+    api.ajax({
+        url: serverUrl+'/daili.php?act=give_yongjin_info',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false,
+        data:{
+            values: {
+                supplier_id:SUPPLIER_ID,
+                pay_log_ids:pay_log_ids,
+                user_id:userid_gs
+            }
+        }          
+    },function(ret,err){
+        api.alert({msg:JSON.stringify(ret)});
+        if (ret) {
+            // TODO 
+        } else {
+            api.alert({
+                msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+            });
+        };
+    });
+
+
+}
+
+
+
+function fanhui(){
+    api.closeWin({name: 'checkout'});
+    api.closeWin({name: 'address'});
+    api.closeWin({name: 'ordergoodslist'});
+    api.closeWin({name: 'carts'});
+
+    //alert(api.winName);
+    
+
+    // api.sendEvent({
+    //     name: 'orderdone'
+    // });
+    api.openWin({
+        name: 'allorder',
+        url: 'allorder.html',
+        reload:true,
+        bounces: false,
+        pageParam: {dones : 1}
+    });
+    //api.closeWin();
+}
+</script>

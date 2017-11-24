@@ -1,0 +1,361 @@
+<!DOCTYPE>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>好太太商城专题页面</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <link rel="stylesheet" type="text/css" href="../css/banner.css"/>
+    <style>
+/*
+        #header h1 { text-align: center; font-size: 16px; line-height: 46px; font-family: '微软雅黑'; color: #FFF; }
+        .header, #header { width: 100%; position: relative; height: 50px; overflow: hidden; text-align: center; background: url("../../image/toubuhener.jpg"); }
+        #header .back { position: absolute; top: 0; left: 8px; bottom: 0; width: 25px; overflow: hidden; color: transparent; background-repeat: no-repeat; background-position: 50% 50%; }
+        #header .back { background-image: url("../../image/hendjiantou.png"); background-size: 13px 13px; }
+        #header span { color: #FFF; position: absolute; left: 31px; top: 14px; font-size: 16px; }
+
+		.clear{
+			clear:both;
+		}
+        .tap-active{
+            background-color: #999999;
+        }*/
+
+        /*公共头部*/
+        .aui-pull-left {
+            float: left !important;
+        }
+        .aui-bar-nav {
+            top: 0;
+        }
+
+        .aui-bar {
+            position: relative;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 10;
+            width: 100%;
+            background-color: #3498db;
+            /*color: #ffffff;*/
+            color: #000000;
+            display: table;
+            min-height: 45px;
+            line-height: 45px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .aui-bar-dark {
+            /*background-color: #34495e;*/
+            background-color: #ffffff;
+        }
+        .aui-bar .aui-iconfont {
+            position: relative;
+            z-index: 20;
+            font-size: 2rem;
+            color: #ffffff;
+            font-weight: 400;
+            line-height: 4.5rem;
+        }
+        .aui-bar .aui-pull-left {
+            padding-left: 10px;
+            font-size: 1.6rem;
+            font-weight: 400;
+        }
+        .aui-bar .aui-pull-right {
+            padding-right: 1rem;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .aui-icon-left:before { content: "\e679"; color:#000000;}
+
+        .aui-title {
+            position: absolute;
+            width: 100%;
+            margin: 0 -1rem;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .aaaaa{
+            background-color: red;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- <header id="header" class="header">
+    <h1 id='zt_title'></h1>
+    <a tapmode="tap-active" onclick="api.closeWin();" class="back">返回</a>
+</header> 
+ -->
+<!-- 
+    <header id="header" class="header">
+        <h1 id='zt_title'></h1>
+        <a tapmode="tap-active" onclick="api.closeWin()" class="back"></a><span tapmode onclick="api.closeWin()">返回</span>
+    </header> -->
+
+<!--     <header class="gsheader" id="header">
+        <div class="gsheaderdivleft">
+            <a tapmode onclick="api.closeWin();" class="">
+                  <font>&#xe619;</font>返回
+            </a>
+        </div>
+        <h1>
+            <a href="#title-link" class="" id='zt_title'>
+            </a>
+        </h1>
+    </header>
+ -->
+
+
+<header class="aui-bar aui-bar-nav aui-bar-dark" id="header">
+    <a class="aui-pull-left" tapmode onclick="api.closeWin();" >
+        <span class="aui-iconfont aui-icon-left"></span>返回
+    </a>
+    <div class="aui-title" id="zt_title">活动页面</div>
+</header>
+
+
+
+<!--大图-->
+<div class="j-custom-2" >
+    <div class="mc">
+        <div class="j-custom-wrap">
+            <div class="j-module">
+                <img  src=""  style="width:100%;height:auto;" height="348" width="640" alt="" id='zt_img' / >
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="bcontent">
+    
+</div>
+
+
+<script type="text/x-dot-template" id="body-template">
+
+<div class="JShop-m-two-column-30" instanceid="1299452" coefficient="2" style="" module-name="Jshop_ProductID">
+    <div class="mc" style=";  ">
+        <div class="JShop-m-two-column">
+            <ul class="JShop-m-two-column-t" id='zt_xunhuan'>
+
+{{ for(var obj1 in  it) { }}
+             <li tapmode onclick="opengoods({{=it[obj1].goods_id}})";>
+                <div class="module">
+                  <a  class="J_ping">
+                      <p class="img">
+                          <img src="{{=serverUrl_img+'/'+it[obj1].thumb}}" />
+                      </p>
+                      <p class="g-title">{{=it[obj1].goods_name}}</p>
+                      <p class="g-price"><span class="jdNum">{{=it[obj1].shop_price}}</span></p>
+                  </a>
+                </div>
+            </li>
+
+{{ } }}
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+</script>
+
+
+
+
+
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+
+<script>
+page=4;
+apiready = function () {
+    api.parseTapmode();
+    var header = $api.byId('header');
+    fixStatusBar(header);
+
+	var pageParam = api.pageParam;
+    if (!pageParam.cx_style) {
+        api.closeWin({name:api.winName});
+    };
+    if(pageParam.cx_style==1){
+        document.getElementById('zt_title').innerHTML='疯狂抢购';
+        document.getElementById('zt_img').src='http://www.httgo.com/app/images/cuxiao/1.jpg';
+    }else if(pageParam.cx_style==2){
+        document.getElementById('zt_title').innerHTML='热销排行';
+        document.getElementById('zt_img').src='http://www.httgo.com/app/images/cuxiao/2.jpg';        
+    }else if(pageParam.cx_style==3){
+        document.getElementById('zt_title').innerHTML='商城热卖';
+        document.getElementById('zt_img').src='http://www.httgo.com/app/images/cuxiao/3.jpg';        
+    }else if(pageParam.cx_style==4){
+        document.getElementById('zt_title').innerHTML='商城推荐';
+        //document.getElementById('zt_img').src='http://www.httgo.com/app/images/cuxiao/4.jpg';        
+    }else if(pageParam.cx_style==5){
+        document.getElementById('zt_title').innerHTML='最新上架';
+        document.getElementById('zt_img').src='http://www.httgo.com/app/images/cuxiao/5.jpg';        
+    }else if(pageParam.cx_style==6){
+        document.getElementById('zt_title').innerHTML='限时折扣';//首页推荐
+        document.getElementById('zt_img').src='http://www.httgo.com/app/images/cuxiao/6.jpg';        
+    }else if(pageParam.cx_style==7){
+        document.getElementById('zt_title').innerHTML='用品促销';
+        document.getElementById('zt_img').src='http://www.httgo.com/app/images/cuxiao/7.jpg';        
+    }else if(pageParam.cx_style==8){
+        document.getElementById('zt_title').innerHTML='食品促销';
+        document.getElementById('zt_img').src='http://www.httgo.com/app/images/cuxiao/8.jpg';        
+    }    
+	get_activity(pageParam.cx_style,page);
+	//alert(pageParam.cx_style);
+    api.setRefreshHeaderInfo({
+        visible: true,
+        bgColor: 'rgba(0,0,0,0)',
+        textColor: '#666',
+        textDown: '下拉刷新555',
+        textUp: '释放刷新555'  ,
+        showTime: true
+    }, function(ret, err){
+        page+=4;
+        get_activity(pageParam.cx_style,page);
+        api.refreshHeaderLoadDone();
+    });
+
+    api.addEventListener({
+        name: 'scrolltobottom'
+    }, function() {
+            api.showProgress({modal: true });
+            page+=4;
+            get_activity(pageParam.cx_style,page);
+            api.refreshHeaderLoadDone();
+    });
+
+};
+
+
+
+//获取指定栏目下的商品
+function get_activity(cx_style,page){
+
+    //调用 疯狂抢购 热销排行   商城热卖  商城推荐  新品上市
+    //  if(type==1){
+    //      cx_type='is_promote';
+    //  }else if(type==2){
+    //      cx_type='is_volum';
+    //  }else if(type==3){
+    //      cx_type='is_hot';
+    //  }else if(type==4){
+    //      cx_type='is_best';
+    //  }else if(type==5){
+    //      cx_type='is_new';
+    //  }    
+
+    //alert(page);
+	api.showProgress({
+        title: '加载中...',
+        modal: false
+    });
+	  	api.ajax({
+		  	//url:serverUrl+'/app/cuxiao.php',
+            url:serverUrl+'/index.php?act=cuxiao',
+		  	method:'post',
+		  	cache:false,
+		  	timeout:30,
+		  	dataType:'json',
+		  	returnAll:false,
+		    data:{
+		        values: {cx_style:cx_style,limit:page,supplier_id:SUPPLIER_ID}
+		    }		  	
+	  	},function(ret,err){
+	  		if(ret){
+                api.hideProgress();
+                //api.alert({msg:JSON.stringify(ret)});
+                if(!ret.data || ret.data==''){
+                    api.toast({
+                        msg: '此活动已经结束',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    api.closeWin({name:api.winName});
+                    return false;
+                }
+                
+                var template = document.getElementById('body-template').innerHTML;
+                document.getElementById('bcontent').innerHTML=doT.template(template)(ret.data);
+
+
+	  		}else{
+	  			api.alert({
+                 	msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                 	
+                  });
+            }
+            api.hideProgress();
+       })
+}
+
+
+
+function openNewWin (type) {
+    if(type=='search'){
+        api.openWin ({
+            name: type,
+            url: '../detailframes/'+type+'.html',
+            rect:{
+                x:0,
+                y:0,
+                w:'auto',
+                h:'auto'
+            },
+            bounces: false,
+            delay:200
+        });
+    }else{
+        api.openWin ({
+            name: type,
+            url: '../'+type+'.html',
+            rect:{
+                x:0,
+                y:0,
+                w:'auto',
+                h:'auto'
+            },
+            bounces: false,
+            delay:200
+        });
+    }
+
+
+}
+
+
+//打开商品详情页    
+/*function opengoods(goods_id){
+
+    //alert(goods_id);
+        api.openWin ({
+            name: 'goods',
+            url: '../goods.html',
+            pageParam: {goods_id:goods_id},
+            rect:{
+                x:0,
+                y:0,
+                w:'auto',
+                h:'auto'
+            },
+            bounces: false,
+            delay:200
+        });
+
+
+}  */  
+    
+</script>
+</html>

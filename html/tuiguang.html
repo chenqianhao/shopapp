@@ -1,0 +1,593 @@
+﻿<!doctype html>
+<html style="height: 100%;">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/daili.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body  style="background:url(../img/guiguangbg.jpg) no-repeat scroll 0px 1.8rem / 100% 100%; height: 100%; width: 100%;">
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft" tapmode onclick="api.closeWin();">
+          <a>
+                <i> <font>&#xe619;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">
+           我的推广
+          </a>
+      </h1>
+       <div class="gsheaderdivright" tapmpde onclick="kefushow('tuiguang');">
+          <a  class="">
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div> 
+  </header>
+  <div id="tuiguang">
+    
+  <div class="tuiguanginfo">
+  <img src="../img/touxiang.jpg" id="avator" /><span id="realname">我是xxx</br><i>我为果好恰推广</i></span>
+  </div>
+
+  <div class="tuiguangfuzhi"><input type="text" id="url" readonly value="www.httgo.com"  /><button tapmode onclick="copy_input();">复制</button><button  tapmode onclick="share_input('timeline');">分享朋友圈</button><button  tapmode onclick="share_input('session');">分享好友</button></div>
+
+  <div class="tuiguangewm">
+  <img src="../img/ewm.jpg" id="ewm" tapmode onclick="downloadewms(this);" />
+  </div>
+
+
+  </div>
+
+
+
+  
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<!-- <script type="text/javascript" src="../script/doT.min.js"></script> -->
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('tuiguang');
+            return false;
+        }
+        get_tuiguang_info(userid_gs);
+
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            get_tuiguang_info(userid_gs);
+            api.refreshHeaderLoadDone();
+        });
+    }
+
+
+
+    function get_tuiguang_info(user_id){
+        if(!user_id){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        //alert(serverUrl_img);
+      api.ajax({
+          url: serverUrl+'/daili.php?act=tuiguang',
+          method: 'post',
+          timeout: 30,
+          dataType: 'json',
+          returnAll:false,
+          data:{
+              values: {
+                serverUrl_img:serverUrl_img,
+                supplier_id:SUPPLIER_ID,
+                user_id:user_id
+              }
+          }            
+      },function(ret,err){
+          if (ret) {
+            //api.alert({msg:JSON.stringify(ret)});
+            if(ret.code==1104){
+                if(ret.realname){//分享时要调用此realname
+                  var realname=$api.getStorage("realname");
+                  if(realname){
+                      $api.rmStorage('realname');
+                  }else{
+                      $api.setStorage('realname',ret.realname);
+                  }
+                }
+
+                //alert(ret.img.ewm);
+
+                str=''; 
+                str+='<div class="tuiguanginfo">';
+                str+='<img src="'+ret.avator+'" id="avator" /><span id="realname">我是'+ret.realname+'</br><i>我为果好恰推广</i></span>';
+                str+='</div>';
+                str+='<div class="tuiguangfuzhi"><input type="text" id="url" readonly value="'+ret.img.url+'" /><button tapmode onclick="copy_input(this);">复制</button><button tapmode onclick="share_input(\'timeline\');">分享朋友圈</button><button tapmode onclick="share_input(\'session\');">分享好友</button></div>';
+                str+='<div class="tuiguangewm">';
+                str+='<img src="'+ret.img.ewm+'?test='+rand_test(10000,1)+'" id="ewm" onclick="downloadewms(this);" />';
+                str+='</div>';
+
+                document.getElementById("tuiguang").innerHTML=str;
+
+            }else{
+              api.toast({
+                  msg: ret.msg,
+                  duration: 2000,
+                  location: 'bottom'
+              });
+            }
+
+
+          } else {
+              api.alert({
+                  msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+              });
+          };
+      });
+    }
+
+
+
+    function rand_test(m,n){//从n到m的一个随机数
+      var shu=Math.random()*(m-n)+n;
+      //alert(Math.floor(shu));
+      return Math.floor(shu);
+    }
+
+    function copy_input(){
+
+      //alert("复制");
+      var clipBoardContent=$api.val($api.byId("url"))?$api.val($api.byId("url")):'';
+      if(clipBoardContent==''){
+          api.toast({
+              msg: '请先复制推广链接！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          return false;
+      }
+
+      var obj = api.require('clipBoard');
+      obj.set({
+          value: clipBoardContent
+      }, function(ret, err){
+          if(ret.status){
+              api.alert({msg:'复制到剪切板成功'});
+          }else{
+              api.alert({msg:err.msg});
+          }
+      });
+
+
+
+    }
+
+    function share_input(sharetype){
+      //alert("分享");
+
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+          showusercenter("tuiguang");
+        }
+
+
+        //alert(document.getElementById("avator").src);
+        // die();
+
+        var avator=document.getElementById("avator").src?document.getElementById("avator").src:'';
+        var ewm=document.getElementById("ewm").src?document.getElementById("ewm").src:'';
+
+        var realname=$api.getStorage("realname")?$api.getStorage("realname"):"推广员";
+        var title="我是"+realname+",我为果好恰推广!";
+  
+        var url=$api.val($api.byId("url"))?$api.val($api.byId("url")):'';
+        //alert(title+'aaa'+avator+'bbb'+url);
+
+
+        if(!sharetype){//session（会话）timeline（朋友圈）favorite（收藏）
+          sharetype="timeline";
+        }
+
+        //alert(avator);
+        //var file_name='fs://ghaapp/'+ewm.substring(ewm.length-21,ewm.length);
+        var file_names="widget://img/share.png";
+
+          //下载成功
+        var wx = api.require('wx');
+        wx.isInstalled(function(ret, err){
+          if(ret.installed){
+            //alert("当前设备已安装微信客户端");
+            wx.shareWebpage({
+            apiKey: 'wxb17bc249fd3e4260',
+            scene: sharetype,
+            title: title,
+            description: "推广有好礼相送！",
+            thumb: file_names,//此处还不支持http地址avator
+            contentUrl: url
+            }, function(ret, err){
+              if(ret.status){
+                api.toast({
+                    msg: '分享成功',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+              }else{
+                if(err.code==-1){
+                  api.toast({
+                      msg: '未知错误',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==-1){
+                  api.alert({
+                      msg: '分享成功'
+                  });
+                }else if(err.code==1){
+                  api.alert({
+                      msg: 'apiKey非法'
+                  });
+                }else if(err.code==1){
+                  api.alert({
+                      msg: 'apiKey非法'
+                  });
+                }else if(err.code==2){
+                  api.toast({
+                      msg: '用户取消',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==3){
+                  api.toast({
+                      msg: '发送失败',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==4){
+                  api.toast({
+                      msg: '授权拒绝',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==5){
+                  api.toast({
+                      msg: '微信服务器返回的不支持错误',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==6){
+                  api.toast({
+                      msg: '当前设备未安装微信客户端',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==7){
+                  api.toast({
+                      msg: '注册SDK失败',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+              
+                //alert(err.code);
+              }
+            });
+          }else{
+            alert('当前设备未安装微信客户端，请安装微信后再分享。');
+          }
+        });
+
+
+
+        return ;
+
+
+
+
+
+
+
+
+/*
+        api.download({
+            url: ewm,
+            savePath: file_name,
+            report: true,
+            cache: true,
+            allowResume: true
+        },function(ret, err){
+          //alert( JSON.stringify( ret ) );
+            if(ret.state == 1){
+                //下载成功
+              var wx = api.require('wx');
+              wx.isInstalled(function(ret, err){
+                if(ret.installed){
+                  //alert("当前设备已安装微信客户端");
+                  wx.shareWebpage({
+                  apiKey: 'wxb17bc249fd3e4260',
+                  scene: sharetype,
+                  title: title,
+                  description: "推广有好礼相送！",
+                  thumb: file_names,//此处还不支持http地址avator
+                  contentUrl: url
+                  }, function(ret, err){
+                    if(ret.status){
+                      api.toast({
+                          msg: '分享成功',
+                          duration: 2000,
+                          location: 'bottom'
+                      });
+                    }else{
+                      if(err.code==-1){
+                        api.toast({
+                            msg: '未知错误',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                      }else if(err.code==-1){
+                        api.alert({
+                            msg: '分享成功'
+                        });
+                      }else if(err.code==1){
+                        api.alert({
+                            msg: 'apiKey非法'
+                        });
+                      }else if(err.code==1){
+                        api.alert({
+                            msg: 'apiKey非法'
+                        });
+                      }else if(err.code==2){
+                        api.toast({
+                            msg: '用户取消',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                      }else if(err.code==3){
+                        api.toast({
+                            msg: '发送失败',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                      }else if(err.code==4){
+                        api.toast({
+                            msg: '授权拒绝',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                      }else if(err.code==5){
+                        api.toast({
+                            msg: '微信服务器返回的不支持错误',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                      }else if(err.code==6){
+                        api.toast({
+                            msg: '当前设备未安装微信客户端',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                      }else if(err.code==7){
+                        api.toast({
+                            msg: '注册SDK失败',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                      }
+                    
+                      //alert(err.code);
+                    }
+                  });
+                }else{
+                  alert('当前设备未安装微信客户端，请安装微信后再分享。');
+                }
+              });
+
+
+            }else{
+              api.toast({
+                  msg: '网络错误',
+                  duration: 2000,
+                  location: 'bottom'
+              });
+            }
+        });
+
+        return ;
+
+*/
+
+
+
+
+
+
+
+
+/*
+        var wx = api.require('wx');
+        wx.isInstalled(function(ret, err){
+          if(ret.installed){
+            //alert("当前设备已安装微信客户端");
+            wx.shareWebpage({
+            apiKey: 'wxb17bc249fd3e4260',
+            scene: sharetype,
+            title: title,
+            description: "推广有好礼相送！",
+            thumb: avator,//此处还不支持http地址
+            contentUrl: url
+            }, function(ret, err){
+              if(ret.status){
+                api.toast({
+                    msg: '分享成功',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+              }else{
+                if(err.code==-1){
+                  api.toast({
+                      msg: '未知错误',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==-1){
+                  api.alert({
+                      msg: '分享成功'
+                  });
+                }else if(err.code==1){
+                  api.alert({
+                      msg: 'apiKey非法'
+                  });
+                }else if(err.code==1){
+                  api.alert({
+                      msg: 'apiKey非法'
+                  });
+                }else if(err.code==2){
+                  api.toast({
+                      msg: '用户取消',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==3){
+                  api.toast({
+                      msg: '发送失败',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==4){
+                  api.toast({
+                      msg: '授权拒绝',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==5){
+                  api.toast({
+                      msg: '微信服务器返回的不支持错误',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==6){
+                  api.toast({
+                      msg: '当前设备未安装微信客户端',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }else if(err.code==7){
+                  api.toast({
+                      msg: '注册SDK失败',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+              
+                //alert(err.code);
+              }
+            });
+          }else{
+            alert('当前设备未安装微信客户端，请安装微信后再分享。');
+          }
+        });*/
+
+    }
+
+
+    function downloadewm(obj){
+
+      api.download({
+          url: obj.src,
+          savePath: '',//app这块
+          report: true,
+          cache: true,
+          allowResume: true
+      },function( ret, err ){
+          if(ret){
+              //alert( JSON.stringify( ret ) );
+
+              api.saveMediaToAlbum({
+                  path: ret.savePath
+              }, function( ret, err ){ 
+                  if( ret ){
+                      //alert( JSON.stringify( ret ) );
+                      api.toast({
+                          msg: '保存相册成功！',
+                          duration: 2000,
+                          location: 'bottom'
+                      });
+                  }else{
+                       alert( JSON.stringify( err ) );
+                  }
+              });
+
+
+
+          }else{
+              alert( JSON.stringify ( err ) );
+          }
+      });
+
+
+
+
+    }
+
+
+    function downloadewms(obj) {
+        var img=document.getElementById("ewm");
+      api.download({
+          url: img.src,
+          savePath: '',//app这块
+          report: true,
+          cache: true,
+          allowResume: true
+      },function( ret, err ){
+          if(ret){
+            
+             // alert( JSON.stringify( ret ) );
+
+              var sharedModule = api.require('shareAction');
+              sharedModule.share({
+                  type: 'image',
+                  path:ret.savePath
+              });
+
+              // api.saveMediaToAlbum({
+              //     path: ret.savePath
+              // }, function( ret, err ){ 
+              //     if( ret ){
+              //         //alert( JSON.stringify( ret ) );
+              //         api.toast({
+              //             msg: '保存二维码到相册成功！',
+              //             duration: 2000,
+              //             location: 'bottom'
+              //         });
+              //     }else{
+              //          alert( JSON.stringify( err ) );
+              //     }
+              // });
+          }else{
+              alert( JSON.stringify ( err ) );
+          }
+      });
+
+    }
+
+
+ </script>   

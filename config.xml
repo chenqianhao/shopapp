@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget id="A6903655436601" version="1.0.0">
+  <name>果好恰</name>
+  <description></description>
+  <author email="68527761@qq.com" href="http://www.httgo.com/guoshu">frank.chen</author>
+  <content src="index.html"/>
+  <preference name="pageBounce" value="false"/>
+  <preference name="appBackground" value="rgba(0,0,0,0.0)"/>
+  <preference name="windowBackground" value="rgba(0,0,0,0.0)"/>
+  <preference name="frameBackgroundColor" value="rgba(0,0,0,0.0)"/>
+  <preference name="hScrollBarEnabled" value="true"/>
+  <preference name="vScrollBarEnabled" value="true"/>
+  <preference name="autoLaunch" value="true"/>
+  <preference name="fullScreen" value="false"/>
+  <preference name="autoUpdate" value="true"/>
+  <preference name="smartUpdate" value="false"/>
+  <preference name="debug" value="false"/>
+<!--   <preference name="iOS7StatusBarAppearance" value="false"/> -->
+<preference name="statusBarAppearance" value="true" />
+  <permission name="readPhoneState"/>
+  <permission name="call"/>
+  <permission name="sms"/>
+  <permission name="camera"/>
+  <permission name="record"/>
+  <permission name="location"/>
+  <permission name="fileSystem"/>
+  <permission name="internet"/>
+  <permission name="bootCompleted"/>
+  <permission name="hardware"/>
+  <permission name="contact"/>
+  <access origin="*"/>
+<!--   <feature name="weiXin">
+    <param name="urlScheme" value="wxb17bc249fd3e4260"/>
+    <param name="apiKey" value="wxb17bc249fd3e4260"/>
+    <param name="apiSecret" value="f9dc6d1880be8b05007d770c284209ea"/>
+  </feature> -->
+  <feature name="aliPay">
+      <param name="urlScheme" value="AliPayA6996421186444" />
+  </feature>  
+  <feature name="ajpush">
+      <param name="app_key" value="d2fe3738fd6dca1fa27ab237" />
+      <param name="channel" value="your channel" />
+  </feature>
+
+  <feature name="wx">
+    <param name="urlScheme" value="wxb17bc249fd3e4260"/>
+    <param name="apiKey" value="wxb17bc249fd3e4260"/>
+    <param name="apiSecret" value="f9dc6d1880be8b05007d770c284209ea"/>
+  </feature>
+
+  
+  
+<!--   <feature name="weiXin">
+    <param name="urlScheme" value="wx6efaad269b8e707f"/>
+    <param name="apiKey" value="wx6efaad269b8e707f"/>
+    <param name="apiSecret" value="260ffc5b94f5487649ee4bb53e19385e"/>
+  </feature> -->
+  <feature name="wxPay">
+    <param name="urlScheme" value="wxb17bc249fd3e4260"/>
+    <param name="apiKey" value="wxb17bc249fd3e4260"/>
+    <param name="apiSecret" value="f9dc6d1880be8b05007d770c284209ea"/>
+  </feature>
+  <feature name="zhuge">
+      <param name="appKey" value="337dc84340444bf6b7e51ff32a983014" />
+      <param name="appChannel" value="360" />
+  </feature>
+  <feature name="bMap">
+    <param name="android_api_key" value="ZgtoTPKt8nz9c89aQ797wYqaGbQf4Vz9" />
+    <param name="ios_api_key" value="n93K6jVFbXiuOT3OICZxzi5aT5Fw17md" />
+  </feature>
+
+</widget>

@@ -1,0 +1,106 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+         <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../css/shuigou.css">
+</head>
+<body style="background: #f3f4f6;">
+
+
+   <header class="gsheader" id="aui-header">
+        <div class="gsheaderdivleft">
+            <a tapmode onclick="api.closeWin();" class="">
+                  <font>&#xe619;</font>
+            </a>
+        </div>
+        <h1>
+            <a href="#title-link" class="">
+                关于我们
+            </a>
+        </h1>
+
+                    <div class="gsheaderdivright"  tapmode onclick="downloadewms();">
+          <a class="">
+                <i><font>&#xe664;</font></i>
+          </a>
+      </div>
+    </header>
+
+    <div class="classdiv gsabout_us">
+        <h3>
+            <span>
+                <img src="../img/ewm.png" id="fenimg" tapmode onclick="downloadewms();" /></span><i>下载二维码分享给好友</i><em>您的朋友也可以下载好太太商城客户端</em></h3>
+        <ul>
+            <li>
+            <div><em>商城介绍</em><font>&#xe626</font></div>
+            <span class="divspan" style="display: none">果好恰是以好太太商城为依托，覆盖整个黄石地区最大的水果及生鲜网购平台。果好恰，是一家基于互联网技术的现代鲜果服务供应商，提供高品质鲜果产品和个性化鲜果服务。果好恰拥有网站订购，电话订购等多元供应渠道，自建物流，全年无休，闪电配送，拥有完善的售后服务，让客户足不出户，享受到真正健康、美味的鲜果和管家式体贴放心的服务。</span></li>
+
+            <li><div><em>售后服务</em><font>&#xe626</font></div><span style="display: none" class="divspan" >24小时无理由退换货：收货后24小时内，所售商品在不影响二次销售的前提下支持无理由退换货（生鲜商品和生活服务除外）。
+                品质与售后：所有在线商铺均在大冶本地有实体店支持，百分百保证商品质量、物流及售后服务，这是真正的大冶人自己的网上购物平台！</span></li>
+        </ul>
+    </div>
+
+    <script>
+        var divli = document.querySelectorAll(".gsabout_us li");
+        var divfont = document.querySelectorAll(".gsabout_us font");
+        var divspan = document.getElementsByClassName("divspan");
+        divli[0].onclick = function () {
+            if(divspan[0].style.display=="block"){
+                divspan[0].style.display = "none";
+                divfont[0].innerHTML = "&#xe626;";
+            }else{
+                divspan[0].style.display = "block";
+                divfont[0].innerHTML = "&#xe62c;";
+            }
+
+            divspan[1].style.display = "none";
+            divfont[1].innerHTML = "&#xe626";
+        }
+        divli[1].onclick = function () {
+            if(divspan[1].style.display=="block"){
+                divspan[1].style.display = "none";
+                divfont[1].innerHTML = "&#xe626";
+            }else{
+                divspan[1].style.display = "block";
+                divfont[1].innerHTML = "&#xe62c";
+            }
+
+            divspan[0].style.display = "none";
+            
+            divfont[0].innerHTML = "&#xe626";
+        }
+    </script>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<!-- <script type="text/javascript" src="../script/doT.min.js"></script> -->
+<script type="text/javascript">
+
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+    }
+
+
+
+    function downloadewms() {
+        var sharedModule = api.require('shareAction');
+        sharedModule.share({
+            type: 'image',
+            path:'widget://img/ewm.png'
+        });
+    }
+
+
+
+
+</script>

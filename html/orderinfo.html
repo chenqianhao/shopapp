@@ -1,0 +1,248 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        
+        
+    .orderaddress{ width:100%; margin:auto; margin-top:0.5rem;}
+    .divone{ float:left;color: #444; font-size:1.7rem; width:26%;}
+    .divtwo{width:74%; float:left;}
+    .divtwo span,.divtwo strong{width: 100%;text-align: left; display:block; color:#666;}
+    .divtwo span{ font-size:1.5rem;} 
+
+    
+    </style>
+</head>
+<body style="background: #f3f4f6;">
+
+<header class="gsheader" id="header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        <a href="#title-link" class="">
+            订单详情
+        </a>
+    </h1>
+
+    <div class="gsheaderdivright" tapmode onclick='kefushow("orderinfo");'>
+        <a >
+            <i><font>&#xe635;</font></i>
+        </a>
+    </div>
+</header>
+
+
+
+
+
+
+  <div class="orderinfoxinx" id="footer">
+
+
+
+
+    <ul>
+    <li><span>商品总额</span><strong id="goods_amount">￥0.00</strong></li>
+    <li><span>+运费</span><strong id="shipping_fee">3.00</strong></li>
+    <li id="bonusli" style="display:none;"><span>-优惠券</span><strong id="youhuiquan">0.00</strong></li>
+    </ul>
+    <div class="orderinfoxinxdiv1"><em>实付款：<i id="total_fee">￥0.00</i></em><b id="order_time">下单时间：2016-05-17</b></div>
+    
+    
+	  <div class="orderaddress">
+			<div class="divone">配送信息：</div>
+			<div class="divtwo"><span id="address">大冶市大冶大道116号金惠小区好太太办公室</span><strong><i id="consignee">卢超</i>收     TEL：<i id="mobile">13042701942</i></strong></div>
+	  </div>
+    
+    
+  </div>
+
+
+
+</body>
+
+</html>
+
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    apiready = function(){
+        var header = $api.byId('header');
+        fixStatusBar(header);
+
+
+        api.parseTapmode();
+        document.getElementById("bonusli").style.display="none";
+
+        var order_id=api.pageParam.order_id?api.pageParam.order_id:0;
+        var goods_amount=api.pageParam.goods_amount?'￥'+api.pageParam.goods_amount:'￥0.00';
+        var shipping_fee=api.pageParam.shipping_fee?api.pageParam.shipping_fee:'0.00';
+        var youhuiquan=api.pageParam.bonus?api.pageParam.bonus:'0.00';
+        
+        var total_fee = api.pageParam.total_fee ? api.pageParam.total_fee : '￥0.00';
+        var order_time = api.pageParam.order_time ? api.pageParam.order_time: '未获取到';
+        
+        var consignee=api.pageParam.consignee?api.pageParam.consignee:'';
+        var address=api.pageParam.address?api.pageParam.address:'';
+        var mobile=api.pageParam.mobile?api.pageParam.mobile:'';
+        
+        //alert(consignee);
+        //alert(address);
+        //alert(mobile);
+        
+        if(address !=''){
+        	$api.html($api.byId('address'), address);
+        }
+        if(consignee !=''){
+        	$api.html($api.byId('consignee'), consignee);
+        }        
+        if(mobile !=''){
+        	$api.html($api.byId('mobile'), mobile);
+        }        
+        
+        if(!order_id || order_id<1){
+            api.closeWin();
+            return false;         
+        }
+
+        $api.html($api.byId('goods_amount'),goods_amount);
+        //alert(shipping_fee);
+
+        $api.html($api.byId('shipping_fee'),"￥"+parseFloat(shipping_fee).toFixed(2));
+        $api.html($api.byId('total_fee'), total_fee);
+        $api.html($api.byId('order_time'), order_time);
+
+        if(youhuiquan>0){
+            document.getElementById("bonusli").style.display="block";
+            $api.html($api.byId('youhuiquan'), youhuiquan);
+        }
+
+        //alert(order_id);
+        open_order_list_info(order_id);
+
+        api.addEventListener({
+            name: 'shaidan'
+        }, function(ret, err){
+            open_order_list_info(order_id);
+        });
+
+
+    }
+
+    function open_order_list_info(order_id){
+        var header = $api.byId('header');
+        var headerPos = $api.offset(header);
+        var footer = $api.byId('footer');
+        var footerPos = $api.offset(footer);
+        var body_h = $api.offset($api.dom('body')).h;
+
+        api.openFrame({
+            name: 'orderinfo_list',
+            url: 'orderinfo_list.html',
+            reload:true,
+            bounces: false,
+            fixedOn: api.frameName,
+            pageParam: {order_id : order_id},
+            rect: {
+                x: 0,
+                y: headerPos.h+5,
+                w: 'auto',//
+                h: api.winHeight-headerPos.h-footerPos.h-9
+            }
+        });
+
+    }
+
+/*
+    function add_to_cart(goods_id,goods_attr_id){
+        if(!goods_attr_id){
+            goods_attr_id='';
+        }
+        if(!goods_id){
+            api.toast({
+                msg: '该商品不存在！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        var number=1;
+
+        var user_id=$api.getStorage('userid_gs');
+
+        if(!user_id || user_id<1){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+            showusercenter('orderinfo',order_id);
+            return false;
+        }
+
+        api.showProgress({
+            title: '正在加入购物车中...',
+            modal: false
+        });
+            api.ajax({
+                url:serverUrl+'/cart.php?act=add_to_cart',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                returnAll:false,
+                data:{
+                    values: {
+                        goods_id: goods_id,
+                        goods_number:number,
+                        type:1,
+                        user_id:user_id,
+                        goods_spec:goods_attr_id,
+                        supplier_id:SUPPLIER_ID
+                    }
+                }           
+            },function(ret,err){
+                //api.alert({msg:JSON.stringify(ret)});
+                api.hideProgress();
+                if(ret.code==509){
+                  
+                  //更新购物车
+                  api.sendEvent({
+                      name: 'cart',
+                      extra: {user_id:user_id}
+                  });                  
+
+                    api.toast({msg:'加入购物车成功',duration:1000,location:'bottom'});
+                }else{
+                       if(ret.code>0){
+                           api.alert({
+                            msg:(ret.msg)
+                           });                          
+                       }else{
+                           api.alert({
+                            msg:("网络不稳定，无法获取到数据")
+                           });  
+                       }
+
+                }
+                
+           })
+
+
+    }
+*/
+
+ 
+</script>

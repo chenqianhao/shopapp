@@ -1,0 +1,321 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+</head>
+<body>
+
+
+<div id="stylediv">
+    
+</div>
+
+<div id="moban01">  
+</div>
+
+<!--
+<script type="text/x-dot-template" id="body-template">
+
+    <div class="classimg  gstopicimg">
+        <img src="{{= serverUrl_img+'/'+it['topic']['topic_img'] }}">
+    </div>
+    <div class="gstopicnav">
+        {{= it['topic']['title'] }}</div>
+    <div class="gstopicgoods">
+        <ul>
+
+        {{ for(var obj1 in  it.data) { }}
+
+            <li tapmode onclick="opengoods({{=it.data[obj1].goods_id}})";>
+                <div class="gstopicgoodsimg">
+                    <img src="{{=serverUrl_img+'/'+it.data[obj1].goods_thumb}}"></div>
+                <em>{{=it.data[obj1].goods_name}}</em><strong>¥{{=it.data[obj1].shop_price}}</strong><i>¥{{=it.data[obj1].market_price}}</i>
+            </li>
+        {{ } }}
+
+        </ul>
+    </div>
+</script>
+-->
+
+
+<div id="moban02" style="display: none;">
+<!-- <div  class="ztmobantop">
+<img  src="{app_zt_toppng}"/>
+</div>
+
+<div class="ztmobangm">
+<span><i>库存数量:{goods_number}个</i><i>市场价:{shop_price}</i></span>
+<strong>￥{goods_price}元/个</strong>
+<em>抢购时间: {start_time}</em>
+<button>积极抢购</button>
+</div>
+
+<div  class="ztmobanzhong">
+<img  src="{app_zt_zhongpng}"/>
+</div> -->
+<div>
+
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+
+<script>
+    page=4;
+    apiready = function () {
+
+        api.parseTapmode();
+        /*    var header = $api.byId('header');
+        fixStatusBar(header);*/
+        
+        var topic_ids = api.pageParam.topic_id;
+        if (!topic_ids) {
+            api.closeWin({name:api.winName});
+        }
+
+            //alert(topic_ids);
+     
+        topic_id(topic_ids,page);
+      
+
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+            api.hideProgress();
+            page+=4;
+            topic_id(topic_ids,page);
+            api.refreshHeaderLoadDone();
+        });  
+
+
+
+    };
+
+
+
+//获取指定栏目下的商品
+function topic_id(id,page){
+
+  api.showProgress({
+        title: '加载中...',
+        modal: false
+    });
+      api.ajax({
+        //url:serverUrl+'/app/banner.php',
+        url:serverUrl+'/index.php?act=banner_cuxiao',
+        method:'post',
+        cache:false,
+        timeout:30,
+        dataType:'json',
+        returnAll:false,//此处去掉多余的信息一边后面的循环取值
+        data:{
+            values: {topic_id: id,supplier_id:SUPPLIER_ID,page:page}
+        }       
+      },function(ret,err){
+        api.hideProgress();
+        
+        //api.alert({msg:JSON.stringify(ret.topic)});
+        
+        if(ret){
+            str="<style type='text/css'>";
+            str+=ret.topic.ap_css;
+            str+= "</style>";
+            document.getElementById('stylediv').innerHTML = str;
+
+            //if(ret.topic.app_zt_category==1){
+                //alert(ret.topic.app_topic_div);
+
+                if(ret.topic.app_topic_div==null){
+                    api.toast({
+                        msg: '此专题还没有添加div样式',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return ;
+                }
+            
+
+                var str='';
+                str+=ret.topic.app_topic_div;
+                var str2='';
+
+
+                var title = new RegExp('\\{title\\}');
+                str=str.replace(title,ret.topic['title']);
+
+                var topic_img = new RegExp('\\{topic_img\\}');
+                str=str.replace(topic_img,serverUrl_img+'/'+ret.topic['topic_img']);
+
+                var app_zt_toppng = new RegExp('\\{app_zt_toppng\\}');
+                str=str.replace(app_zt_toppng,serverUrl_img+'/'+ret.topic['app_zt_toppng']);
+
+                var app_zt_zhongpng = new RegExp('\\{app_zt_zhongpng\\}');
+                str=str.replace(app_zt_zhongpng,serverUrl_img+'/'+ret.topic['app_zt_zhongpng']);
+
+                var start_time = new RegExp('\\{start_time\\}');
+                str=str.replace(start_time,ret.topic['start_time']);
+
+
+                var end_time = new RegExp('\\{end_time\\}');
+                str=str.replace(end_time,ret.topic['end_time']);
+
+                //需要循环的商品信息的标签
+                for(var i=0,len=ret.data.length;i<len;i++){
+
+                    var div_caa=ret.topic.app_xunhuan_tag;
+                    //api.alert({msg:JSON.stringify(ret.topic.app_xunhuan_tag)});
+                    
+                    var goods_number = new RegExp('\\{goods_number\\}');
+                    div_caa=  div_caa.replace(goods_number,ret.data[i]['goods_number']);
+
+                    var goods_id = new RegExp('\\{goods_id\\}');
+                    div_caa=  div_caa.replace(goods_id,ret.data[i]['goods_id']);
+
+                    var goods_name = new RegExp('\\{goods_name\\}');
+                    div_caa=  div_caa.replace(goods_name,ret.data[i]['goods_name']);
+
+                    var market_price = new RegExp('\\{market_price\\}');
+                    div_caa=  div_caa.replace(market_price,ret.data[i]['market_price']);   
+
+                    var goods_thumb = new RegExp('\\{goods_thumb\\}');
+                    div_caa=  div_caa.replace(goods_thumb,serverUrl_img+'/'+ret.data[i]['goods_thumb']);   
+
+                    var goods_img = new RegExp('\\{goods_img\\}');
+                    div_caa=  div_caa.replace(goods_img,serverUrl_img+'/'+ret.data[i]['goods_img']); 
+
+                    var shop_price = new RegExp('\\{shop_price\\}');
+                    div_caa=  div_caa.replace(shop_price,ret.data[i]['shop_price']); 
+
+                    var goods_price = new RegExp('\\{goods_price\\}');
+                    div_caa=  div_caa.replace(goods_price,ret.data[i]['goods_price']);
+
+                    var start_times = new RegExp('\\{start_times\\}');
+                    div_caa=  div_caa.replace(start_times,ret.data[i]['start_times']);
+
+                    var end_times = new RegExp('\\{end_times\\}');
+                    div_caa=  div_caa.replace(end_times,ret.data[i]['end_times']);
+
+                    var start_time = new RegExp('\\{start_time\\}');
+                    div_caa=div_caa.replace(start_time,getDate(ret.topic['start_time']));
+
+                    var end_time = new RegExp('\\{end_time\\}');
+                    div_caa=div_caa.replace(end_time,getDate(ret.topic['end_time']));
+
+                    str2+=div_caa;
+
+                }
+
+                //自定义的循环标签cycle_label,把循环的html替换其中
+                var cycle_label= new RegExp('\\{cycle_label\\}');
+                str=str.replace(cycle_label,str2);
+
+
+                //alert(str);
+                document.getElementById("moban01").innerHTML=str;
+
+                //str.str_replace('{goods_number}','3');
+/*                document.getElementById("moban02").style.display="block";
+                document.getElementById("moban02").innerHTML=str;
+                document.getElementById("moban01").style.display="none";
+
+                return false;
+            }else{
+
+       
+                if(!ret.data || ret.data==''){
+
+                    api.toast({
+                        msg: '此活动已经结束',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    api.closeWin({name:api.winName});
+                    return;
+                }
+
+                var template = document.getElementById('body-template').innerHTML;
+                document.getElementById('moban01').innerHTML=doT.template(template)(ret);
+
+            }*/
+
+
+        }else{
+          api.alert({
+                  msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                  
+                  });
+            }
+            
+       })
+}
+
+
+
+
+
+
+function openNewWin (type) {
+    if(type=='search'){
+        api.openWin ({
+            name: type,
+            url: '../detailframes/'+type+'.html',
+            rect:{
+                x:0,
+                y:0,
+                w:'auto',
+                h:'auto'
+            },
+            bounces: false,
+            delay:200
+        });
+    }else{
+        api.openWin ({
+            name: type,
+            url: '../'+type+'.html',
+            rect:{
+                x:0,
+                y:0,
+                w:'auto',
+                h:'auto'
+            },
+            bounces: false,
+            delay:200
+        });
+    }
+
+
+}
+
+
+//打开商品详情页    
+/*function opengoods(goods_id){
+
+    //alert(goods_id);
+        api.openWin ({
+            name: 'goods',
+            url: '../goods.html',
+            pageParam: {goods_id:goods_id},
+            rect:{
+                x:0,
+                y:0,
+                w:'auto',
+                h:'auto'
+            },
+            bounces: false,
+            delay:200
+        });
+
+
+}  */  
+    
+</script>

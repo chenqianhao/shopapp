@@ -1,0 +1,190 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+    <script type="text/javascript" src="../script/TouchSlide.1.0.js"></script>
+
+</head>
+<body style="background: #f3f4f6;">
+
+
+<div id="goodscommentlist"></div>
+
+
+
+<script type="text/x-dot-template" id="body-template">
+
+<div class="classdiv gsgoodscommentlist">
+    <ul>
+
+    {{for(var i=0,len=it.length;i<len;i++){}}
+        <li><span>
+            <img src="{{=serverUrl+'/'+it[i].avator}}" /><i>{{=it[i].user_name}}</i><b>{{=getDate(it[i].addtime)}}</b></span>
+            <spanc class="iconfont";><em>
+            <i>
+
+            <div class="iconfont wujiaoxing";><em>
+            
+            <i>
+            {{for(var x=it[i].xingji;x>0;x--){}}
+                &#xe64e;
+            {{}}}
+            </i>
+            {{for(var x=it[i].xingji;x<5;x++){}}
+                &#xe64e;
+            {{}}}
+            </em></div>
+
+            {{for(var j=0,lens=it[i]['content'].length;j<lens;j++){}}
+            <div class="wujiaoxing">{{=it[i].content[j]['evaluate']}}</div>
+
+            <p>
+
+                {{for(var k=0,lenss=it[i].content[j]["images"].length;k<lenss;k++){}}
+                    {{if(it[i].content[j]['images'][k]){}}
+                    <img src="{{=serverUrl+'/'+it[i].content[j]['images'][k]}}" tapmode onclick="scanimages({{=k}},this);" />
+                    {{}}}
+                {{}}}
+            </p>
+             {{}}}
+            
+            {{if(it[i].goods_attr){}}
+             <div class="gsgoodscommentlistcite"> 规格：{{=it[i].goods_attr}}</div>
+            {{}}}
+             <div class="gsgoodscommentlistcite"> 购买日期：{{=getDate(it[i].order_time)}}</div>
+
+        </li>
+    {{}}}
+
+
+
+
+     
+    </ul>
+</div>
+
+</script>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+
+<script type="text/javascript">
+
+    
+    apiready = function(){
+        api.parseTapmode();
+
+        // api.toast({
+        //     msg: '暂未开放评论',
+        //     duration: 2000,
+        //     location: 'bottom'
+        // });
+
+        // api.closeWin();
+        // 
+        
+        var goods_id=$api.getStorage("goods_id");
+        if(!goods_id){
+            api.toast({
+                msg: '请重新选择商品',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeWin();
+            return false;
+        }
+
+		goods_next(api.frameName);
+
+        get_pingjia_shaidan(goods_id);
+
+    }
+    // function guanbi(){
+    //   api.closeWin({name: 'goods'});
+    //   api.closeWin({name: 'goodsinfo'});
+    //   api.closeWin({name: 'goodscomment'});
+    // }
+
+
+    function get_pingjia_shaidan(goods_id){
+
+
+        api.ajax({
+            url: serverUrl+'/user.php?act=get_pingjia_shaidan',
+            method : 'POST',
+            timeout : '30',
+            dataType : 'json',
+            returnAll : false,
+            cache :true,
+            data:
+            {
+                values:{
+                    goods_id:goods_id,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret, err){
+                //api.alert({msg:JSON.stringify(ret.info)});
+                if (ret){
+                    if(ret.code==994){
+                      var template = document.getElementById('body-template').innerHTML;
+                      document.getElementById('goodscommentlist').innerHTML=doT.template(template)(ret.info);
+                    }else{
+                      api.toast({
+                          msg: ret.msg,
+                          duration: 2000,
+                          location: 'bottom'
+                      });
+                      document.getElementById("goodscommentlist").innerHTML="    <div class='gsnopinglun'> <span><font>&#xe695;</font></span> <strong>暂无评论</strong> </div>  ";
+                    }
+                }
+                else{
+                    api.alert({msg:JSON.stringify(err)});
+                }
+        })
+
+
+
+    }
+
+
+    function scanimages(index,e){
+
+        var piclist=e.parentNode.childNodes;
+        var picarray=new Array();　
+        for(var i=0,len=piclist.length;i<len;i++){
+            if(piclist[i].src!=null){
+                picarray.push(piclist[i].src);
+            }
+        }
+
+        //alert(index);
+        //api.alert({msg:JSON.stringify(picarray)});
+
+        var photoBrowser = api.require('photoBrowser');
+        photoBrowser.open({
+            images: picarray,
+            activeIndex: index,
+            placeholderImg: 'widget://res/img/nonepic.jpg',
+            bgColor: '#000'
+        }, function(ret){
+            //alert(JSON.stringify(ret));
+            if( ret.eventType == 'click' ){//长按事件
+                photoBrowser.close();
+            }else{
+                alert( JSON.stringify( err ) );
+            }
+        });        
+    }
+
+</script>

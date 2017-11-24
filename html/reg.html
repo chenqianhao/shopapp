@@ -1,0 +1,376 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body style="background-color: #f5f5f5;">
+
+<header class="gsheader" id="header">
+  <div class="gsheaderdivleft">
+      <a  tapmode onclick="api.closeWin();">
+            <i> <font>&#xe619;</font></i>
+      </a>
+  </div>
+  <h1>
+      <a >
+       用户注册 
+      </a>
+  </h1>
+</header>
+
+
+
+      <div class="gsregisterlogo classimg">
+        <img src="../img/logo.png" />
+    </div>
+
+      <div class="classdiv gsrightlist classinputf">
+        <ul>
+            <li>
+                <input name="name" id="username" type="text" placeholder="用户帐号" /></li>
+                      <li>
+                <input name="nble" type="text" placeholder="绑定手机" id="phone" />
+                <span id="defaultyzm" tapmode onclick='hqyzm(this);' style="display:block;">获取验证码</span>
+                <span id="huoquyzm"  style="display:none;">获取验证码</span>
+                </li>
+                                      <li>
+                <input name="vericode" id="vericode" type="text" placeholder="请输入短信验证码" /></li>
+            <li>
+                <input name="pass" id="password" type="password" placeholder="密码" /></li>
+                            <li>
+                <input id="confirm_password" name="passn" type="password" placeholder="确认密码" /></li>
+
+                                      <li>
+                <input name="yqm" id="yqm" type="text" placeholder="邀请码" /></li>
+        </ul>
+        <input type="hidden" name="xuanzhe" id="xuanzhe" value="1" />
+        <input type='hidden'  name='yzid' id='yzid'  /> 
+    </div>
+
+
+    <button class="classbtn gslogginbtn" tapmode onclick="register();">
+        立即注册帐号</button>
+    <div class="gslogininfo">
+    <span tapmode onclick="logins();">现在去登录</span>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/md5.js" ></script>
+ <script type="text/javascript">
+    var wait=30;
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+        //shouji();
+    }
+
+
+/* function shouji(){
+     var  shouji=document.getElementById("shouji");
+    var  you=document.getElementById("youxiang");
+      var  email=document.getElementById("email");
+      var shou=document.getElementById('shou');
+    shou.style.display='block';
+    email.style.display='none';
+    shouji.style.background='#ffc809';
+    youxiang.style.background='#f3f4f6';
+    document.getElementById('xuanzhe').value="1"; 
+   
+  }
+ function email(){
+      var  shouji=document.getElementById("shouji");
+      var  you=document.getElementById("youxiang");
+      var  email=document.getElementById("email");
+      var shou=document.getElementById('shou');
+      email.style.display='block';
+      shou.style.display='none';
+      youxiang.style.background='#ffc809'; 
+      shouji.style.background='#f3f4f6';
+      document.getElementById('xuanzhe').value="2";
+  }
+*/
+  //检测手机号是否正确
+  function checkPhone(phone){
+    var reg = /^1\d{10}$/;
+    return reg.test(phone);
+  }
+  //检测邮箱是否正确
+  function checkEmail(email){
+    var reg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+    return reg.test(email);
+  }
+
+  function register(){
+    var xuanzhe=document.getElementById('xuanzhe').value;
+    var emails = $api.val($api.byId('emails'))?$api.val($api.byId('emails')):'';
+    var phone = $api.val($api.byId('phone'))?$api.val($api.byId('phone')):'';
+    if(xuanzhe==1){//手机注册
+      if( phone == ''  ||  checkPhone(phone)==false){
+        api.toast({msg: '请先输入正确的手机号注册', location: 'middle'});
+        return;
+      }
+    }else{
+      if( emails == ''  || checkEmail(emails)==false){
+        api.toast({msg: '请先输入正确的邮箱注册', location: 'middle'});
+        return;
+      }      
+    }
+
+    var username = $api.val($api.byId('username'))?$api.val($api.byId('username')):'';
+    var password = $api.val($api.byId('password'));
+    var confirm_password = $api.val($api.byId('confirm_password')); 
+
+    var yqm = $api.val($api.byId('yqm'))?$api.val($api.byId('yqm')):'';
+
+    var vericode= $api.val($api.byId('vericode'))?$api.val($api.byId('vericode')):'';
+    
+
+    if( password == '' || password == undefined || password.length<6){
+      api.toast({msg: '密码不能为空且大于6个字符!', location: 'middle'});
+      return;
+    }   
+
+    if( password !== confirm_password){
+      api.toast({msg: '两次输入的密码不一致!', location: 'middle'});
+      return;
+    }  
+
+    if(username !=''){
+      if(username.length<6){
+        api.toast({msg: '用户名必须大于6个字符,并且不能是中文!', location: 'middle'});
+        return;        
+      }
+    }
+
+    if(vericode ==''){
+        api.toast({msg: '验证码必须填写!', location: 'middle'});
+        return;
+    }
+
+    var yzid = $api.val($api.byId('yzid'))? $api.val($api.byId('yzid')):'';
+    if(yzid=='' ){
+        api.toast({msg: '请先获取手机验证码！', location: 'middle'});
+        return;       
+    }
+
+    //生成4位的随机数
+    var ec_salt = Math.floor(Math.random()*9000)+1000;
+    var passwords = hex_md5(password+ec_salt);
+    var confirm_passwords = hex_md5(confirm_password+ec_salt);
+      api.ajax({
+          url:serverUrl+'/user.php?act=reg_app',
+          method:'post',
+          cache:false,
+          timeout:30,
+          dataType:'json',
+        data:{
+              values:{
+                xuanzhe:xuanzhe,//1手机2邮箱
+                phone: phone,
+                email: emails,
+                user_name:username,
+                pwd:passwords,
+                back_act:"login",
+                confirm_pwd:confirm_passwords,
+                yqm:yqm,
+                ec_salt:ec_salt,
+                vericode:vericode,
+                yzid:yzid,
+                supplier_id:SUPPLIER_ID
+              }
+            },
+          returnAll:false,
+          },function(ret,err){
+          if(ret){
+            //api.alert({msg:JSON.stringify(ret)});
+            //return false;
+
+            if(ret.code==21){//注册成功
+                //ret['user_id']
+                //ret['uname']
+                //ret['back_act']
+                if(ret['back_act']=='login'){
+                    logins();
+                }else{
+                  api.openWin({
+                      name: ret.back_act,
+                      url: ret.back_act+'.html',
+                      bounces: false,
+                  });                  
+                }
+
+            }else{
+              api.toast({msg: ret.msg, location: 'middle'});
+                    api.hideProgress();
+                  return false;
+            }
+        }else{
+            api.alert({
+                    msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                    });
+              }
+      });
+ 
+  }
+
+
+//检测代理是否存在
+  function chkdaili(){
+    var yqm = $api.val($api.byId('yqm'))?$api.val($api.byId('yqm')):'';
+    if(yqm==''){
+      api.toast({
+          msg: '请先输入邀请人再检验！',
+          duration: 2000,
+          location: 'middle'
+      });
+    }
+       api.ajax({
+          url:serverUrl+'/user.php?act=checkyqm',
+          method:'post',
+          cache:false,
+          timeout:30,
+          dataType:'json',
+        data:{
+              values:{
+                yqm:yqm,
+                supplier_id:SUPPLIER_ID
+              }
+            },
+          returnAll:false,
+          },function(ret,err){
+          if(ret){
+            api.alert({msg:JSON.stringify(ret)});
+            return false;
+        }else{
+            api.alert({
+                    msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                    });
+              }
+      });   
+  }
+
+
+
+   function logins(){
+
+        var jsfun = 'closegroup(4);';
+        api.execScript({
+            name: 'root',
+            script: jsfun
+        });
+
+        api.openWin({
+            name: 'root',
+            url: '../index.html',
+            bounces: false,
+            pageParam: {"aaa" : 4}
+        });
+
+   }
+
+
+  function hqyzm(o){
+    //alert('获取验证码');
+    var phone = $api.val($api.byId('phone'));
+    if(phone == '' ||  checkPhone(phone)==false){
+          api.toast({msg: '请输入正确的手机号码', location: 'middle'});
+          return;
+    }
+
+    time(1); 
+
+    //sendCode();
+    //return false;
+
+    //return false;
+    //verifycode表中的status=3正面是手机app发送的验证码（此处修改了/sms/sms.php?act=send文件）
+    //php中应该先验证手机号码是否已经注册，已经注册了不让发送验证码了
+    //alert(serverUrl+'/sms/sms.php?act=reg_app&mobile='+phone);
+    
+    //alert(serverUrl_img+'/sms/sms.php?act=reg_app_supplier&mobile='+phone);
+    api.ajax({
+          url:serverUrl_img+'/sms/sms.php?act=reg_app_supplier&mobile='+phone,
+          method:'POST',
+          cache:false,
+          timeout:30,
+          dataType:'json',
+        data: {
+              values:{supplier_id: SUPPLIER_ID}
+            },
+          returnAll:false,
+          },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+          if(ret){
+             //alert(ret.id);//插入数据库验证码的id
+             //$api.setStorage('yzid', ret.id);//1.设置进入本地缓存
+             document.getElementsByName("yzid")[0].value=ret.id;//2.把值放到隐藏表单（两种方法可以取到值）
+           if(ret.codes==2){
+            api.alert({
+                msg: '验证码发送成功！'
+            });
+           }
+        }else{
+            api.alert({
+                    msg:('验证码发送失败，请重新发送！')
+                    });
+              }
+      }); 
+
+  }
+  
+
+  //验证码倒计时函数,要在开头定义时间wait=30
+  function time(id) {
+
+
+    if(id && id>0){
+      id=1;
+    }else{
+      id=0;
+    }
+
+
+    if (wait == 0) {
+
+      document.getElementById('defaultyzm').style.display="block";
+      document.getElementById('huoquyzm').style.display="none";
+
+      //o.removeAttribute("disabled");
+      //o.innerHTM="获取验证码";
+      wait = 30;
+      if(id==1){
+        time(0);
+      }
+
+
+    } else {
+      document.getElementById('defaultyzm').style.display="none";
+      document.getElementById('huoquyzm').style.display="block";
+      document.getElementById('huoquyzm').innerHTML="重新发送(" + wait + ")";
+      //o.setAttribute("disabled", true);
+      //o.innerHTML="重新发送(" + wait + ")";
+      wait--;
+      setTimeout(function() {
+        time(0)
+      },
+      1000)
+    }
+  }
+
+
+
+
+
+
+
+
+</script>

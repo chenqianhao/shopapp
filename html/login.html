@@ -1,0 +1,152 @@
+﻿<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>登录</title>
+    <link rel="stylesheet" href="../css/whq/whqzhuche.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+
+<body>
+<header>
+</header>
+
+<div id="one1">
+         <div class="forms">
+               <ul>
+                   <li><input type="text" name="name" class="iconfont" placeholder="&#xe603 请输入用户名" id="account"></li>
+                   <li><input type="password" name="pass" class="iconfont" placeholder="&#xe601 请输入密码" id="usrpw"></li>
+                   <li style="border: 0px none;"><input type="button" name="sub" class="subno" value="立即登录" tapmode onclick="login();"></li>
+                   <li style="border: 0px none;">
+                   <span style="float:left;" tapmode onclick="openHtmlWin('reg');">账号注册</span>
+                   <span style="float:right;" tapmode onclick="openHtmlWin('forgetpwd');">找回密码</span>
+                   </li>
+               </ul>
+         </div>  
+</div>
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+    }
+        
+    function login(){
+        var account = $api.val($api.byId('account'));
+        var password = $api.val($api.byId('usrpw'));
+        if (password =='' || password == undefined) {
+            api.toast({ msg: '请输入密码', location: 'middle' });
+            return;
+        }
+        if (account == '' || account == undefined) {
+            api.toast({ msg: '请输入账号', location: 'middle' });
+            return;
+        } else {
+            doNetRequest(account, password);
+        }
+    }
+
+  function doNetRequest(account, password){
+    //alert(account+password);
+    api.showProgress({title: '登录中', modal: false});
+    //打开登陆页面传了参数
+    var back_act=api.pageParam.back_act?api.pageParam.back_act:'usercenter';
+    var goods_id=api.pageParam.goods_id?api.pageParam.goods_id:'';//当登陆后要返回商品页时
+    api.ajax({
+       url: serverUrl+'/user.php?act=login_app',
+       method: 'post',
+       cache: false,
+          timeout: 30,
+          dataType: 'json',
+          data: {
+            values:{username: account, userpwd: password,goods_id:goods_id,back_act:back_act,supplier_id:SUPPLIER_ID}
+          }
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            api.hideProgress();
+            if (ret) {
+              if(ret.code==43){//登陆成功
+                  api.closeWin({
+                      name: 'reg'
+                  });
+                  //api.toast({msg: ret.msg, location: 'middle'});
+                  //缓存登陆
+                  var userid_gs = $api.getStorage('userid_gs');
+                  var username_gs = $api.getStorage('username_gs');
+                  var avator_gs = $api.getStorage('avator_gs');
+                  if(userid_gs){
+                      $api.rmStorage('userid_gs');
+                  }
+                  if(username_gs){
+                      $api.rmStorage('username_gs');
+                  }   
+                  if(avator_gs){
+                      $api.rmStorage('avator_gs');
+                  }
+
+                  $api.setStorage('userid_gs', ret.data.user_id);
+                  $api.setStorage('username_gs', ret.data.user_name);
+                  $api.setStorage('avator_gs', ret.data.avator);
+
+                  //alert(ret.data.user_id);
+                  //发放登录广播，方便要更新数据的页面更新数据
+                  api.sendEvent({
+                      name: 'login',
+                      extra: {userid_gs:ret.data.user_id,username_gs:ret.data.user_name,avator_gs:ret.data.avator}
+                  });
+                  api.sendEvent({
+                      name: 'cart',
+                      extra: {user_id:ret.data.user_id}
+                  });
+
+
+                  //页面跳转
+                  //alert(ret.back_act);
+                  //
+                  if(ret.back_act=="usercenter"){//此处应该考虑所有framegroup里面的页面
+                      showcenter(); 
+
+                  }else{
+                      api.openWin({
+                          name: ret.back_act,
+                          url: ret.back_act+'.html',
+                          bounces: false,
+                          reload:true,
+                          pageParam: {goods_id : ret.goods_id}
+                      });                    
+                  }
+
+              }else{
+                  api.toast({msg: ret.msg, location: 'middle'});
+                  return false;                
+              }                
+          } else {
+              api.alert({
+                  msg : ('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+              });
+          };
+      });
+  }
+
+//进入首页的购物车
+    function showcenter(){
+        var jsfun = 'closegroup(3);';
+        api.execScript({
+            name: 'root',
+            script: jsfun
+        });
+
+
+
+        api.openWin({
+            name: 'root',
+            url: '../index.html',
+            //reload:true,
+            bounces: false,
+            pageParam: {"aaa" : 4}
+        });
+    }
+
+</script>

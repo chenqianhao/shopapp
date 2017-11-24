@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/aui.2.0.css"/>
+    <style>
+    	body{
+
+    	}
+
+    </style>
+</head>
+<body>
+
+
+
+<div class="bigbox">
+	<!--
+	<div class="aui-bar aui-bar-btn aui-bar-btn-sm aui-bar-btn-full">
+	    <div class="aui-bar-btn-item aui-active">步行</div>
+	    <div class="aui-bar-btn-item">公交车</div>
+	    <div class="aui-bar-btn-item">驾车</div>
+	</div>
+	 -->
+
+
+
+
+
+	<div style="width:100%;position:fixed;bottom:0;left:0;">
+	 	<div class="aui-bar aui-bar-btn aui-bar-btn-full" id='action_nav' style="height:2.5rem;">
+	 		<div class="aui-bar-btn-item aui-active" tapmode onclick="search_route(this,0);">地图</div>
+		    <div class="aui-bar-btn-item" tapmode onclick="search_route(this,1);">步行</div>
+		    <div class="aui-bar-btn-item" tapmode onclick="search_route(this,2);">公交车</div>
+		    <div class="aui-bar-btn-item" tapmode onclick="search_route(this,3);">驾车</div>
+		</div>
+	</div>
+
+</div>
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+
+	lons='114.97744593264538';
+	lats='30.106388000690433';
+
+	apiready = function(){
+		//alert("ccccc");
+		//api.alert({msg:JSON.stringify(api.pageParam.cansu)});
+		show_map_info();
+
+	}
+
+
+	function show_map_info(){
+
+
+
+		var alldiv=document.getElementById('action_nav').getElementsByTagName('div');
+		for(var i=0,len=alldiv.length;i<len;i++){
+			if($api.hasCls(alldiv[i], 'aui-active')){
+				$api.removeCls(alldiv[i], 'aui-active');
+			}
+			if(i==0){
+				$api.addCls(alldiv[i], 'aui-active');
+			}
+		}
+
+
+
+		//return ;
+		var map = api.require('bMap');
+		//根据地址查询经纬度
+/*
+		map.getCoordsFromName({
+		    city: '黄石',
+		    address: '大冶市荟萃北路27号'
+		}, function(ret, err) {
+		    if (ret.status) {
+		        alert(JSON.stringify(ret));
+		        console.log(ret.lon);
+		        console.log(ret.lat);
+		    }
+		});
+*/
+
+		var action_nav=$api.offset($api.byId('action_nav')).h;
+
+
+		map.open({
+		    rect: {
+		        x: 0,
+		        y: 0,
+		        w: api.frameWidth,
+		        h: api.frameHeight-action_nav
+		    },
+		    center: {
+		        lon: lons,
+		        lat: lats
+		    },
+		    zoomLevel: 18,
+		    showUserLocation: true,
+		    fixedOn: api.frameName,
+		    fixed: true
+		}, function(ret) {
+		    if (ret.status) {
+		        //alert('地图打开成功');
+		        //api.alert({msg:JSON.stringify(ret)});
+				biaozhu();
+				map.annotationExist({
+				    id: 1
+				}, function(ret) {
+				    if (ret.status) {
+				        //api.alert({ msg: '存在' });
+
+
+						map.addBillboard({
+						    id: 1,
+						    coords: {
+						        lon: lons,
+						        lat: lats
+						    },
+						    bgImg: 'widget://image/bMapTest.png',
+						    content: {
+						        title: '果好恰',
+						        subTitle: '大冶好太太连锁超市源君店'
+						    },
+						    styles: {
+						        titleColor: '#000',
+						        titleSize: 16,
+						        subTitleColor: '#999',
+						        subTitleSize: 10,
+						        illusAlign: 'left'
+						    }
+						}, function(ret) {
+						    if (ret) {
+						        //alert(JSON.stringify(ret));
+						    }
+						});
+
+
+				    }
+				});
+
+		    }
+		});
+
+
+
+	}
+
+
+	//地图上标注
+	function biaozhu(){
+		//alert(lons);
+		//alert(lats);
+		var map = api.require('bMap');
+		map.addAnnotations({
+		    annotations: [{
+		        id: 1,
+		        lon: lons,
+		        lat: lats
+		    }],
+		    icon: 'widget://',
+		    draggable: true
+		}, function(ret) {
+			//api.alert({msg:JSON.stringify(ret)});
+		    if (ret && ret.id==1) {
+		        //alert(ret.id);
+
+		    }
+		});
+
+
+	}
+
+
+
+
+	function search_route(el,type){
+
+
+		var alldiv=document.getElementById('action_nav').getElementsByTagName('div');
+		for(var i=0,len=alldiv.length;i<len;i++){
+			if($api.hasCls(alldiv[i], 'aui-active')){
+				$api.removeCls(alldiv[i], 'aui-active');
+			}
+			if(alldiv[i]==el){
+				$api.addCls(alldiv[i], 'aui-active');
+			}
+		}
+
+		//alert(type);
+		switch(type)
+		{
+		case 1:
+		  style_type="walk";
+		  break;
+		case 2:
+		  //alert('公交车');
+		  style_type="transit";
+		  break;
+		case 3:
+		  style_type="driver";
+		  break;
+		default:
+		  //alert('默认路线');
+		  style_type="";
+		}
+
+		//alert(style_type);
+
+		if(style_type==''){
+			show_map_info();
+		}else{
+
+			//获取自身的地址
+			var bMap = api.require('bMap');
+			bMap.getLocation({
+			    accuracy: '10m',
+			    autoStop: true,
+			    filter: 1
+			}, function(ret, err) {
+			    if (ret.status) {
+			        //alert(JSON.stringify(ret));
+			        //alert(style_type);
+				    //get_instance_two(ret.lon,ret.lat,lons,lats);
+					var policys='';
+				    if(style_type=='transit'){
+				    	policys='ebus_time_first';
+				    }else if(style_type=='driver'){
+				    	policys='ecar_fee_first';
+				    }else{
+				    	policys='';
+				    }
+
+					bMap.searchRoute({
+					    id: 1,
+					    type: style_type,
+					    policy: policys,
+					    start: {
+					        lon: ret.lon,
+					        lat: ret.lat
+					    },
+					    end: {
+					        lon: lons,
+					        lat: lats
+					    }
+					}, function(ret, err) {
+					    if (ret.status) {
+					        //api.alert({ msg: JSON.stringify(ret) });
+
+					        bMap.drawRoute({
+					            id: 1,
+					            autoresizing: false,
+					            index: 0,
+					            styles: {
+					                start: {
+					                    icon: 'widget://image/bmap_start.png'
+					                },
+					                end: {
+					                    icon: 'widget://image/bmap_end.png'
+					                }
+					            }
+					        }, function(ret) {
+					            api.alert({ msg: JSON.stringify(ret) });
+					        });
+
+
+					    }else{
+					    	api.toast({
+	                            msg:'暂未查询到该线路信息！'
+                            });
+					    }
+					});
+
+
+
+			    } else {
+			        //alert(err.code);
+			        api.toast({
+	                    msg:'获取我的当前位置失败'
+                    });
+                    show_map_info();
+                    return;
+			    }
+			});
+
+		}
+
+
+	}
+
+
+
+	//获取两点间的距离
+	function get_instance_two(l1,l2,l3,l4){
+		var bMap = api.require('bMap');
+	    bMap.getDistance({
+		    start: {
+		        lon: l1,
+		        lat: l2
+		    },
+		    end: {
+		        lon: l3,
+		        lat: l4
+		    }
+		}, function(ret) {
+		    if (ret.status) {
+		        //alert(ret.distance);
+		        var juli="未获取到距离";
+		        var distances=Math.round(ret.distance);
+		        if(distances<1000){
+		        	juli=distances+'m';
+		        }else{
+		        	juli=Math.floor(distances*100/1000)/100+'km';
+		        }
+		        alert(juli);
+		    }
+		});
+
+	}
+</script>
+</html>

@@ -1,0 +1,155 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+     <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../css/shuigou.css">
+
+</head>
+<body style="background: #f3f4f6;">
+
+
+   <header class="gsheader" id="aui-header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        <a href="#title-link" class="">
+            账号安全
+        </a>
+    </h1>
+
+     <div class="gsheaderdivright" tapmpde onclick="kefushow('usersecurity');">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+    </div>
+</header>
+
+<div class="gsusersecurity  classdiv">
+<ul>
+<li tapmode onclick="openHtmlWin('editpwd');"><span>修改密码</br><em>*建议您定期更改密码以保护帐号安全</em></span><strong></strong></li>
+<li tapmode onclick="opneyanzhen();"><span>手机验证<i id="mobile">您还没有绑定手机号</i></br><em>*若您的验证手机已丢失或停用,请立即修改更换</em></span><strong></strong></li>
+
+
+<li tapmode onclick="opneyz_email();"><span>邮箱验证<i id="email">您还没有绑定邮箱</i></br><em>*若您的邮箱已丢失或停用,请立即修改更换</em></span><strong></strong></li>
+
+<li tapmode onclick="openHtmlWin('securitytip');"><span>安全Tips</span><strong></strong></li>
+</ul>
+</div>
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+    bangding=0;//0未绑定手机号 已经绑定手机号直接赋值手机号
+    b_email='';//''未绑定邮箱 已经绑定邮箱直接赋值邮箱
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('profile');
+        }
+
+        user_info(userid_gs);
+
+        api.addEventListener({
+            name: 'approvemobile'
+        }, function(ret, err){
+            var userid_gs=$api.getStorage('userid_gs');
+            if(!userid_gs){
+                showusercenter('profile');
+            }   
+
+            user_info(userid_gs);         
+        });
+
+    }
+
+
+
+
+    function user_info(user_id){
+        if(!user_id || user_id<1){
+            showusercenter('profile');
+        }
+
+        api.showProgress({title: '用户信息加载中……', modal: true});
+            api.ajax({
+                url:serverUrl+'/user.php?act=user_info',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                data: {
+                    values:{
+                        user_id:user_id,
+                        supplier_id:SUPPLIER_ID
+                    }
+                },       
+                returnAll:false,
+            },function(ret,err){
+                if(ret){
+                    api.hideProgress();
+                    //api.alert({msg:JSON.stringify(ret.data)});
+                    if(ret.code=='53'){
+                        if(ret.data.mobile !=''){
+                            //alert(ret.data.mobile);
+                            $api.html($api.byId('mobile'),ret.data.mobile);
+                            bangding=ret.data.mobile;
+
+                            $api.html($api.byId('email'),ret.data.email);
+                            b_email=ret.data.email;
+
+                        }
+                    }else{
+                            api.toast({msg: ret.msg});
+                            api.hideProgress();
+                            return false;
+                    }
+                }else{
+                    api.alert({
+                        msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                      });
+                }
+                
+           })  
+
+    }
+
+    function opneyanzhen(){
+        api.openWin({
+            name: 'updaephone',
+            url: 'updaephone.html',
+            bounces: false,
+            pageParam: {bangding : bangding,b_email:b_email}
+        });
+    }
+
+
+
+
+    function opneyz_email(){
+        //alert(b_email);
+        api.openWin({
+            name: 'update_email',
+            url: 'update_email.html',
+            bounces: false,
+            pageParam: {b_email: b_email,bangding:bangding}
+        });
+    }
+
+
+</script>

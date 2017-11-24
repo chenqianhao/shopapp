@@ -1,0 +1,172 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+      .choujianggoods{ display:block; width:100%; overflow:hidden;}
+      .choujianggoods h3{ padding:1rem; color:313131; border-bottom:1px solid #ccc;}
+      .choujianggoods li{ width:100%; float:left; border-bottom:1px solid #ccc; padding:0.8rem; position:relative}
+      .choujianggoodsimg{ width:12rem; float:left;}
+      .choujianggoodsimg img{ width:80%;}
+      .choujianggoods span{white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; padding: 0.8rem; color: #4FBB0F;}
+      .choujianggoods li strong{ position:absolute; bottom:2rem; left:13rem;}
+      .choujianggoods li strong i{ color:#fe4a7a; font-size:1.8rem; font-weight:bold;}
+      .choujianggoods li strong em{ color:#8e8e8e; font-size:1.8rem; margin-left:0.6rem; text-decoration:line-through}
+      .choujianggoods li strong  b{margin-left: 4rem; color:#8f8f8f;}
+      .choujianggoodsimg font{ font-size:8rem; color:#4FBB0F}
+    </style>
+
+
+</head>
+<body style=" background-color:#fff;">
+
+
+
+
+
+<div class="choujianggoods">
+<!-- <h3>你抽取到的奖品</h3> -->
+<ul id="choujiang_list">
+<!-- <li>
+<div class="choujianggoodsimg"><img src="http://httgo.com/images/201603/thumb_img/20773_thumb_G_1458193660933.jpg" /></div>
+<span>红颜奶油草莓 新鲜水果 约300g/盒</span>
+<strong><i>一等奖</i><b>已领取</b></strong>
+</li>
+<li>
+<div class="choujianggoodsimg"><font>&#xe6b3;</font></div>
+<span>满100减50</span>
+<strong><i>二等奖</i><b>已领取</b></strong>
+</li>
+<li>
+<div class="choujianggoodsimg"><font>&#xe6b2;</font></div>
+<span>100积分</span>
+<strong><i>三等奖</i><b>已领取</b></strong>
+</li>
+<li>
+<div class="choujianggoodsimg"><img src="http://httgo.com/images/201603/thumb_img/20773_thumb_G_1458193660933.jpg" /></div>
+<span>红颜奶油草莓 新鲜水果 约300g/盒</span>
+<strong><i>一等奖</i><b>已领取</b></strong>
+</li> -->
+</ul>
+</div>
+
+
+
+<script type="text/x-dot-template" id="body-template">
+
+
+{{ for(var i=0,len=it.length;i<len;i++){ }}
+  
+
+  {{ if(it[i].type==3){ }}
+  <li tapmode onclick="opengoods({{=it[i]['activity_id']}});">
+  <div class="choujianggoodsimg"><img src="{{=serverUrl_img+'/'+it[i]['goods']['goods_thumb']}}" /></div>
+  <span>{{=it[i]['goods']['goods_name']}}</span>
+  <strong><i>{{=it[i]['dengjis']}}等奖</i>
+  {{  if(it[i]['is_fafang']==0){ }}
+      <b>未发放</b>
+  {{  }else if(it[i]['is_fafang']==1){ }}
+      <b>已发放</b>
+  {{  } }}
+ 
+  </strong>
+  </li>
+  {{ }else if(it[i].type==2){ }}
+  
+  <li tapmode onclick="api.openWin({name: 'bonus_info',url: 'bonus_info.html',bounces: false,reload:true,pageParam: {bonus_type_id: {{=it[i]['activity_id']}}}});">
+
+  <div class="choujianggoodsimg"><font>&#xe6b3;</font></div>
+  <span>{{=it[i]['activity']['type_name']}}</span>
+  <strong><i>{{=it[i]['dengjis']}}等奖</i>  
+  {{  if(it[i]['is_fafang']==0){ }}
+      <b>未发放</b>
+  {{  }else if(it[i]['is_fafang']==1){ }}
+      <b>已发放</b>
+  {{  } }}</strong>
+  </li>
+  {{ }else if(it[i].type==1){ }}
+  <li>
+  <div class="choujianggoodsimg"><font>&#xe6b2;</font></div>
+  <span>{{=it[i]['activity_id']}}积分</span>
+  <strong><i>{{=it[i]['dengjis']}}等奖</i>
+    {{  if(it[i]['is_fafang']==0){ }}
+        <b>未发放</b>
+    {{  }else if(it[i]['is_fafang']==1){ }}
+        <b>已发放</b>
+    {{  } }}
+  </strong>
+  </li>
+  {{ } }}
+{{ } }}
+</script>
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=0;
+    apiready = function(){
+        api.parseTapmode();
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+            page+=1;
+            get_user_choujiang_info();
+            api.refreshHeaderLoadDone();
+        });  
+        get_user_choujiang_info();
+
+    }
+
+
+    function get_user_choujiang_info(){
+
+        var user_id=$api.getStorage('userid_gs');
+        if(!user_id || user_id<1){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+            showusercenter('choujianggoods');
+            return false;
+        }
+        api.ajax({
+            url: serverUrl+'/user.php?act=get_user_choujiang_info',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {user_id:user_id,supplier_id:SUPPLIER_ID,page:page,size:6}
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            //return ;
+            if (ret) {
+                if(ret.code==3403){
+                   var  origin_html=document.getElementById('choujiang_list').innerHTML;
+                   var template = document.getElementById('body-template').innerHTML;
+                   document.getElementById('choujiang_list').innerHTML=origin_html+doT.template(template)(ret.data);
+                }else{
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+    }
+
+</script>

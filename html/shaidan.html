@@ -1,0 +1,434 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+    <style></style>
+</head>
+<body style="background: #fff;">
+
+   <header class="gsheader" id="header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>返回
+        </a>
+    </div>
+    <h1>
+        <a>
+            评价晒单
+        </a>
+    </h1>
+    </header>
+
+
+    <div class="classdiv gsshaidan classtestoverh3">
+        <h3 id="goods_name">正品卡盾柏油清洁剂 漆面柏油沥青清洗剂 除残胶剂 汽车美</h3>
+        <span>
+            <img src="http://httgo.com/images/201601/thumb_img/19770_thumb_G_1452303422614.jpg" id="goods_img" />
+            <i  class="iconfont wujiaoxing">评分：</br> <b onmousemove="getxingji(1)">&#xe64e;</b> <b onmousemove="getxingji(2)">&#xe64e;</b>
+            <b onmousemove="getxingji(3)">&#xe64e;</b>
+            <b onmousemove="getxingji(4)">&#xe64e;</b>
+            <b onmousemove="getxingji(5)">&#xe64e;</b>
+        </i>
+    </span> <strong><textarea name="evaluate" placeholder="写下购买体会或使用过程中带来的帮助可以为其他小伙伴提供参考" id="evaluate"></textarea></strong> 
+    <spanc> 
+
+                <em  tapmode onclick="upload_avator(10);">
+                    <div> 
+                        <span name="file1"  ></span>
+                        <img src="../img/upload.jpg" id="img10"  />
+                    </div>
+                </em>  
+
+
+                <em tapmode onclick="upload_avator(11);">
+                    <div>
+                        <span name="file2"></span>
+                        <img src="../img/upload.jpg"  id="img11" />
+                    </div>
+                </em> 
+
+
+                <em tapmode onclick="upload_avator(12);">
+                    <div>
+                        <span name="file3"></span>
+                        <img  src="../img/upload.jpg"   id="img12" />
+                    </div>
+                </em>
+
+                <input type="hidden" value="" id="img_10">
+                <input type="hidden" value="" id="img_11">
+                <input type="hidden" value="" id="img_12">
+                <input type="hidden" value="5" id="xingji">
+    </spanc>
+</div>
+
+<button class="classbtn" tapmode onclick="shaidan();">提交</button>
+</body>
+
+<!--
+<script type="text/javascript">
+     var image = '';
+     function showPreview(source, num) {
+         var img = "img" + num;
+         var file = source.files[0];
+ 
+         if (window.FileReader) {
+             var fr = new FileReader();
+             fr.onloadend = function (e) {
+                 document.getElementById(img).src = e.target.result;
+                 image = e.target.result;
+
+            
+             };
+             fr.readAsDataURL(file);
+         }
+     }
+     function uploadImage() {
+         $.ajax({
+             type: 'POST',
+             url: 'user.php?act=shangchuantouxiang',
+             data: { image: image },
+             async: false,
+             dataType: 'json',
+             success: function (data) {
+                 if (data.success) {
+                     alert('上传成功');
+                 } else {
+                     alert('上传失败');
+                 }
+             },
+             error: function (err) {
+                 alert('网络故障');
+             }
+         });
+     }
+</script>
+-->
+</html>
+
+
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<!-- <script type="text/javascript" src="../script/doT.min.js"></script> -->
+<script type="text/javascript">
+
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+
+        var rec_id=api.pageParam.rec_id?api.pageParam.rec_id:0;
+        if(!rec_id || rec_id<1){
+            api.closeWin();
+            return false;       
+        }
+
+        var goods_id=api.pageParam.goods_id?api.pageParam.goods_id:0;
+        if(!goods_id || goods_id<1){
+            api.closeWin();
+            return false;         
+        }
+
+        var goods_name=api.pageParam.goods_name?api.pageParam.goods_name:"";
+        var goods_thumb=api.pageParam.goods_thumb?api.pageParam.goods_thumb:"";
+        if(goods_name==''){
+            get_goods_info_shaidan(rec_id,goods_id);
+        }
+        if(goods_thumb==''){
+            get_goods_info_shaidan(rec_id,goods_id);
+        }
+
+        document.getElementById("goods_name").innerHTML=goods_name;
+        document.getElementById("goods_img").src=serverUrl_img+'/'+goods_thumb;
+
+        getxingji(5);
+
+    }
+
+
+    function getxingji(xingji) {
+        if(!xingji){
+            xingji=5;
+        }
+        document.getElementById("xingji").value=xingji;
+        var li = document.querySelectorAll(".wujiaoxing b");
+        for(var i=0;i<5;i++){
+            if(i<xingji){
+                li[i].style.color = "#ff5000";
+            }else{
+                li[i].style.color = "#ccc"; 
+            }
+        }
+
+    }
+
+    function get_goods_info_shaidan(rec_id,goods_id) {
+        if(!goods_id || goods_id<1){
+            api.toast({
+                msg: '该商品不存在！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+
+        if(!rec_id || rec_id<1){
+            api.toast({
+                msg: '该订单不存在！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        api.ajax({
+            url: serverUrl+'/user.php?act=get_goods_info_shaidan',
+            method : 'POST',
+            timeout : '30',
+            dataType : 'json',
+            returnAll : false,
+            cache :true,
+            data:
+            {
+                values:{
+                    goods_id:goods_id,
+                    rec_id:rec_id,
+                    user_id:userid_gs,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret, err){
+                if (ret){
+                        if(ret.code==975){
+                            if(ret.order_goods){
+                                document.getElementById("goods_name").innerHTML=ret.order_goods.goods_name;
+                                 document.getElementById("goods_img").src=serverUrl_img+'/'+ret.order_goods.goods_thumb;
+ 
+                            }   
+                        }else{
+                            api.toast({
+                                msg: ret.msg,
+                                duration: 2000,
+                                location: 'bottom'
+                            });
+                        }
+                }else{
+                    api.alert({msg:JSON.stringify(err)});
+                }
+        })
+
+
+    }    
+
+
+    function upload_avator(id){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs || userid_gs<1){
+            // api.openWin({
+            //     name: 'login',
+            //     url: './login.html',
+            //     bounces: false,
+            //     pageParam: {back_act: 'Formagent'}
+            // });
+            showusercenter('Formagent');
+            return false;
+        }
+
+        if(!id || id<10 || id>12){
+            api.toast({
+                msg: '非法操作',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        //library            //图片库
+        //camera            //相机
+        //album            //相册
+        api.confirm({
+            title: '选择图片',
+            msg: '您想要从哪里选取晒单图片 ?',
+            buttons:["优雅自拍", "手机相册"]
+        },function(ret,err){
+
+            //api.alert({msg:JSON.stringify(ret)});
+            if(ret.buttonIndex == 1){
+                sourceType="camera";
+            }else if(ret.buttonIndex == 2){
+                sourceType="library";
+            }else{
+                api.toast({
+                    msg: '选取图片失败！',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                return false;
+            }
+
+            api.getPicture({
+                sourceType: sourceType,
+                encodingType: 'jpg',
+                mediaValue: 'pic',
+                destinationType: 'base64',
+                allowEdit: true,
+                quality: 50,
+                targetWidth:640,
+                targetHeight:960,
+                saveToPhotoAlbum: false
+            }, function(rets, err){ 
+                //api.alert({msg:JSON.stringify(ret)});
+                if (rets) {
+                    api.showProgress({title: '图像上传中……', modal: false});
+                    //alert(rets.base64Data);
+                    api.ajax({
+                        url:serverUrl+'/daili.php?act=upload_avator',
+                        method:'post',
+                        cache:false,
+                        timeout:30,
+                        dataType:'json',
+                        data: {
+                            values:{
+                                type:id,
+                                user_id:userid_gs,
+                                supplier_id:SUPPLIER_ID,
+                                idcard:rets.base64Data
+                            }
+                        },       
+                        returnAll:false,
+                    },function(ret,err){
+                        //api.alert({msg:JSON.stringify(ret)});
+                        if(ret){
+                            
+                             if(ret.code==1073){//头像上传成功
+                                // alert(ret.data);
+                   
+                                document.getElementById("img"+ret.type).src = serverUrl+'/'+ret.idcard;
+ 
+                                document.getElementById("img_"+ret.type).value= ret.idcard;
+
+                                api.toast({msg: "图片上传成功！"});
+                                //改变用户中心的头像（暂时不做，可以发送监听事件）
+                                api.hideProgress();
+                             }else{
+                                api.toast({msg: ret.msg});
+                                api.hideProgress();
+                                //window.location.reload();
+                                return false;
+                            }
+                        }else{
+                            api.toast({msg: "获取商品图片失败！"});
+                        }
+                        api.hideProgress();
+                   })  
+
+                } else{
+                    //api.alert({msg:err.msg});
+                    api.toast({msg: "选取商品图片失败！"});
+                };
+            });  
+
+        });
+    }
+
+
+
+    //提交评论晒单
+    function shaidan(){
+
+        var xingji=$api.val($api.byId('xingji'))?$api.val($api.byId('xingji')):5;
+        var evaluate=$api.val($api.byId('evaluate'))?$api.val($api.byId('evaluate')):'';
+        var img_10=$api.val($api.byId('img_10'))?$api.val($api.byId('img_10')):'';
+        var img_11=$api.val($api.byId('img_11'))?$api.val($api.byId('img_11')):'';
+        var img_12=$api.val($api.byId('img_12'))?$api.val($api.byId('img_12')):'';
+
+        var rec_id=api.pageParam.rec_id?api.pageParam.rec_id:0;
+        if(!rec_id || rec_id<1){
+            api.toast({
+                msg: '订单有误，无法评论！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;       
+        }
+
+        var goods_id=api.pageParam.goods_id?api.pageParam.goods_id:0;
+        if(!goods_id || goods_id<1){
+            api.toast({
+                msg: '商品有误，无法评论！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;         
+        }
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.toast({
+                msg: '请先登陆！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        //alert(xingji+'aaa'+rec_id+"bbb"+goods_id+"ccc"+evaluate+"ddd"+img_10+"eee"+img_11+"fff"+img_12);
+
+        //alert(evaluate);
+        api.ajax({
+            url: serverUrl+'/user.php?act=shaidan_order',
+            method : 'POST',
+            timeout : '30',
+            dataType : 'json',
+            returnAll : false,
+            cache :true,
+            data:
+            {
+                values:{
+                    rec_id:rec_id,
+                    user_id:userid_gs,
+                    goods_id:goods_id,
+                    evaluate:evaluate,
+                    img_10:img_10,
+                    img_11:img_11,
+                    img_12:img_12,
+                    xingji:xingji,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret, err){
+                //api.alert({msg:JSON.stringify(ret)});
+                if (ret){
+
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+
+                    //跳转到评论列表页面
+                    if(ret.code==988){
+                        api.sendEvent({
+                            name: 'shaidan'
+                        });
+
+                        api.closeWin();
+                    }
+   
+                }
+                else{
+                    api.alert({msg:JSON.stringify(err)});
+                }
+        })
+
+
+    }
+
+</script>

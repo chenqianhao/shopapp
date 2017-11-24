@@ -1,0 +1,162 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+
+</head>
+<body style="background: #f3f4f6;">
+<!-- 
+<header class="indexheader headerusercender">
+<a class="headerleft hearderico"><font>&#xe619;</font>返回</a>
+<h1 class="headertitle">用户中心</h1>
+</header> -->
+
+
+   <header class="gsheader" id="aui-header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        <a href="#title-link" class="">
+            设置用户信息
+        </a>
+    </h1>
+
+    <div class="gsheaderdivright" tapmpde onclick="kefushow('shezhi');">
+          <a >
+                <i><font>&#xe635;</font></i>
+          </a>
+    </div>
+
+    </header>
+
+
+
+    <div class="gsusercenderlist gsshezhilist">
+        <ul>
+           <li tapmode onclick="upload_avator();"><span>头像</span><strong><img  id="avators" src="../img/400.png"/></strong></li>
+            <li tapmode onclick="openHtmlWin('profile');"><span>我的帐号</span><strong></strong></li>
+            <li tapmode onclick="openHtmlWin('usersecurity');"><span>帐号安全</span><strong></strong></li>
+            <li tapmode onclick="openHtmlWin('about_us');"><span>关于我们</span><strong></strong></li>
+        </ul>
+    </div>
+
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+
+
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+        
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('shezhi');
+        }
+
+
+        var avator_gs = $api.getStorage('avator_gs');
+        if(avator_gs){
+            document.getElementById("avators").src=serverUrl+'/'+avator_gs;
+        }
+
+    }
+
+//头像上传
+function upload_avator(){
+    var userid_gs=$api.getStorage('userid_gs');
+    if(!userid_gs || userid_gs<1){
+        api.openWin({
+            name: 'login',
+            url: './login.html',
+            bounces: false,
+            pageParam: {back_act: 'shezhi'}
+        });
+    }
+    //var usr=$api.getStorage('usr');
+    api.getPicture({
+        sourceType: 'library',
+        encodingType: 'jpg',
+        mediaValue: 'pic',
+        destinationType: 'base64',
+        allowEdit: true,
+        quality: 50,
+        targetWidth:100,
+        targetHeight:100,
+        saveToPhotoAlbum: false
+    }, function(rets, err){ 
+        if (rets) {
+            api.showProgress({title: '头像上传中……', modal: false});
+            //alert(rets.base64Data);
+            api.ajax({
+                url:serverUrl+'/user.php?act=upload_avator',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                data: {
+                    values:{
+                        user_id:userid_gs,
+                        supplier_id:SUPPLIER_ID,
+                        avator:rets.base64Data
+                    }
+                },       
+                returnAll:false,
+            },function(ret,err){
+                if(ret){
+                     //api.alert({msg:JSON.stringify(ret)});
+                     if(ret.code==64){//头像上传成功
+                        // alert(ret.data);
+                        document.getElementById("avators").src=serverUrl+'/'+ret.avator;
+
+                        var avator_gs = $api.getStorage('avator_gs');
+                        if(avator_gs){
+                            $api.rmStorage('avator_gs');
+                        } 
+                        $api.setStorage('avator_gs',ret.avator);
+                        api.sendEvent({
+                            name: 'upload_avator'
+                        });
+
+                        api.toast({msg: ret.msg});
+                        //改变用户中心的头像（暂时不做，可以发送监听事件）
+                        api.hideProgress();
+                     }else{
+                        api.toast({msg: ret.msg});
+                        api.hideProgress();
+                        //window.location.reload();
+                        return false;
+                    }
+                }else{
+                    api.toast({msg: "获取头像失败！"});
+                }
+                api.hideProgress();
+           })  
+
+        } else{
+            //api.alert({msg:err.msg});
+            api.toast({msg: "选取头像失败！"});
+        };
+    });  
+    //return false;       
+}
+
+
+
+</script>

@@ -1,0 +1,676 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	  <title>代理中心</title>
+      <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../css/daili.css">
+
+
+</head>
+
+<body style="background: #f5f5f5;">
+
+<!--
+  <header class="gsheader" id="header">
+  <div class="gsheaderdivleft">
+  <a tapmode onclick="api.closeWin();">
+        <i> <font>&#xe679;</font></i>
+  </a>
+  </div>
+  <h1>
+  <a href="#title-link" class="">
+   代理中心
+  </a>
+  </h1>
+  </header>
+ -->
+
+  <div class="classimg gsdailiindeximg">
+  <img  src="../img/dailibg.jpg"/>
+
+
+ <!--  <span><img id="avator" src="../img/touxiang.jpg"/></span> -->
+<span><img id="avator" src="../img/400.png"/></span>
+
+
+  <strong><i id="username"></i><br /><b id="dengji">你还不是代理商，<a href="#" tapmode onclick="opendaili();">申请</a>成为代理商</b></strong>
+  </div>
+
+  <div class="classdiv gsdailiindexzhijin">
+<ul>
+<li><span id="total_amount">￥0.00</span><strong>累计销售额</strong></li>
+<li><span id="yongjin">￥0.00</span><strong>累计佣金</strong></li>
+</ul>
+ </div>
+
+  <div class="classdiv gsdailiindexdailishang">
+  <h3 tapmode onclick="openDailiWin('agentlist');"><font>&#xe678;</font>我的合伙人 </h3>
+  <span id="wshrs" class="gswdhhrh3span"><i >未审核人数 0人</i></span>
+<ul id="hehuoren">
+<!-- <li><span>0个</span><strong>一级代理商</strong></li>
+<li><span>0个</span><strong>二级代理商</strong></li>
+<li><span>0个</span><strong>三级代理商</strong></li> -->
+<li><span>0个</span><strong>我的下级</strong></li>
+</ul>
+ </div>
+
+ <div class="classdiv gsdailiindexyongjin">
+  <h3><font tapmode onclick="openzijin(1);">&#xe675;</font><span tapmode onclick="openzijin(1);">我的佣金</span><button tapmode onclick="tixian();">提现</button></h3>
+
+  <ul id="yongjin_list">
+    <li tapmode onclick="openzijin(6);"><span>￥0.00</span><strong>待返佣金</strong></li>
+    <li tapmode onclick="openzijin(3);"><span>￥0.00</span><strong>可用佣金</strong></li>
+    <li tapmode onclick="openzijin(5);"><span>￥0.00</span><strong>待提现佣金</strong></li>
+    <li tapmode onclick="openzijin(2);"><span>￥0.00</span><strong>本月佣金</strong></li>
+  </ul>
+
+ </div>
+
+ <div class="gsdailiindexlist">
+ <ul>
+ <li tapmode onclick="opendaili();"><font>&#xe677;</font><span>成为代理商</span></li>
+ <li tapmode onclick="openHtmlWin('tuiguang');"><font>&#xe676;</font><span>我要推广</span></li>
+
+  <li tapmode onclick="openset_pwd();"><font>&#xe6a4;</font><span>修改支付密码</span></li>
+  <li><font>&#xe690;</font><span>邀请码</span><em id="ckyqm">无</em></li>
+ </ul>
+ </div>
+
+
+
+</body>
+</html>
+
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<!-- <script type="text/javascript" src="../script/doT.min.js"></script> -->
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        // var header = $api.byId('header');
+        // fixStatusBar(header);
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('daili');
+            return false;
+        }
+
+        get_daili_info(userid_gs);//把ec_salt字段也查询出来
+        //return;
+
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            get_daili_info(userid_gs);
+            api.refreshHeaderLoadDone();
+        });
+
+
+        api.addEventListener({
+            name: 'addbank'
+        }, function(ret, err){
+            //tixian();
+            get_daili_info(userid_gs);
+        });
+
+
+
+        api.addEventListener({
+            name: 'fordaili'
+        }, function(ret, err){
+            //alert("aaaa");
+            // api.closeWin({
+            //     name: 'set_pwd'
+            // });
+
+            opendaili();
+        });
+
+
+        // api.addEventListener({
+        //     name: 'tixian'
+        // }, function(ret, err){
+        //     var dialogBox = api.require('dialogBox');
+        //     dialogBox.close ({
+        //         dialogName: 'alert'
+        //     });
+        // });
+
+
+    }
+
+    function get_daili_info(user_id){
+        if(!user_id){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        //alert(serverUrl+'/daili.php?act=get_daili_info');return ;
+        api.ajax({
+            url: serverUrl+'/daili.php?act=get_daili_info',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                  supplier_id:SUPPLIER_ID,
+                  user_id:user_id
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+            	//api.alert({msg:JSON.stringify(ret)});
+                //api.alert({msg:JSON.stringify(ret.daili)});
+                //api.alert({msg:JSON.stringify(ret.info)});
+                //api.alert({msg:JSON.stringify(ret.code)});
+                if(ret.info.yqms!=''){
+                    document.getElementById("ckyqm").innerHTML=ret.info.yqms;
+                }
+                
+
+                //二级代理
+                var two_daili=$api.getStorage("two_daili");
+                if(two_daili){
+                  $api.rmStorage("two_daili");
+                }
+                $api.setStorage("two_daili",ret.daili.two_daili);
+
+                //三级代理
+                var three_daili=$api.getStorage("three_daili");
+                if(three_daili){
+                  $api.rmStorage("three_daili");
+                }
+                $api.setStorage("three_daili",ret.daili.three_daili);
+
+                //普通代理
+                var four_daili=$api.getStorage("four_daili");
+                if(four_daili){
+                  $api.rmStorage("four_daili");
+                }
+                $api.setStorage("four_daili",ret.daili.four_daili);
+
+                if(ret.code==1005){
+                   if(ret.info!=''){
+                      $api.html($api.byId("username"),ret.info.user_name);
+                      
+                      var str_desc='';
+                      if(ret.info.is_daili==0){
+                          str_desc+=",请等待上级审核通过后方可获得推广收益！"
+                      }
+
+                      var ec_salt=$api.getStorage("ec_salt");
+                      if(ec_salt){
+                        $api.rmStorage("ec_salt");
+                      }
+
+                      //alert(ret.info.ec_salt);
+                      $api.setStorage("ec_salt",ret.info.ec_salt);
+
+                      var hehuorens="";
+
+                      if(ret.info.dengji==1){
+                        if(str_desc==''){
+                           str_desc="(请点击二级代理商审核下级，审核通过的下级才能获得收益！)";
+                        }
+                        $api.html($api.byId("dengji"),"一级代理"+str_desc);
+                        //hehuoren+='<li><span>0个</span><strong>一级代理商</strong></li>';
+                        
+
+                        hehuorens+='<li typemode onclick="xiaji('+ret.info.dengji+');"><span style="color:red;">'+ret.daili.two+'个</span><strong style="color:red;">二级代理商</strong></li>';
+
+                        //hehuorens+='<li typemode onclick="xiajis(3);"><span>'+ret.daili.three+'个</span><strong>三级代理商</strong></li>';
+                        hehuorens+='<li typemode onclick="xiajis(4);"><span>'+ret.daili.four+'个</span><strong>消费者</strong></li>';
+
+                      }else if(ret.info.dengji==2){
+                        if(str_desc==''){
+                           str_desc="(请点击三级代理商审核下级，审核通过的下级才能获得收益！)";
+                        }                        
+
+                        $api.html($api.byId("dengji"),"二级代理"+str_desc);
+
+                        //hehuorens+='<li><span>'+ret.daili.two+'个</span><strong>二级代理商</strong></li>';
+                        
+                        hehuorens+='<li typemode onclick="xiaji('+ret.info.dengji+');"><span>'+ret.daili.three+'个</span><strong style="color:red;">三级代理商</strong></li>';
+
+                        hehuorens+='<li typemode onclick="xiajis(4);"><span>'+ret.daili.four+'个</span><strong>消费者</strong></li>';
+
+                      }else if(ret.info.dengji==3){
+                        if(str_desc==''){
+                           str_desc="(请点击下级消费者审核下级，审核通过的下级才能获得收益！)";
+                        }
+
+                        $api.html($api.byId("dengji"),"三级代理"+str_desc);
+
+                        //hehuoren+='<li><span>'+ret.daili.two+'个</span><strong>二级代理商</strong></li>';
+                        //hehuorens+='<li><span>'+ret.daili.three+'个</span><strong>三级代理商</strong></li>';
+                        //hehuorens+='<li typemode onclick="xiaji('+ret.info.dengji+');"><span>'+ret.daili.four+'个</span><strong style="color:red;">消费者</strong></li>';
+                        hehuorens+='<li typemode onclick="xiajis(4);"><span>'+ret.daili.four+'个</span><strong style="color:red;">消费者</strong></li>';
+                      }else{
+                         var xiaofeizhe=ret.info.realname?ret.info.realname:ret.info.user_name;
+                         $api.html($api.byId("dengji"),"您好，"+xiaofeizhe+"!(想成为代理获取收益请联系客服哦！)");
+                      }
+
+                      $api.html($api.byId("total_amount"),ret.info.total_amount);
+                      $api.html($api.byId("yongjin"),ret.info.yongjin);
+
+                      //alert(ret.info.avator);
+
+                      if(ret.info.avator != null){
+                        $api.byId("avator").src=serverUrl+'/'+ret.info.avator;
+                      }
+                      
+                      //alert(hehuorens);
+                      if(hehuorens!=''){
+                        $api.html($api.byId("hehuoren"),hehuorens);
+                      }
+
+                      var yongjin_list="";
+
+                      yongjin_list+='<li tapmode onclick="openzijin(6);"><span>￥'+ret.info.wsh_yj+'</span><strong>待返佣金</strong></li>';
+                      yongjin_list+='<li tapmode onclick="openzijin(3);"><span>￥'+ret.info.shengyu+'</span><strong>可用佣金</strong></li>';
+
+                      yongjin_list+='<li tapmode onclick="openzijin(5);"><span>￥'+ret.info.frost+'</span><strong>待提现佣金</strong></li>';
+
+                     //yongjin_list+='<li><span>￥'+ret.info.yongjin_week+'</span><strong>本周佣金</strong></li>';
+                      yongjin_list+='<li tapmode onclick="openzijin(2);"><span>￥'+ret.info.yongjin_month+'</span><strong>本月佣金</strong></li>';
+
+                      if(yongjin_list!=''){
+                        $api.html($api.byId("yongjin_list"),yongjin_list);
+                      }
+
+
+                      //alert(ret.info.dsh);
+                      if(ret.info.dsh==''){
+                         ret.info.dsh=0;
+                      }
+
+                      if(ret.info.dengji<3){
+                      document.getElementById("wshrs").innerHTML="<i typemode onclick='xiaji("+ret.info.dengji+")';>未审核人数"+ret.info.dsh+"人</i>";
+                      }
+                      
+                                            
+                   }
+
+                }else{
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+    }
+
+
+//在html目录打开窗口
+function openDailiWin(type){
+    var userid_gs=$api.getStorage('userid_gs');
+    if(!userid_gs){
+      api.toast({
+          msg: '请先登陆！',
+          duration: 2000,
+          location: 'bottom'
+      });
+      return false;
+    }
+
+
+    //二级代理
+    var two_daili=$api.getStorage("two_daili");
+    if(!two_daili){
+      two_daili='';
+    }
+
+
+    //三级代理
+    var three_daili=$api.getStorage("three_daili");
+    if(!three_daili){
+      three_daili='';
+    }
+
+    //普通代理
+    var four_daili=$api.getStorage("four_daili");
+    if(!four_daili){
+      four_daili='';
+    }
+
+    api.openWin ({
+        name: type,
+        url: type+'.html',
+        rect:{
+            x:0,
+            y:0,
+            w:'auto',
+            h:'auto'
+        },
+        pageParam: {user_id:userid_gs,two_daili:two_daili,three_daili:three_daili,four_daili:four_daili},
+        bounces: false,
+        reload:true,
+        delay:200
+    });
+
+}
+
+function tixian(){
+
+  //判断用户是否绑定银行卡  是否绑定支付
+  //
+    var user_id=$api.getStorage('userid_gs');
+    if(!user_id || user_id<1){
+      api.toast({
+          msg: '请先登陆！',
+          duration: 2000,
+          location: 'bottom'
+      });
+      api.closeWin({
+          name: 'agentlist'
+      });
+      return false;
+    }
+
+  api.ajax({
+      url:serverUrl+'/daili.php?act=paywd_isseting',
+      method:'post',
+      cache:false,
+      timeout:30,
+      dataType:'json',
+      data:{
+          values:{
+              user_id:user_id,
+              supplier_id:SUPPLIER_ID
+          }
+      },
+      returnAll:false,
+  },function(ret,err){
+      //api.alert({msg:JSON.stringify(ret)});
+      if (ret) {
+          if(ret.code==1093){
+              api.toast({
+                  msg: ret.msg,
+                  duration: 2000,
+                  location: 'bottom'
+              });
+
+              api.openWin({
+                  name: 'set_pwd',
+                  url: 'set_pwd.html',
+                  bounces: false
+              });
+
+              return false;
+          }else if(ret.code==1094){
+
+
+            //判断收货地址
+              api.ajax({
+                  url: serverUrl+'/daili.php?act=get_bank_list',
+                  method: 'post',
+                  timeout: 30,
+                  dataType: 'json',
+                  returnAll:false,
+                  data:{
+                      values: {
+                        supplier_id:SUPPLIER_ID,
+                        user_id:user_id
+                      }
+                  }            
+              },function(ret,err){
+                  if (ret) {
+                    //api.alert({msg:JSON.stringify(ret)});
+                    if(ret.code==1017){
+                        api.openWin({
+                            name: 'withdrawal',
+                            url: 'withdrawal.html',
+                            bounces: false,
+                            reload:true,
+                            pageParam: {ec_salt : ret.ec_salt}
+
+                        });
+                    }else if(ret.code==1016){
+                        api.openWin({
+                            name: 'addbank',
+                            url: 'addbank.html',
+                            pageParam: {"addbank" : 'addbank'},//设置参数，添加成功通过时间重新加载此函数，其它添加银行卡的页面不传此参数
+                            bounces: false,
+                            reload:true
+                        });
+
+                    }else{
+                      api.toast({
+                          msg: ret.msg,
+                          duration: 2000,
+                          location: 'bottom'
+                      });
+                    }
+
+
+                  } else {
+                      api.alert({
+                          msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                      });
+                  };
+              });
+
+          }else{
+              api.toast({
+                  msg: ret.msg,
+                  duration: 2000,
+                  location: 'bottom'
+              });
+          }
+
+
+      } else {
+          api.alert({
+              msg:('网络错误')
+          });
+      };
+  });
+
+
+
+
+}
+
+
+function opendaili(){
+  var user_id=$api.getStorage('userid_gs');
+
+  if(!user_id || user_id<1){
+      api.toast({
+          msg: '请先登陆！',
+          duration: 2000,
+          location: 'bottom'
+      });
+      return false;
+  }
+
+
+  api.ajax({
+      url:serverUrl+'/daili.php?act=paywd_isseting',
+      method:'post',
+      cache:false,
+      timeout:30,
+      dataType:'json',
+      data:{
+          values:{
+              user_id:user_id,
+              supplier_id:SUPPLIER_ID
+          }
+      },
+      returnAll:false,
+  },function(ret,err){
+      //api.alert({msg:JSON.stringify(ret)});
+      //return ;
+      if (ret) {
+          if(ret.code==1093){
+              api.toast({
+                  msg: ret.msg,
+                  duration: 2000,
+                  location: 'bottom'
+              });
+
+              //alert("xxxx");
+
+              api.openWin({
+                  name: 'set_pwd',
+                  url: 'set_pwd.html',
+                  reload:true,
+                  pageParam: {fordaili:'1'},//成为代理商人
+                  bounces: false
+              });
+
+              return false;
+          }else if(ret.code==1094){
+
+              api.openWin({
+                  name: 'Formagent',
+                  url: 'Formagent.html',
+                  pageParam: {dengji : ret.dengji,is_daili:ret.is_daili,dengjis:ret.dengjis,yqm:ret.yqm},
+                  bounces: false
+              });
+
+              api.closeWin({
+                  name: 'set_pwd'
+              });
+
+
+
+          }else{
+              api.toast({
+                  msg: ret.msg,
+                  duration: 2000,
+                  location: 'bottom'
+              });
+          }
+
+
+      } else {
+          api.alert({
+              msg:('网络错误')
+          });
+      };
+  });
+
+
+
+}
+
+
+
+
+function xiaji(dengji){
+
+
+  var userid_gs=$api.getStorage('userid_gs');
+  if(!userid_gs){
+      showusercenter('daili');
+      return false;
+  }
+
+  if(!dengji || dengji<0){
+    api.toast({
+        msg: '您还不是代理，请重新申请！',
+        duration: 2000,
+        location: 'bottom'
+    });
+    return false;
+  }
+
+  api.openWin({
+      name: 'xiaji',
+      url: 'xiaji.html',
+      bounces: false,
+      pageParam: {user_id : userid_gs,dengji:dengji}
+  });
+
+
+  
+}
+
+
+
+
+  function xiajis(dengji){
+
+
+
+      var userid_gs=$api.getStorage('userid_gs');
+      if(!userid_gs){
+          showusercenter('daili');
+          return false;
+      }
+
+      if(!dengji){
+        api.toast({
+            msg: '没有获取到您申请的等级!',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      api.openWin({
+          name: 'xiaji_chakan',
+          url: 'xiaji_chakan.html',
+          bounces: false,
+          pageParam: {user_id:userid_gs,dengji:dengji}
+      });
+
+  }
+
+
+
+
+  function openzijin(id){
+
+      if(!id || id<1){
+          api.toast({
+              msg: '非法入口！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          return false;
+      }
+
+      api.openWin({
+          name: 'commissionlist',
+          url: 'commissionlist.html',
+          bounces: false,
+          reload:true,
+          pageParam: {account_id : id}
+      });
+
+    
+  }
+
+
+  function openset_pwd(){
+
+    api.openWin({
+        name: 'set_pwd',
+        url: 'set_pwd.html',
+        bounces: false,
+        pageParam: {update_pwd : 1}
+    });
+
+  }
+</script>

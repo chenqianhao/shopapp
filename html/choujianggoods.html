@@ -1,0 +1,79 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+      .choujianggoods{ display:block; width:100%; overflow:hidden;}
+      .choujianggoods h3{ padding:1rem; color:313131; border-bottom:1px solid #ccc;}
+      .choujianggoods li{ width:100%; float:left; border-bottom:1px solid #ccc; padding:0.8rem; position:relative}
+      .choujianggoodsimg{ width:12rem; float:left;}
+      .choujianggoodsimg img{ width:80%;}
+      .choujianggoods span{white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; padding: 0.8rem; color: #4FBB0F;}
+      .choujianggoods li strong{ position:absolute; bottom:2rem; left:13rem;}
+      .choujianggoods li strong i{ color:#fe4a7a; font-size:1.8rem; font-weight:bold;}
+      .choujianggoods li strong em{ color:#8e8e8e; font-size:1.8rem; margin-left:0.6rem; text-decoration:line-through}
+      .choujianggoods li strong  b{margin-left: 4rem; color:#8f8f8f;}
+      .choujianggoodsimg font{ font-size:8rem; color:#4FBB0F}
+    </style>
+
+
+</head>
+<body style=" background-color:#fff;">
+
+
+<header class="gsheader" id="aui-header">
+     <div class="gsheaderdivleft">
+         <a tapmode onclick="api.closeWin();" >
+               <font>&#xe619;</font>
+         </a>
+     </div>
+     <h1>抽到的奖品</h1>
+    <div class="gsheaderdivright" tapmode onclick='kefushow("choujianggoods");'>
+        <a>
+            <i><font>&#xe635;</font></i>
+        </a>
+    </div>
+</header>
+
+
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        var headerPos = $api.offset(header);
+        fixStatusBar(header);
+        
+        api.openFrame({
+            name: 'choujianggoods_info',
+            url: 'choujianggoods_info.html',
+            bounces: false,
+            reload:true,
+            rect: {
+                x: 0,
+                y: headerPos.h+5,
+                w: 'auto',
+                h: api.winHeight-headerPos.h
+            }
+        });
+
+
+
+    }
+
+
+
+
+</script>

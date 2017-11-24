@@ -1,0 +1,270 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body style="background: #fff;">
+
+  <header class="gsheader" id="header">
+      <div class="gsheaderdivleft" tapmode onclick="api.closeWin();">
+          <a>
+              <i> <font>&#xe619</font></i>
+          </a>
+      </div>
+      <h1>
+          <a>
+            <input name="keywords" placeholder="搜索你想找的商品" value="" id="keywords" style="position:relative;">
+            <font style="position: absolute;top:2.5rem;">&#xe63f</font>
+          </a>
+      </h1>
+      <div class="gsheaderdivright" >
+
+                <i tapmode onclick="search(this);">搜索</i>
+      </div>
+  </header>
+
+
+    <div class="gssearch">
+        <h3>
+            <i>最近搜索</i><font tapmode onclick="del_search();">&#xe634</font></h3>
+        <ul id="localsearch">
+<!--
+            <li><span>厚防滑耐磨</span></li>
+            <li><span>厚防滑耐磨</span></li>
+            <li><span>厚防滑耐磨</span></li>
+            <li><span>厚防滑耐磨</span></li>
+            <li><span>厚防滑耐磨</span></li>
+            <li><span>厚防滑耐磨</span></li>
+            <li><span>厚防滑耐磨</span></li>
+            <li><span>厚防滑耐磨</span></li>
+            <li><span>厚防滑耐磨</span></li> 
+-->
+        </ul>
+    </div>
+
+
+
+<!--     <div class="gssearch gssearch01">
+    <h3>
+        <i>热门搜索</i></h3>
+    <ul id="hotsearch">
+        <li><span>厚防滑耐磨</span></li>
+        <li><span>厚防滑耐磨</span></li>
+        <li><span>厚防滑耐磨</span></li>
+        <li><span>厚防滑耐磨</span></li>
+        <li><span>厚防滑耐磨</span></li>
+        <li><span>厚防滑耐磨</span></li>
+        <li><span>厚防滑耐磨</span></li>
+        <li><span>厚防滑耐磨</span></li>
+        <li><span>厚防滑耐磨</span></li>
+    </ul>
+</div>
+ -->
+</body>
+
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<!-- <script type="text/javascript" src="../script/doT.min.js"></script> -->
+<script type="text/javascript">
+
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+        
+        searchkeywordlist(1);
+    }
+
+    function search(obj){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+          user_id=0;
+        }else{
+          user_id=userid_gs;
+        }
+        var keywords= $api.val($api.byId('keywords'));
+        if(!keywords || trim(keywords)==''){
+           api.toast({
+               msg: '请先输入要搜索的内容！',
+               duration: 2000,
+               location: 'bottom'
+           });
+           return false;
+        }
+
+
+        var keywordss=$api.getStorage('keywordss');
+        if(!keywordss){
+           keywordss = new Array();
+           keywordss.push(keywords);
+           $api.setStorage('keywordss',keywordss);
+        }else{
+            var keyword=new Array();
+            for (var i = 0,len=keywordss.length; i < len; i++) {
+                if(keywordss[i]!=keywords){
+                  keyword.push(keywordss[i]);
+                }
+            }  
+            keyword.push(keywords);
+            $api.setStorage('keywordss',keyword);
+
+        }
+
+        // api.showProgress({
+        //     title: '搜索中...',
+        //     modal: false
+        // });
+        
+      api.ajax({
+          url:serverUrl+'/category.php?act=search_goods',
+          method:'post',
+          cache:false,
+          timeout:30,
+          dataType:'json',
+          data:{
+              values:{
+                order:"ASC",
+                type:"xiaoliang",
+                page:'4',             
+                user_id:user_id,
+                keywords: keywords,
+                supplier_id:SUPPLIER_ID
+              }
+            },
+          returnAll:false,
+          },function(ret,err){
+          if(ret){
+            api.hideProgress();
+            //api.alert({msg:JSON.stringify(ret)});
+            //alert(keywords);
+            if(ret.code==122){//搜索成功
+                api.openFrame({
+                    name: 'searchlist',
+                    url: './searchlist.html',
+                    bounces: false,
+                    pageParam: {searchvalue : '1',keywords:keywords,data:ret.data},
+                    rect: {
+                      x: 0,
+                      y: 0,
+                      w: 'auto',
+                      h: 'auto'
+                    }
+                });
+            }else if(ret.code==123 || ret.code==124){
+                api.openFrame({
+                    name: 'searchlist',
+                    url: './searchlist.html',
+                    bounces: false,
+                    pageParam: {searchvalue : '2',keywords:keywords},
+                    rect: {
+                      x: 0,
+                      y: 0,
+                      w: 'auto',
+                      h: 'auto'
+                    }
+                });
+
+            }else{
+              api.toast({msg: ret.msg, location: 'middle'});
+                    api.hideProgress();
+                  return false;
+            }
+        }else{
+            api.alert({
+                    msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                    });
+              }
+      });
+
+
+
+    }
+
+
+
+    function searchkeywordlist(index){//index:1本地搜索 2大家热门搜索
+
+        //alert(index);
+        if(index==1){
+            var ccc=$api.getStorage('keywordss');
+            //api.alert({msg:JSON.stringify(ccc)});
+            if(ccc){
+                var str='';
+                for (var len=ccc.length,i=len-1; i >=0; i--) {
+                      if(ccc[i]!=null){
+                        str+='<li><span tapmode onclick="djss(this);">'+ccc[i]+'</span></li>';
+                        //alert(ccc[i]);
+                      }
+                }   
+                $api.html($api.dom('#localsearch'),str);
+                //document.getElementById('localsearch').innerHTML=str;
+            }
+        }else if(index==2){
+          api.ajax({
+              url:serverUrl+'/app/search.php',
+              method: 'post',
+              timeout: 30,
+              dataType: 'json',
+              returnAll:false,
+              data:{
+                  values: {
+                          act: "list"
+                      }
+              }
+          },function(ret,err){
+              if (ret) {
+                  //api.alert({msg:JSON.stringify(ret.data)});
+                  str='';
+                  //  for (var i = 0,len=ret.data.length; i < len; i++) {
+                  //       str+='<span class="search-tags">'+ret.data[i].keyword+'</span>';
+                  //   }  
+
+                  // $api.html($api.dom('#hotsearch'),str);
+                  // window.location.reload();
+              }else {
+                  api.alert({
+                      msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                  });
+              }
+          }); 
+        }
+
+    }
+
+
+    function djss(e){
+        var a= e.innerHTML.replace(/(^\s*)|(\s*$)/g, "");
+        //alert(a);
+        document.getElementById('keywords').value=a;
+
+        search(a);
+
+    }
+
+
+    function del_search(){
+      api.confirm({
+          title: '清空搜索记录',
+          msg: '您确定要删除搜索记录吗？',
+          buttons:['确定', '取消']
+      },function(ret,err){
+          if(ret.buttonIndex == 1){
+              var ccc=$api.getStorage('keywordss');
+              if(ccc){
+                 $api.rmStorage('keywordss');
+              }
+
+              $api.html($api.dom('#localsearch'),'');
+          }
+      });
+
+
+    }
+</script>

@@ -1,0 +1,534 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/daili.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body style="background: #ffffff;">
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft">
+          <a tapmode onclick="api.closeWin();">
+                <i> <font>&#xe619;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">
+           提现
+          </a>
+      </h1>
+            <div class="gsheaderdivright" tapmpde onclick="kefushow('withdrawal');">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+  </header>
+
+<div id="bank_list_app">
+    <div class="classdiv gswithdrawal classinputf">
+        <h3>提现银行卡</h3>
+        <ul>
+            <li><font>&#xe67f;</font><span>农业银行</span><strong>xxxxxxxxxxxxxxxx</strong></li>
+            <li><span>持有金额</span><strong>0.00元</strong></li>
+            <li><span>取出金额</span><strong><input  type="text"/></strong><span>元</span></li>
+        </ul>
+    </div>
+    <em class="gswithdrawalem"><i>提示：</i><b>选择20分钟到账至少取出1000元</b></em>
+    <button class="classbtn"  onclick="xianshi();">提现</button>
+</div>
+
+
+
+<script id="bank-template" type="text/x-dot-template">
+    <div class="classdiv gswithdrawal classinputf">
+    {{if(it.type==1){}}
+    <h3>提现到微信</h3>
+    {{}else if(it.type==2){}}
+    <h3>提现到支付宝</h3>
+    {{}else{}}
+        <h3>提现到银行卡</h3>
+    {{}}}
+        <ul>
+
+    {{if(it.type==1){}}
+        <li tapmode onclick="openbacklist();"><font class="font_20"></font>
+        <span>
+        微信
+        </span><strong>
+        {{=it.nid}}
+        </strong>
+        </li>
+    {{}else if(it.type==2){}}
+        <li tapmode onclick="openbacklist();"><font class="font_30"></font>
+        <span>
+        支付宝
+        </span><strong>
+        {{=it.nid}}
+        </strong>
+        </li>
+    {{}else{}}
+        <li tapmode onclick="openbacklist();"><font class="font_{{=it.bank_ids}}"></font>
+        <span>
+        {{=it.bankname}}
+        </span><strong>
+        {{=it.nid}}
+        </strong>
+        </li>
+    {{}}}
+    <li><span>持有佣金</span><strong>{{=it.yongjin}}元</strong></li>
+    <li><span>提现佣金</span><strong><input  type="text" id="tixianyj" /></strong><span>元</span></li>
+        </ul>
+    </div>
+    <em class="gswithdrawalem"><i>提示：</i><b>提现金额至少为10.00元</b></em>
+    <button class="classbtn"  onclick="xianshi({{=it.id}},{{=it.type}});">提现</button>
+
+    <input type="hidden" id="type" value="{{=it.type}}" />
+    <input type="hidden" id="bank_id" value="{{=it.id}}" />
+</script> 
+
+    <div class="zhengzhao" style=" display:none;" id="zhezhao">
+    </div>
+   
+   
+    <div class="gswithdrawaltck" style=" display:none;" id="gswithdrawaltck">
+    <h1>请输入提现密码
+    </h1>
+<div class="gswithdrawaltckinput">
+<button onclick="tanchu();"></button>
+<input type="password" name="mima"  readonly="true" /> 
+<input type="password" name="mima"  readonly="true" /> 
+<input type="password" name="mima"  readonly="true" /> 
+<input type="password" name="mima"  readonly="true" /> 
+<input type="password" name="mima"  readonly="true" /> 
+<input type="password" name="mima"  readonly="true" /> 
+</div>
+
+
+<div class="gswithdrawaltckbtn"><button class="btnquxiao"  onclick="guanbi()">取消</button><button class="btnok" tapmode onclick="xianshis();">确认</button></div>
+
+    </div>
+
+
+    <div id="zhifujianpan" style="display:none">
+    <div class="zhifujianpan classdiv">  
+    <h3  onclick="tanchux()"><font>&#xe68d;</font></h3>
+    <ul>
+         <li tapmode  onclick="shurumima(1);"><button>1</button></li>
+         <li tapmode  onclick="shurumima(2);"><button>2</button></li>
+         <li tapmode  onclick="shurumima(3);"><button>3</button></li>
+         <li tapmode  onclick="shurumima(4);"><button>4</button></li>
+         <li tapmode  onclick="shurumima(5);"><button>5</button></li>
+         <li tapmode  onclick="shurumima(6);"><button>6</button></li>
+         <li tapmode  onclick="shurumima(7);"><button>7</button></li>
+         <li tapmode  onclick="shurumima(8);"><button>8</button></li>
+         <li tapmode  onclick="shurumima(9);"><button>9</button></li>
+         <li tapmode  onclick="shanchu();"><button><font class="withdrawalfont">&#xe687;</font></button></li>
+         <li tapmode onclick="shurumima(0)"><button>0</button></li>
+         <li><button class="withdrawalbuttonok" tapmode onclick="xianshis();">完成</button></li>
+    </ul>
+    </div>
+    </div>
+
+    <script>
+
+        var zhifujianpan = document.getElementById("zhifujianpan");
+        var zhezhao = document.getElementById("zhezhao");
+        var gswithdrawaltck = document.getElementById("gswithdrawaltck");
+        function xianshi(id,type){
+        	//alert(type);
+        	if(type==1){
+                api.toast({
+                    msg: '暂不支持微信提现！',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                return false;        	
+        	}
+            var userid_gs=$api.getStorage('userid_gs');
+            if(!userid_gs){
+                showusercenter('withdrawal');
+                return false;
+            }
+            var tixianyj=$api.val($api.byId("tixianyj"))?$api.val($api.byId("tixianyj")):'';
+            if(tixianyj==''){
+                api.toast({
+                    msg: '提现金额为不能为空1！',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                return false;
+            }
+
+            if(tixianyj<10){
+                api.toast({
+                    msg: '提现金额最少为10元！',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+                return false;
+            }
+
+            zhezhao.style.display = "block";
+            gswithdrawaltck.style.display = "block";
+//            zhifujianpan.style.display = "block";
+          }
+          function tanchu() {
+
+           zhifujianpan.style.display = "block";
+
+       }
+       function guanbi() {
+           zhezhao.style.display = "none";
+           gswithdrawaltck.style.display = "none";
+           zhifujianpan.style.display = "none";
+           var tag = document.getElementsByName("mima");
+           for (var i = 0; i < 6; i++) {
+               tag[i].value = "";
+           }
+           lc = 0;
+       }
+
+       function tanchux() {
+           zhifujianpan.style.display = "none";
+       }
+       function shurumima(el) {
+           //alert(el);
+           var tag = document.getElementsByName("mima");
+           var num = ch();
+           for (var i = 0; i < tag.length; i++) {
+               if (i == num) {
+                   tag[num].value = el;
+               }
+           }
+
+       }
+
+        var lc = 0;
+        function ch(){
+           if(lc>=0 && lc<6){
+             return lc++;
+           }
+           
+        }
+
+        function shanchu() {
+            lc = lc - 1;
+
+            if(lc<0){
+              lc=0;
+            }
+              var tag = document.getElementsByName("mima");
+              if(tag[lc]){
+                tag[lc].value = "";
+              
+              }
+        }
+
+
+    </script>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/md5.js" ></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        var header = $api.byId('header');
+        fixStatusBar(header);
+    
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('withdrawal');
+            return false;
+        }
+
+        get_default_bank(userid_gs);
+    }
+
+    //获取默认银行
+    function get_default_bank(userid_gs,tixianyj){
+        if(!tixianyj){
+          tixianyj='0.00';
+        }
+
+        //alert(tixianyj);
+        
+        if(!userid_gs){
+            api.toast({
+                msg: '请先登陆！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        api.ajax({
+            url: serverUrl+'/daili.php?act=get_default_bank',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                  supplier_id:SUPPLIER_ID,
+                  user_id:userid_gs
+                }
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==1028){
+                    api.openWin({
+                        name: 'addbank',
+                        url: 'addbank',
+                        bounces: false,
+                        pageParam: {addbank: 'addbank'}
+                    });
+
+                }else if(ret.code==1029){
+                    var template = document.getElementById('bank-template').innerHTML;
+                    document.getElementById('bank_list_app').innerHTML=doT.template(template)(ret.bank_info);
+
+                    if(tixianyj>0){
+                      document.getElementById('tixianyj').value=tixianyj;
+                    } 
+
+                     var tag = document.getElementsByName("mima");
+                     for (var i = 0; i < 6; i++) {
+                         tag[i].value = "";
+                     }
+
+                }else{
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+    }
+
+
+    function xianshis(){
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            // api.openWin ({
+            //     name: 'login',
+            //     url: 'login.html',
+            //     reload: true,
+            //     bounces: false,
+            //     pageParam: {back_act: 'withdrawal'},
+            //     delay:200
+            // });
+            showusercenter('withdrawal');
+            return false;
+        }
+
+        var bank_id=$api.val($api.byId('bank_id'))?$api.val($api.byId('bank_id')):0;
+        var type=$api.val($api.byId('type'))?$api.val($api.byId('type')):0;
+        if(bank_id<1){
+            api.toast({
+                msg: '请先绑定默认银行卡',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.openWin({
+                name: 'addbank',
+                url: 'addbank',
+                bounces: false,
+                pageParam: {addbank : 'addbank'}
+            });
+            return false;          
+        }
+         str='';
+         var tag = document.getElementsByName("mima");
+         for (var i = 0; i < 6; i++) {
+             str+=tag[i].value;
+         }
+
+         //var mima=parseInt(str);
+        //支付密码必须是6位纯数字
+        var reg = new RegExp(/^\d{6}$/);
+        if(!reg.test(str)){
+            api.toast({
+                msg: '请先输入6位纯数字的支付密码！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        var paypwd = hex_md5(str);
+        //alert(paypwd);
+
+        //return false;
+        var tixianyj=$api.val($api.byId("tixianyj"))?$api.val($api.byId("tixianyj")):'';
+        if(tixianyj==''){
+            api.toast({
+                msg: '提现金额为不能为空2！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        //var paywd=$api.val($api.byId('paywd'))?$api.val($api.byId('paywd')):'';
+        var ec_salt=api.pageParam.ec_salt?api.pageParam.ec_salt:'';
+        //var paypwd = hex_md5(paywd+ec_salt);
+        api.ajax({
+            url: serverUrl+'/daili.php?act=account_cash_daili',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                  tixianyj:tixianyj,
+                  supplier_id:SUPPLIER_ID,
+                  type:type,//0银行卡1微信2支付宝
+                  bank_id:bank_id,
+                  paypwd:paypwd,
+                  user_id:userid_gs
+                }
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+
+            guanbi();
+            if (ret) {
+                if(ret.code==1034 || ret.code==1035 || ret.code==1036){
+                    api.openWin({
+                        name: 'addbank',
+                        url: 'addbank',
+                        bounces: false,
+                        pageParam: {type: ret.type}
+                    });
+                    return false;
+                }else if(ret.code==1040){
+                  // api.toast({
+                  //     msg: ret.msg,
+                  //     duration: 2000,
+                  //     location: 'bottom'
+                  // });
+
+
+
+              var dialogBox = api.require('dialogBox');
+              dialogBox.alert ({
+                  texts: {
+                      title: ' ',          
+                      content:ret.msg,           
+                      leftBtnTitle: '继续提现',   
+                      rightBtnTitle: '查看其它'
+                  },
+                  styles:{
+                      bg: '#fff',
+                      w: 300,
+                      title:{   
+                          marginT : 20,
+                          icon : 'widget://img/duigou.png',
+                          iconSize : 40,
+                          titleSize : 14,
+                          titleColor : '#000'
+                      },
+                      content:{  
+                          color: '#000',         
+                          size: 14          
+                      },
+                      left:{            
+                          marginB: 7,      
+                          marginL: 20,     
+                          w: 130,           
+                          h: 35,
+                          corner: 2,       
+                          bg: '#22A33F', 
+                          color: '#fff',   
+                          size: 12    
+                      },
+                      right:{            
+                          marginB: 7,      
+                          marginL: 10,      
+                          w: 130,           
+                          h: 35,
+                          corner: 2,       
+                          bg: '#22A33F',
+                          color: '#fff',    
+                          size: 12    
+                      }
+                  }
+              },function(ret){
+                  // api.alert({
+                  //     title: 'title', 
+                  //     msg: ret.eventType
+                  // });
+
+                  if (ret.eventType == 'left') {
+                      get_default_bank(userid_gs);
+                      var dialogBox = api.require('dialogBox');
+                      dialogBox.close ({
+                          dialogName: 'alert'
+                      });
+                    
+                  }else{
+
+                    // api.sendEvent({
+                    //     name: 'tixian'
+                    // });
+
+                    var dialogBox = api.require('dialogBox');
+                    dialogBox.close ({
+                        dialogName: 'alert'
+                    });
+                    api.closeWin({
+                        name: 'withdrawal'
+                    });
+
+
+                  }
+              });
+
+
+
+                  //api.closeWin();
+
+                }else{
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                  var tixianyj=ret.tixianyj?ret.tixianyj:'0.00';
+                  get_default_bank(userid_gs,tixianyj);
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+    }
+
+    function openbacklist(){
+        api.openWin({
+            name: 'bankcardlist',
+            url: 'bankcardlist.html',
+            reload:true,
+            bounces: false
+            // ,
+            // pageParam: {key : 'value'}
+        });
+    }
+</script>

@@ -1,0 +1,1057 @@
+﻿<!doctype html>
+<html>
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <link rel="stylesheet" href="../css/shuigou.css">
+
+    <meta name="format-detection" content="telephone=no">
+    <style type="text/css">
+        /*下面为幻灯片css*/
+
+        .swipe { overflow: hidden; position: relative;-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2); }
+        .swipe-wrap { overflow: hidden; position: relative;}
+        .swipe-wrap > div { float: left; width: 100%; position: relative; }       
+        .swipe-wrap > div { height: 17rem; overflow: hidden; position: relative; }
+        .swipe-wrap img { height: 16.7rem; width: 100%; }     
+        #pointer { position: absolute; left: 30%;width:40%; bottom: 1.5rem;overflow: hidden;text-align:center;  }
+        #pointer li { list-style: none;display:inline; }
+        #pointer li a { display: inline-block; width: 6px; height: 6px; border-radius: 6px;  margin-right: 4px; background-color: rgba(0, 0, 0, 0.5);-webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);}
+        #pointer li a.active { background-color: #55abce; }
+        .touchweb_page-index{width: 100%;box-shadow: 0px 1px 5px 0px rgba(0, 0, 0,0.15);}
+        .chop_hand_price{background-color:#fff;padding-bottom: 0.3rem;padding-bottom: 0.5rem;}
+        .head_box{position:relative;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-ms-flex-align:center;-webkit-box-align:center;box-align:center;-webkit-align-items:center;align-items:center;}
+        .touchweb_components-indexTitle{-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;}
+        .title{font-size:1.8rem;font-weight:normal;background: url("../img/shuigouindexnavbj01.png") no-repeat scroll 0% 0% / 4rem auto; color:#6d6d6d;border-bottom: 1px solid #e0e0e0;height: 4rem;line-height: 4rem;padding-left: 2.5rem;padding-bottom: 0.3rem;}
+        .title  i { color: #c5c5c5;  font-size: 1.6rem; margin-left: 0.5rem;}
+        .title font{margin-right: 2rem;  float: right;color: #c5c5c5; font-size: 2rem;font-weight: bold;}
+        .product_list{padding-bottom:.1rem;-webkit-overflow-scrolling:touch;overflow-y:auto;white-space:nowrap;font-size:1.6rem;}
+        .product_item{position:relative;display:inline-block;width:15rem;margin-left:.1rem;padding:.1rem .1rem .08rem;font-size:1.6rem;white-space:normal;vertical-align:top; border-right:1px solid #e0e0e0;}
+        .product_item h3{ font-size: 1.35rem; height: 3.2rem; line-height: 1.6rem; overflow: hidden; color:#6e6e6e;padding: 0.2rem;}
+        .product_box .pic{position:relative;}
+        .price_box{margin-top:.05rem;margin-left:-0.02rem;white-space:nowrap;}
+        .price{color:#ff3c25;font-size:1.5rem;}
+        .old_price{display:inline-block;position:relative;color: #bbb; font-size: 1rem; padding-left: 0.5rem;}
+        .youhui{position: absolute; top: 0; left: 0; font-size: 4rem; color: red; z-index: 9999; }
+        .shuigouindexgoods li {position: relative; }
+        
+        
+        .ttkb{ background-color:#fff;margin-bottom:1rem; padding:0.6rem 0.35rem 0.8rem 0.35rem; position:relative;} 
+        .ttkb span { display:inline-block;}
+        .ttkb span font{ color:#216e00; font-size:1.7rem;border-right: 2px solid #bbb; padding-right:0.2rem; margin-right:0.5rem;}
+        .ttkb .gd{display:inline-block; vertical-align: bottom;}
+        .ttkb .gd li{height: 20px;line-height: 20px;font-size:1.4rem; white-space: nowrap; overflow: hidden;text-overflow:ellipsis;}
+        .ttkb font.fd{ position:absolute; right:0.8rem; top:0.5rem;font-size:1.8rem;color:#828282;}
+
+</style>
+</head>
+<body style="background: #f3f4f6;">
+
+<!--
+        <script id="banner-template" type="text/x-dot-template">
+            
+                <div class='swipe-wrap' id="banner-content">
+                    {{ for(var i=0; i< it.length; i++) { }}
+                    <div>
+                        <img src="{{=serverUrl_img+'/'+it[i].topic_img}}" tapmode onclick="openBannerWin('{{=it[i].topic_id}}');" />
+                    </div>
+                    
+                    {{ } }}
+                </div>
+                <ul id="pointer">
+                    {{ for(var j=0; j< it.length; j++) { }}
+                        {{ if(j==0){ }}
+                            <li><a class="active"></a></li>
+                        {{ }else{ }}
+                            <li><a ></a></li>                        
+                        {{ } }}
+                        
+                    {{ } }}
+                </ul>
+        </script>
+-->
+
+
+
+        <script id="banner-template" type="text/x-dot-template">
+            
+                <div class='swipe-wrap' id="banner-content">
+                    {{ for(var i=0; i< it.length; i++) { }}
+                    <div>
+                        <img src="{{=it[i].topic_img}}" tapmode onclick="openBannerWin('{{=it[i].topic_id}}');" />
+                    </div>
+                    
+                    {{ } }}
+                </div>
+                <ul id="pointer">
+                    {{ for(var j=0; j< it.length; j++) { }}
+                        {{ if(j==0){ }}
+                            <li><a class="active"></a></li>
+                        {{ }else{ }}
+                            <li><a ></a></li>                        
+                        {{ } }}
+                        
+                    {{ } }}
+                </ul>
+
+             
+        </script>
+
+        <div id='slide' class='swipe'></div>
+
+
+
+
+    <div class="shuiguoindexnav">
+        <ul>
+            <li tapmode onclick="navigation(1);"><strong><font>&#xe6a8;</font></strong><span>剁手价</span></li>
+            <li tapmode onclick="navigation(2);"><strong><font>&#xe60a;</font></strong><span>团购</span></li>
+            <li tapmode onclick="navigation(3);"><strong><font>&#xe6b6;</font></strong><span>抽奖</span></li>
+            <li tapmode onclick="navigation(4);"><strong><font>&#xe6b7;</font></strong><span>积分兑换</span></li>           
+            <li tapmode onclick="navigation(7);"><strong><font>&#xe6b5;</font></strong><span>签到</span></li>
+            <li tapmode onclick="navigation(5);"><strong><font>&#xe6a7;</font></strong><span>客服</span></li>
+            <li tapmode onclick="navigation(8);"><strong><font>&#xe607;</font></strong><span>合伙人</span></li>
+            <li ><strong><font>&#xe616;</font></strong><span>敬请期待</span></li>         
+        </ul>
+    </div>
+
+<script type="text/x-dot-template" id="dztj-template">
+        {{for(var i=0,len=it.length;i<len;i++){}}
+                <div class="product_item" topmode onclick="opengoods({{=it[i].goods_id}})">
+
+               {{ if(it[i].codes !=null){ }}
+                 <div class="hongdong{{=it[i].codes}}"></div>
+                {{ } }}
+                    <span class="product_box">
+                        <div class="pic">
+                            <img src="{{=serverUrl_img+'/'+it[i].goods_thumb}}" alt="{{=it[i].goods_name}}" width="120" height="120" >
+                        </div>
+                        <h3>{{=it[i].goods_name}}</h3>
+                        <div class="price_box">
+                            <span class="price">￥{{=it[i].goods_price}}</span> 
+                            <span class="old_price">
+                                <span class="reference_price">参考价</span>
+                                <del>￥{{=it[i].market_price}}</del>
+                            </span>
+                        </div>
+                    </span>
+                </div>
+        {{}}}    
+</script>
+
+
+    <div class="ttkb">
+        <span id="spanwidth"><font>&#xe6d6;</font></span>
+        <div class="gd">
+        <ul style="overflow:hidden; height:20px;" id="ttkulist">
+
+        </ul>
+        </div>
+        <font class="fd" tapmode onclick="openGYhearder('top_list','天天快报','',1,'');">&#xe6d4;</font>
+    </div>
+
+
+
+
+
+    <script type="text/x-dot-template" id="ttkb-template">
+        {{for(var i=0,len=it.length;i<len;i++){}}
+            <li tapmode onclick="opentitle({{=it[i].article_id}});">{{=it[i].title}}</li>
+        {{}}}    
+    </script>
+
+
+
+  <div class="touchweb_page-index">
+            <div class="chop_hand_price">
+                <div class="head_box">
+                    <div class="touchweb_components-indexTitle">
+                        <h3 class="title">口碑甄选<i>GOOD PRICE</i><font tapmode onclick="getDztj();">&#xe6be;</font></h3>
+                    </div>
+                </div> 
+                <div class="product_list" id="chopHandList">  
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="shuigouindexads">
+    <h3>品质优先<i>GOOD FRUIT</i></h3>
+     
+        <div class="shuigouindexadsleft">
+           <ul>
+               <li tapmode onclick="navigation(1);">
+                <img src="../img/index01.jpg"></li>
+                <!-- <li tapmode onclick="zhuanti(830);"> -->
+                <li tapmode onclick="zhuanti(753);">
+                <img src="../img/index05.jpg"></li>
+           </ul>
+        </div>
+
+         <div class="shuigouindexadsright">
+         <ul><!-- 
+            <li tapmode onclick="zhuanti(736);"> -->
+            <li tapmode onclick="zhuanti(736);">
+                <img src="../img/index02.jpg"></li>
+            <li tapmode onclick="zhuanti(678);">
+            <img src="../img/index03.jpg"></li>
+
+         </ul>    
+        </div>
+      
+    </div>
+
+     <div class="shuigouhoudong" tapmode onclick="api.openWin({
+         name: 'zt_list',
+         url: 'zt_list.html',
+         reload:true,
+         bounces: false
+     });;">
+
+            <img src="../img/index06.jpg" />
+    </div>
+    <div class="shuigouindexgoods">
+        <h3>
+            <span></span><i><font class="iconfont">&#xe614;</font>猜你喜欢</i><span></span></h3>
+
+        <script type="text/x-dot-template" id="cnxh-template">
+
+            {{for(var i=0,len=it.length;i<len;i++){}}
+            <li id="cnxh_{{=cnxh_page()}}">           
+                 {{ if(it[i].codes !=null){ }}
+                 <div class="hongdong{{=it[i].codes}}"></div>
+                {{ } }}   
+                <div topmode onclick="opengoods({{=it[i].goods_id}})">
+
+                   <img src="{{=serverUrl_img+'/'+it[i].goods_thumb}}" /></div>
+                <span>{{=it[i].goods_name}}</span>
+                <spanc>￥{{=it[i].goods_price}}<font topmode onclick="collect({{=it[i].goods_id}})">&#xe64b;</font></spanc>
+            </li>
+            {{}}}
+        </script>
+        <ul id='cnxh'>
+
+        </ul>
+    </div>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/swipe.js"></script>
+<script type="text/javascript">
+    page=1;
+    apiready = function(){
+        api.parseTapmode();
+        api.hideProgress();
+/*        getBanner();//获取轮播图
+        getDztj();//店长推荐
+        getCnxh(page);//猜你喜欢
+*/
+
+        //clear_cache();
+
+/*        read_cache_show("banner");
+        
+        var systemType = api.systemType;
+        if (systemType == "ios") {
+            getBanner();
+        }else{
+            read_cache_show("banner");
+        }        
+*/
+        
+        getBanner();
+        getguoshitop();
+
+        getDztj();
+        getCnxh(page);
+
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            api.hideProgress();
+            getBanner();
+            banner_info = [];
+            
+            //下来刷新时重新更新缓存
+            read_banner_cache();
+            api.refreshHeaderLoadDone();
+        });
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+            api.hideProgress();
+            page+=1;
+            getCnxh(page);
+            api.refreshHeaderLoadDone();
+        });        
+    }
+
+
+    function cnxh_page(){
+
+        //alert(page+1);
+        return page;
+
+    }
+
+
+
+    //店长推荐(生成缓存)
+    function getDztj(){
+        api.showProgress({
+            title: '剁手产品加载中...',
+            modal: false
+        });
+        
+        api.ajax({
+            url:serverUrl+'/index.php?act=dztj',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID}
+            },
+        },function(ret,err){
+            api.hideProgress();
+            if(ret){
+                //api.alert({msg:JSON.stringify(ret.data)});
+                if(ret.code==2){
+                    //先缓存商品图片
+
+                    //注意促销的商品显示促销价
+                   var template = document.getElementById('dztj-template').innerHTML;
+                   document.getElementById('chopHandList').innerHTML=doT.template(template)(ret.data);
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else{
+
+            }
+       })        
+    }
+
+
+
+
+
+
+    banner_cache=0;
+    banner_number=10;
+    banner_info = [];
+    topic_ids=[];
+    topic_imgs=[];
+
+//获取轮播图的数据生成缓存
+    function getBanner(){
+        // api.showProgress({
+        //     title: '轮播图加载中...',
+        //     modal: false
+        // });
+        
+        api.ajax({
+            url:serverUrl+'/index.php?act=banner',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID}
+            },
+        },function(ret,err){
+            api.hideProgress();
+            if(ret){
+                //api.alert({msg:JSON.stringify(ret)});
+                banner_number=ret.length;
+                var systemType = api.systemType;
+                if (systemType == "ios") {
+                    for(var i=0,len=ret.length;i<len;i++){
+                        ret[i]['topic_img']=serverUrl_img+'/'+ret[i]['topic_img'];
+                    }
+                    var content = $api.byId('slide');//获取div的id
+                    var tpl = $api.byId('banner-template').text;//获取模板的id
+                    var tempFn = doT.template(tpl);//获取模板的方法 
+                    content.innerHTML = tempFn(ret);//赋值
+                    initSlide();
+                }else{
+                    for(var i=0,len=ret.length;i<len;i++){
+                        topic_ids.push(ret[i]['topic_id']);
+                        //topic_id=ret[i]['topic_id'];
+                        var urls=serverUrl_img+'/'+ret[i]['topic_img'];
+                        
+                        api.imageCache({
+                            url: urls,
+                            thumbnail:false  //不使用缩略图
+                        }, function(ret, err){
+                            //alert(urls);
+                            var path_url='';
+                            if(ret.status){
+                                path_url=ret.url;
+                            }else{
+                                path_url=urls;
+                            }
+                            //alert(path_url);
+                            topic_imgs.push(path_url);
+                            banner_cache+=1;
+                            
+                            if(banner_cache==banner_number){
+                                for(var j =0;j<banner_number;j++){
+                                    banner_info[j]={topic_id:topic_ids[j],topic_img:topic_imgs[j]};
+                                }
+                                make_cache_done("banner","bannertable","banner",banner_info);
+                            }
+                        });
+                     }
+                   }
+
+                
+
+            }else{
+                // api.alert({
+                //     msg:('错误码2:'+err.code+':错误信息2:'+err.msg+'网络状态码2:'+err.statusCode)
+                //     //alert(JSON.stringify(err))
+                //   });
+            }
+       })          
+    }
+
+
+    function  read_banner_cache(){
+        var db = api.require('db');
+        db.openDatabase({
+            name: 'banner'
+        }, function(ret, err){
+            db.selectSql({
+                name: "banner",
+                sql: 'SELECT banner FROM bannertable'
+            }, function(retsss, errsss){  
+          
+                if( retsss.status ){
+                    if(retsss.data!='' && retsss.data!=undefined){
+
+                        //alert( JSON.stringify(retsss.data[0]["banner"]));
+                       
+                        var data_info_list=$api.strToJson(retsss.data[0]["banner"]);
+
+                        //alert( JSON.stringify( data_info_list ));
+                        
+                        var content = $api.byId('slide');//获取div的id
+                        var tpl = $api.byId('banner-template').text;//获取模板的id
+                        var tempFn = doT.template(tpl);//获取模板的方法 
+                        content.innerHTML = tempFn(data_info_list);//赋值
+                        initSlide();
+                    }else{//没有获取到缓存，从服务器从新获取
+                        getBanner();
+                    }
+                }else{
+                    getBanner();
+                    //alert( JSON.stringify( errsss ) );
+                }
+            });
+        });
+
+    }
+
+
+     //轮播图
+      function initSlide() {
+         var slide = $api.byId('slide');
+         var pointer = $api.domAll('#pointer a');
+         
+         window.mySlide = Swipe(slide, {
+             startSlide: 0,
+             auto: 5000,
+             continuous: true,
+             disableScroll: true,
+             stopPropagation: true,
+             callback: function (index, element) {
+                 //alert(index);
+                 //alert(pointer.length);//当只有两个图片时pointer会有问题，此处应做个判断左下处理
+                 var actPoint = $api.dom('#pointer a.active');
+                 $api.removeCls(actPoint, 'active');
+                 if(pointer.length==1){
+                    $api.addCls(pointer[0], 'active');
+                 }else if(pointer.length==2){
+                    if(index==2 || index==0){
+                        $api.addCls(pointer[0], 'active');  
+                    }else if(index==3 || index==1){
+                        $api.addCls(pointer[1], 'active');  
+                    }
+                 }else{
+                     $api.addCls(pointer[index], 'active');                    
+                 }
+
+             },
+             transitionEnd: function (index, element) {
+     
+             }
+         });
+     }
+ 
+     //打开banner链接(banner.html为专题模板)
+     function openBannerWin (topic_id,type) {
+    //通过index索引查询出topic_id
+        if(!type || type==''){
+            type="banner";
+        }
+        var p=topic_id.substr(0,7);
+        if(p=='suppId='){
+            //alert('aaaaa');
+            var supplier_id=topic_id.substr(7,10);
+            //alert(supplier_id);
+            opensupplier(supplier_id);
+            return ;
+        }
+
+/*        if(topic_id==100){
+            api.openWin ({
+                name: "activity",
+                url: "./activity.html"
+            }); 
+            return;       
+        }*/
+
+        api.openWin ({
+            name: type,
+            url: './'+type+'.html',
+            pageParam: {topic_id: topic_id}
+        }); 
+    }   
+
+
+    function navigation(id){
+        if(id==1){
+            //新品尝鲜
+/*            openActivityWin(5);
+            return false;
+*/
+            api.openWin({
+                name: 'duoshoujia',
+                url: 'duoshoujia.html',
+                reload:true,
+                bounces: false,
+                pageParam: {style : 'promote'}
+            });
+
+            return false;
+
+        }else if(id==2){
+            // openActivityWin(1);//天天特惠
+            // return false;
+            api.openWin({
+                name: 'tuangou',
+                url: 'tuangou.html',
+                reload:true,
+                bounces: false,
+                pageParam: {style : 'tuangou'}
+            });
+            return false;            
+        }else if(id==3){
+            //type='groupbuy';//团购
+            api.openWin({
+                name: 'choujiang',
+                url: 'choujiang.html',
+                reload:true,
+                bounces: false,
+                pageParam: {style : 'choujiang'}
+            });
+
+            return false;
+        }else if(id==4){
+            //type='miaosha';//秒杀
+            api.openWin({
+                name: 'jifen',
+                url: 'jifen.html',
+                reload:true,
+                bounces: false,
+                pageParam: {style : 'jifen'}
+            });
+
+            return false;
+
+        }else if(id==5){
+            // type='qiandao';//签到
+            // api.toast({
+            //     msg: '重置功能暂未开放，敬请期待!',
+            //     duration: 2000,
+            //     location: 'bottom'
+            // });
+        
+            kefushow("main");
+            return false;
+        }else if(id==6){
+            type='quan';//优惠券
+            api.toast({
+                msg: '暂无公共优惠券，商品优惠券请到商品页领取！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }else if(id==7){
+/*            type='chongzhi';//充值
+            api.toast({
+                msg: '充值功能暂未开放，敬请期待!',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;*/
+
+            api.openWin({
+                name: 'qiandao',
+                url: 'qiandao.html',
+                reload:true,
+                bounces: false,
+                pageParam: {style : 'jifen'}
+            });
+            return false;
+
+        }else if(id==8){
+            type='daili_header';//我的合伙人
+        }else if(id==9){
+            type='ttth';//今日特价
+        }else if(id==10){
+            type='gcxg';//国产鲜果
+        }else if(id==11){
+            type='jkxg';//进口鲜果
+        }else if(id==12){
+            type='slxg';//时令鲜果
+        }else if(id==13){
+            type='lplh';//礼品礼盒
+        }else if(id==14){
+            type='tjxm';//特级鲜柠檬专题
+        }
+        //alert(id);
+        //return false;
+
+        api.openWin ({
+            name: type,
+            url: './'+type+'.html',
+            reload:true,
+            pageParam: {supplier_id: id},
+            rect:{
+                x:0,
+                y:0,
+                w:'auto',
+                h:'auto'
+            },
+            bounces: false,
+            delay:0
+        }); 
+        return false;
+    }
+
+/*    //店长推荐
+    function getDztj(){
+        api.showProgress({
+            title: '剁手产品加载中...',
+            modal: false
+        });
+        
+        api.ajax({
+            url:serverUrl+'/index.php?act=dztj',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID}
+            },
+        },function(ret,err){
+            api.hideProgress();
+            if(ret){
+                //api.alert({msg:JSON.stringify(ret.data)});
+                if(ret.code==2){
+                    //注意促销的商品显示促销价
+                   var template = document.getElementById('dztj-template').innerHTML;
+                   document.getElementById('chopHandList').innerHTML=doT.template(template)(ret.data);
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else{
+                // api.alert({
+                //     msg:('错误码3:'+err.code+':错误信息3:'+err.msg+'网络状态码3:'+err.statusCode)
+                //   });
+            }
+       })        
+    }*/
+
+    //猜你喜欢
+    function getCnxh(page){
+        // api.showProgress({
+        //     title: '猜你喜欢加载中...',
+        //     modal: false
+        // });
+        size=4;
+        
+        api.ajax({
+            url:serverUrl+'/index.php?act=cnxh',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID,page:page,size:size}
+            },
+        },function(ret,err){
+            api.hideProgress();
+            //api.alert({msg:JSON.stringify(ret.data)});
+            if(ret){
+                if(ret.code==5){
+                    //注意促销的商品显示促销价
+                    //alert(page);
+                    var cnxh_pages=page;
+                   var template = $api.byId('cnxh-template').innerHTML;
+                   $api.append($api.byId('cnxh'),doT.template(template)(ret.data));
+                   
+                    // setInterval("load_cnxh_img("+cnxh_pages+")", 1000);
+/*                    
+                    if(page==1){
+                        // var str="";
+                        // str+="<div id='cnxh_1'></div>";
+                        // document.getElementById('cnxh').innerHTML=str;
+                       var template = document.getElementById('cnxh-template').innerHTML;
+                       document.getElementById('cnxh').innerHTML=doT.template(template)(ret.data);   
+                       //cnxh_page();                    
+                    }else{
+                       var template = document.getElementById('cnxh-template').innerHTML;
+                       //document.getElementById('cnxh_'+page).innerHTML=doT.template(template)(ret.data);
+                       //cnxh_page();
+                       
+                       $api.append($api.byId('cnxh'),doT.template(template)(ret.data));
+                    }
+*/
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else{
+                // api.alert({
+                //     msg:('错误码4:'+err.code+':错误信息4:'+err.msg+'网络状态码4:'+err.statusCode)
+                //   });
+            }
+       })
+    }
+
+
+/*
+    function load_cnxh_img(pages){
+       alert(pages);
+       //return ;
+    
+        //alert(document.getElementById('cnxh_'+pages+'').getElementsByTagName('img')[0].src);
+
+        document.getElementById('cnxh_'+pages+'').getElementsByTagName('img')[0].onload= function () {
+            //alert('cnxh_'+pages);
+            alert("aaaa");
+
+           // document.getElementById('cnxh_'+pages).style.display="block";
+        }
+
+    }
+*/
+
+    //添加商品收藏
+    function collect(goods_id){
+        //alert(goods_id);
+        if(!goods_id || goods_id<1){
+            api.toast({
+                msg: '请先选择要收藏的商品！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.openWin ({
+                name: 'login',
+                url: 'login.html',
+                reload: true,
+                bounces: false,
+                pageParam: {back_act: 'goods',goods_id:goods_id},
+                delay:200
+            });
+    
+            return false;
+        }
+
+        api.showProgress({
+            text: '添加收藏中……',
+            modal: true
+        });
+        api.ajax({
+            url: serverUrl+'/user.php?act=add_collect',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {user_id:userid_gs,goods_id:goods_id,supplier_id:SUPPLIER_ID}
+            }
+        },function(ret,err){
+            api.hideProgress();
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+               if(ret.code==123){
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });                
+                    window.location.reload();
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                // api.alert({
+                //     msg:('错误码5：'+err.code+'；错误信息5：'+err.msg+'网络状态码5：'+err.statusCode)
+                // });
+            };
+        });
+        api.hideProgress();
+    }
+
+
+     //打开疯狂抢购 热销排行   商城热卖  商城推荐  新品上市链接(activity.html为模板)
+     function openActivityWin (cx_style) {
+        if(!cx_style || cx_style==''){
+            cx_style=1;
+        }
+        api.openWin ({
+            name: "activity",
+            url: 'activity.html',
+            pageParam: {cx_style:cx_style},
+            rect:{
+                x:0,
+                y:0,
+                w:'auto',
+                h:'auto'
+            },
+            scrollToTop:true,
+            showProgress:true,
+            bounces: false,
+            delay:200
+        }); 
+    }  
+
+
+    //通过专题编号获取专题的topic_id 
+    //后台添加位置：手机app专题首页显示顺序   
+    function zhuanti(a){
+        //alert(a);
+        // return false;
+/*        if(!a || a<100){
+            api.toast({
+                msg: '该活动已经结束！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+            api.ajax({
+                url:serverUrl+'/index.php?act=zhuanti_cuxiao',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                returnAll:false,
+                data:{
+                    values: {zuanti: a,supplier_id:SUPPLIER_ID}
+                }           
+            },function(ret,err){
+                api.hideProgress();
+                if(ret){
+                  //api.alert({msg:JSON.stringify(ret)});
+                    if(ret.code==1232){
+                        openBannerWin(ret.data);
+                    }else{
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        return false;
+                    }
+                }else{
+                    api.alert({
+                        msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                        //alert(JSON.stringify(err))
+                      });
+                }
+           })
+*/
+
+
+
+        //lm的值1一级栏目点击进入  2二级栏目点击进入 3表示从三级栏目进入
+        var url='';
+        url='catlist';
+        api.openWin ({
+            name: url,
+            url: url+'.html',
+            pageParam: {cat_id:a,lm:1},
+            reload:true,
+            rect:{
+                x:0,
+                y:0,
+                w:'auto',
+                h:'auto'
+            },
+            bounces: false,
+            delay:300
+        });
+
+
+
+
+    }
+
+
+    function openCatWin (type) {
+        var url='';
+        url='catlist';
+        api.openWin ({
+            name: url,
+            url: '../'+url+'.html',
+            pageParam: {cat_id:type},
+            reload:true,
+            rect:{
+                x:0,
+                y:0,
+                w:'auto',
+                h:'auto'
+            },
+            bounces: false,
+            delay:200
+        });
+    }
+
+
+
+
+
+
+    //天天快报
+    function getguoshitop(){
+        //alert("aaa");
+        api.ajax({
+            url:serverUrl+'/article.php?act=get_guoshi_top',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID}
+            },
+        },function(ret,err){
+            if(ret){
+                //api.alert({msg:JSON.stringify(ret.article)});
+                if(ret.code==1701){
+                    //api.alert({msg:JSON.stringify(ret.code)});
+                    var template = document.getElementById('ttkb-template').innerHTML;
+                    document.getElementById('ttkulist').innerHTML=doT.template(template)(ret.article);
+                    //zhuan_tt();
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else{
+
+            }
+       })        
+    }
+
+
+    var screenWidth=window.screen.width;
+    var spanwidth= document.getElementById("spanwidth").offsetWidth;
+    var userlistWidth=screenWidth-spanwidth-120;
+    document.getElementById("ttkulist").style.width=userlistWidth+"px";
+
+   var area = document.getElementById('ttkulist');
+     var iliHeight = 20; //单行滚动的高度
+     var speed = 50; //滚动的速度
+     var time;
+     var delay = 1000;
+     area.scrollTop = 0;
+     area.innerHTML += area.innerHTML; //克隆一份一样的内容
+     function startScroll() {
+         time = setInterval("scrollUp()", speed);
+         area.scrollTop++;
+     }
+
+     function scrollUp() {
+         if (area.scrollTop % iliHeight == 0) {
+             clearInterval(time);
+             setTimeout(startScroll, delay);
+         } else {
+             area.scrollTop++;
+             if (area.scrollTop >= area.scrollHeight / 2) {
+                 area.scrollTop = 0;
+             }
+         }
+     }
+     setTimeout(startScroll, delay);
+
+
+     function opentitle(article_id){
+
+        //alert(article_id);
+        api.openWin({
+            name: 'guoshiinfo',
+            url: 'guoshiinfo.html',
+            reload:true,
+            pageParam: {
+                article_id: article_id
+            }
+        });
+
+     }
+
+/*
+     function opentoplist(){
+        api.openWin({
+            name: 'top_list',
+            url: 'top_list.html',
+            reload:true
+        });
+     }
+*/
+
+</script>

@@ -1,0 +1,361 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/guoshi.css">
+    <meta name="format-detection" content="telephone=no">
+    <script src="../script/TouchSlide.1.0.js"></script>
+</head>
+<body  style=" background:#f1f1f1;">
+<!-- 
+  <header class="gsheader">
+      <div class="gsheaderdivleft">
+          <a>
+                <i> <font>&#xe63d;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">
+          果实
+          </a>
+      </h1>
+      <div class="gsheaderdivright">
+          <a>
+                <i><font>&#xe663;</font></i>
+          </a>
+      </div>
+  </header>
+ -->
+
+
+<div id="guoshi_index_list">
+</div>
+
+
+
+
+<script id="guoshi-list-template" type="text/x-dot-template">
+
+	{{if(it.lunbo){}}
+  	<div id="slideBox" class="slideBox gsgoushilunbo">
+		<div class="bd">
+			<ul>
+				
+				{{for(var i=0,len=it.lunbo.length;i<len;i++){}}
+					<li tapmode onclick="openArticle({{=it.lunbo[i].article_id}})">
+						<a class="pic" href="####"><img src="{{=serverUrl_img+'/'+it.lunbo[i].luoboimg}}" /></a>
+						<a class="tit" href="####">{{=it.lunbo[i].title}}</a>
+					</li>
+				{{}}}
+
+				
+<!-- 
+					<li>
+						<a class="pic" href="#"><img src="http://www.superslide2.com/TouchSlide/demo/images/2b.jpg"/></a>
+						<a class="tit" href="#">范冰冰黄晓明亲密无间</a>
+					</li>
+					<li>
+						<a class="pic" href="#"><img src="http://www.superslide2.com/TouchSlide/demo/images/2b.jpg"/></a>
+						<a class="tit" href="#">一周体育快报</a>
+					</li>
+					<li>
+						<a class="pic" href="#"><img src="http://www.superslide2.com/TouchSlide/demo/images/4b.jpg"/></a>
+						<a class="tit" href="#">金正恩携娇妻视察</a>
+					</li>
+ -->
+
+			</ul>
+		</div>
+
+		<div class="hd">
+			<ul></ul>
+		</div>
+	</div>
+	{{}}}
+
+
+	{{if(it.article_cat){}}
+    <div class="classdiv gsguoshinav">
+	<ul>
+		{{for(var i=0,len=it.article_cat.length;i<len;i++){}}
+		<li tapmode onclick="touchlanmu({{=it.article_cat[i].cat_id}});"><font>&#xe65b;</font><strong>{{=it.article_cat[i].cat_name}}</strong></li>
+		{{}}}
+
+<!--
+ 		<li><font>&#xe662;</font><strong>懒人厨房</strong></li>
+		<li><font>&#xe65c;</font><strong>果实百科</strong></li>
+		<li><font>&#xe65a;</font><strong>趣味百果</strong></li>
+-->
+
+	</ul>
+	</div>
+	{{}}}
+
+
+{{if(it.article_info){}}
+	<div class="classdiv gsgoushilist">
+	<ul>
+	{{for(var i=0,len=it.article_info.length;i<len;i++){}}
+	<li>
+	<span  tapmode onclick="openArticle({{=it.article_info[i].article_id}})"><i class="classtestover">{{=it.article_info[i].title}}</i><em>果友圈</em></span>
+	<div class="gsgoushilistimg"  tapmode onclick="openArticle({{=it.article_info[i].article_id}})"><img src="{{=serverUrl_img+'/'+it.article_info[i].luoboimg}}" /></div>
+	<strong  tapmode onclick="openArticle({{=it.article_info[i].article_id}})">{{=it.article_info[i].description}}</strong>
+	<spanc><i>{{=it.article_info[i].add_time}}</i>
+    
+  <em> <font tapmode onclick="sharearticle('{{=it.article_info[i].article_id}}','{{=it.article_info[i].title}}','{{=it.article_info[i].description}}','{{=it.article_info[i].add_time}}','{{=it.article_info[i].luoboimg}}');">&#xe664;<i>{{=it.article_info[i].share_num}}</i></font>
+	<font>&#xe665;<i>{{=it.article_info[i].dianzan_num}}</i></font> 
+<font>&#xe64c;<i>{{=it.article_info[i].pinglun_num}}</i></font> 
+    </em>
+    
+    
+    </spanc>
+	</li>
+	{{}}}
+
+<!-- 
+	<li>
+	<span><i class="classtestover">心情不好了，就来看看这只狗！</i><em>果友圈</em></span>
+	<div class="gsgoushilistimg"><img src="http://m.360buyimg.com/mobilecms/s720x350_jfs/t1846/300/2910353806/110620/685a2d3c/56f89765N8403d57b.jpg" /></div>
+	<strong>猫咪不像人，猫咪的情绪不会写在脸上，反馈给我们的信息更多的应该是行为上肢体上的，当然从叫声中也会反应</strong>
+	<spanc><i>2016-04-01 18:18:16</i><em><font>&#xe664;<i>0</i></font><font>&#xe665;<i>0</i></font><font>&#xe64c;<i>0</i></font></em></spanc>
+	</li>
+	<li>
+	<span><i class="classtestover">心情不好了，就来看看这只狗！</i><em>果友圈</em></span>
+	<div class="gsgoushilistimg"><img src="http://m.360buyimg.com/mobilecms/s720x350_jfs/t1846/300/2910353806/110620/685a2d3c/56f89765N8403d57b.jpg" /></div>
+	<strong>猫咪不像人，猫咪的情绪不会写在脸上，反馈给我们的信息更多的应该是行为上肢体上的，当然从叫声中也会反应</strong>
+	<spanc><i>2016-04-01 18:18:16</i><em><font>&#xe664;<i>0</i></font><font>&#xe665;<i>0</i></font><font>&#xe64c;<i>0</i></font></em></spanc>
+	</li>
+-->
+
+
+	</ul>
+	</div>
+{{}}}
+
+
+</script>
+
+
+
+
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+    page=4;
+    cat_id=0;
+    apiready = function(){
+        api.parseTapmode();
+        api.hideProgress();
+        get_guoshi_info(cat_id,page);
+
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+        	api.hideProgress();
+        	page+=4;
+			get_guoshi_info(cat_id,page);
+            api.refreshHeaderLoadDone();
+        });
+        
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+        		api.hideProgress();
+                page+=4;
+                get_guoshi_info(cat_id,page);
+                api.refreshHeaderLoadDone();
+        });
+
+    }
+
+    function get_guoshi_info(cat_id,page){
+    	//alert(cat_id);
+    	//alert(page);
+
+        api.ajax({
+            url: serverUrl+'/article.php?act=get_guoshi_info',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                  supplier_id:SUPPLIER_ID,
+                  cat_id:cat_id,
+                  page:page
+                }
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==1301){
+                    var template = document.getElementById('guoshi-list-template').innerHTML;
+                    document.getElementById('guoshi_index_list').innerHTML=doT.template(template)(ret);
+                    if(ret.lunbo !=''){
+                    	lunboshow();
+                    }
+                }else{
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+            }else {
+                // api.alert({
+                //     msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                // });
+            };
+        });
+
+    }
+
+    function lunboshow(){
+		TouchSlide({
+		    slideCell: "#slideBox",
+		    titCell: ".hd ul", 
+		    mainCell: ".bd ul",
+		    effect: "leftLoop",
+		    autoPage: true, 
+		    autoPlay: false
+		});
+	}
+
+	function openArticle(id){
+		//alert(id);
+		if(id<1){
+			api.toast({
+			    msg: '该文章信息有误，请选择能正常浏览的文章！',
+			    duration: 2000,
+			    location: 'bottom'
+			});
+			return false;
+		}
+		api.openWin({
+		    name: 'guoshiinfo',
+		    url: 'guoshiinfo.html',
+		    bounces: false,
+		    pageParam: {article_id : id}
+		});
+	}
+
+	function touchlanmu(cat_ids){
+		cat_id=cat_ids;
+		//alert(cat_ids);
+		get_guoshi_info(cat_ids);
+	}
+
+
+/*
+	function sharearticle(id,title,description,add_time,img){
+		// alert(id);
+		// alert(title);
+		// alert(description);
+		// alert(add_time);
+		// alert(img);
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+        	showusercenter("guoshi");
+        }
+  //       var sharedModule = api.require("shareAction");
+		// var sharedMsg = {
+		//     text : title,
+		//     type : "text"
+
+		// };
+		// sharedModule.share(sharedMsg);
+
+
+	}
+*/
+
+	function sharearticle(id,title,description,add_time,img,wx_scene){//wx_scene,取值范围：session（会话）timeline（朋友圈）favorite（收藏）
+
+		var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+        	showusercenter("guoshi");
+        }
+        if(!wx_scene){
+        	wx_scene="timeline";
+        }
+		var wx = api.require('wx');
+		wx.isInstalled(function(ret, err){
+			if(ret.installed){
+				//alert("当前设备已安装微信客户端");
+				wx.shareWebpage({
+				apiKey: 'wxb17bc249fd3e4260',
+				scene: wx_scene,
+				title: title,
+				description: description,
+				thumb: "widget://img/share.png",
+				contentUrl: serverUrl_img+'/appweball/guoshiinfo.php?id='+id
+				}, function(ret, err){
+					if(ret.status){
+						api.toast({
+						    msg: '分享成功！',
+						    duration: 2000,
+						    location: 'bottom'
+						});
+				        api.ajax({
+				            url: serverUrl+'/article.php?act=article_share',
+				            method: 'post',
+				            timeout: 30,
+				            dataType: 'json',
+				            returnAll:false,
+				            data:{
+				                values: {
+				                  user_id:userid_gs,
+				                  supplier_id:SUPPLIER_ID,
+				                  article_id:id
+				                }
+				            }            
+				        }, function (ret, err) {
+				            //api.alert({msg:JSON.stringify(ret)});
+				            //return false;
+				            if (ret) {
+				                if(ret.code==2406){
+				                  window.location.reload();
+				                }else{
+				                  api.toast({
+				                      msg: ret.msg,
+				                      duration: 2000,
+				                      location: 'bottom'
+				                  });
+				                }
+				            }else {
+				                // api.alert({
+				                //     msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+				                // });
+				            };
+				        });						
+					}else{
+					   //alert(err.code);
+					   //alert('分享失败');
+					   api.toast({
+					       msg: '分享失败',
+					       duration: 3000,
+					       location: 'bottom'
+					   });
+					}
+				});
+			}else{
+				alert('当前设备未安装微信客户端，请安装微信后再分享。');
+			}
+		});
+	}
+
+</script>

@@ -1,0 +1,84 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+    <style>
+    
+    </style>
+
+</head>
+<body style="background: #f3f4f6;">
+
+
+<header class="gsheader" id="header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+            <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        售后商品列表
+    </h1>
+
+    <div class="gsheaderdivright" tapmode onclick='kefushow("shouhou_header");'>
+        <a>
+            <i><font>&#xe635;</font></i>
+        </a>
+    </div>
+
+
+</header>
+
+
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+    order_id=0;
+    apiready = function(){
+        api.parseTapmode();
+
+        var header = $api.byId('header');
+        var headerPos = $api.offset(header);
+        fixStatusBar(header);
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('shouhou_header');            
+            return false;
+        }
+
+        if(api.pageParam.order_id>0){
+            order_id=api.pageParam.order_id;
+        }
+
+        api.openFrame({
+            name: 'shouhou_list',
+            url: 'shouhou_list.html',
+            bounces: true,
+            reload:true,
+            pageParam: { order_id: order_id},
+            rect: {
+                x: 0,
+                y: headerPos.h+5,
+                w: 'auto',
+                h: 'auto'
+            }
+        });
+
+    }
+
+
+
+
+
+</script>

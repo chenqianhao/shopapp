@@ -1,0 +1,323 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+</head>
+<body style="background: #f0f0f0;">
+
+   <header class="gsheader" id="aui-header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        <a href="#title-link" class="">
+              编辑地址
+        </a>
+    </h1>
+
+        
+<!--              <div class="gsheaderdivright" tapmpde onclick="kefushow('addressedit');">>
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>-->
+</header>
+
+
+
+
+
+
+
+<div id="address_edit_app">
+    
+</div>
+
+
+<!--     <div class="gsaddressedit">
+        <ul>
+            <li>
+                <input id="Communit" name="Communit" value="" placeholder="填写小区名称" type="text"></li>
+            <li>
+                <input id="Communitinfo" name="Communitinfo" value="" placeholder="输入门牌或者详细地址" type="text"></li>
+            <li>
+                <input id="consignee" name="consignee" value="" placeholder="你的姓名" type="text"></li>
+            <li>
+                <input name="tel" id="mobile" value="" placeholder="填写送货联系手机号码！" type="text">
+            </li>
+        </ul>
+    </div>
+ -->
+<script id="address-edit-template" type="text/x-dot-template">
+
+    
+<!--     <li><input id="Communit" name="Communit" value="{{=it.Communit}}" placeholder="填写小区名称" type="text"></li>
+    <li>  <input id="Communitinfo" name="Communitinfo" value="{{=it.Communitinfo}}" placeholder="输入门牌或者详细地址" type="text"></li> -->
+    <li><input id="consignee" name="consignee" value="{{=it.consignee}}" placeholder="你的姓名" type="text"></li>
+    <li><input name="tel" id="mobile" value="{{=it.mobile}}" placeholder="填写送货联系手机号码！" type="text">   </li>
+    <li>  <input id="address" name="address" value="{{=it.address}}" placeholder="输入详细地址" type="text"></li>
+
+</script>
+
+
+
+
+
+<div class="gsaddressedit classinputf" >
+        <ul id="addressshow">
+             
+<!--             <li>
+                <input id="Communit" name="Communit" value="" placeholder="填写小区名称" type="text"></li>
+            <li>
+                <input id="Communitinfo" name="Communitinfo" value="" placeholder="输入门牌或者详细地址" type="text"></li> -->
+            <li>
+                <input id="consignee" name="consignee" value="" placeholder="你的姓名" type="text"></li>
+<!--             <li>
+                <span>男</span><input id="radio-1-1" class="regular-radio" name="gender" checked="checked" value="0" type="radio">
+                <label for="radio-1-1">
+                </label>
+                  <span>女</span><input id="radio-1-2" class="regular-radio" name="gender" value="1" type="radio">
+                <label for="radio-1-2">
+                </label>
+            </li> -->
+            <li>
+                <input name="tel" id="mobile" value="" placeholder="填写送货联系手机号码！" type="text">
+            </li>
+
+            <li>  <input id="address" name="address" value="" placeholder="输入详细地址" type="text"><span tapmpde onclick="dingwei();"><font>&#xe648;</font></span></li>
+        </ul>
+    </div>
+
+
+    <button class="classbtn" tapemode onclick="edit_address();">修改地址</button>
+
+</body>
+
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    addressid=0;
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);        
+        var addressnr=api.pageParam.address_id;
+        if(addressnr>0){//编辑地址,调用地址信息
+            addressid=addressnr;
+            get_address_info(addressnr);
+        }else{
+            api.toast({
+                msg: '地址信息有误！',
+                duration: 2000,
+                location: 'bottom'
+            });
+        }
+        // else{
+        //     document.getElementById("addressshow").style.display="block";
+        // }
+    }
+
+    //指定地址id的地址信息（直接用pageParam传过来，不需要ajax）
+    function get_address_info(addressnr){
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('addressedit');
+            return false;
+        }
+
+        api.ajax({
+            url:serverUrl+'/cart.php?act=get_address_one',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    address_id: addressnr,
+                    user_id:userid_gs,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                if(ret.code==673){
+
+                    var template = document.getElementById('address-edit-template').innerHTML;
+                    document.getElementById('addressshow').innerHTML=doT.template(template)(ret.address);
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+    }
+
+
+    //新增地址
+    function edit_address(){
+
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('addressedit');
+            return false;
+        }
+
+        if(addressid<1){
+            api.toast({
+                msg: '传入的地址参数错误！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return ;
+        }
+
+
+        var address=$api.val($api.byId('address'))?$api.val($api.byId('address')):'';
+        // var Communit=$api.val($api.byId('Communit'))?$api.val($api.byId('Communit')):'';
+        // var Communitinfo=$api.val($api.byId('Communitinfo'))?$api.val($api.byId('Communitinfo')):'';
+        var consignee=$api.val($api.byId('consignee'))?$api.val($api.byId('consignee')):'';
+        var mobile=$api.val($api.byId('mobile'))?$api.val($api.byId('mobile')):'';
+
+
+
+        if( address == '' || address == undefined ){
+          api.toast({msg: '收货人必须认真填写!', location: 'middle'});
+          return;
+        } 
+        // if( Communitinfo == '' || Communitinfo == undefined ){
+        //   api.toast({msg: '详细地址必须认真填写!', location: 'middle'});
+        //   return;
+        // }   
+        // if( consignee == '' || consignee == undefined ){
+        //   api.toast({msg: '收货人必须认真填写!', location: 'middle'});
+        //   return;
+        // } 
+        if( mobile == '' || mobile == undefined ){
+          api.toast({msg: '手机号必须认真填写!', location: 'middle'});
+          return;
+        } 
+
+        if(checkPhone(mobile)==false){
+          api.toast({msg: '手机号格式不对!', location: 'middle'});
+          return;            
+        }
+
+        // var address='';
+        // if(Communit!=''){
+        //     address+=Communitinfo+'('+Communit+')';
+        // }else{
+        //     address+=Communitinfo;
+        // }
+
+
+
+        api.showProgress({
+            title: '地址加载中……',
+            modal: true
+        });
+        
+        api.ajax({
+            url:serverUrl+'/cart.php?act=edit_address',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    country:1,
+                    province:2,
+                    city:3,
+                    district:4,
+                    consignee:consignee,
+                    address:address,
+                    user_id:userid_gs,
+                    //Communit:Communit,
+                    //Communitinfo:Communitinfo,
+                    mobile:mobile,
+                    address_id:addressid,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            api.hideProgress();
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                if(ret.code==685){      
+                    api.sendEvent({
+                        name: 'address'
+                    });     
+
+                    api.closeWin();
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+    }
+
+
+  //检测手机号是否正确
+  function checkPhone(phone){
+    var reg = /^1\d{10}$/;
+    return reg.test(phone);
+  }
+
+
+
+    function dingwei(){
+        var bMap = api.require('bMap');
+        bMap.getLocation({
+                accuracy : '10m',
+                autoStop : true,
+                filter : 1
+        }, function(ret, err) {
+                if (ret.status) {
+                        bMap.getNameFromCoords({
+                                lon : ret.lon,
+                                lat : ret.lat
+                        }, function(ret, err) {
+                                if (ret.status) {
+                                        // 设置给位置
+                                        //$(".po").text(ret.address);
+                                        //alert(ret.address);
+                                        $api.val($api.byId("address"),ret.address);
+                                }
+                        });
+                } else {
+                    api.alert({msg:JSON.stringify(err)});
+                    //alert(err.code);
+                }
+        });
+
+    }
+
+
+
+</script>

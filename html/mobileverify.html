@@ -1,0 +1,82 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+   
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+
+</head>
+<body style="background: #f3f4f6;">
+
+
+   <header class="gsheader" id="aui-header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>返回
+        </a>
+    </div>
+    <h1>
+        <a >
+            身份验证
+        </a>
+    </h1>
+</header>
+
+
+
+<div class="gsmobileverifydiyibu  classdiv classinput">
+<h3>输入发送的手机号码</h3>
+    <div class="txhezhi gsmobileverifydiyibudiv">
+    <div>手机号</div>    <div><input placeholder="输入你要绑定手机号码"  type="text"/></div>    <div><button>获取验证码</button></div>
+           <span></span>
+    </div>
+    <button class="classbtn">下一步</button>
+</div>
+
+
+
+<div class="gsmobileverifydierbu classdiv classinput">
+<h3>输入验证手机接收到的短信验证码</h3>
+    <div class="txhezhi1 gsmobileverifydiyibudiv">
+    <div>验证码</div>    <div><input placeholder="输入短信验证码"  type="text"/></div><button>30秒后重发送</button><span></span>
+    </div>
+    <button class="classbtn">下一步</button>
+</div>
+
+
+
+<div class="gsmobileverifydisanbu classdiv classinput">
+<h3>输入原登录密码,完成身份验证</h3>
+<span>帐号密码<input  type="text"/></span>
+    <button class="classbtn">下一步</button>
+</div>
+
+<div class="gsmobileverifydisibu classdiv classinput">
+<h3>绑定手机号可以最大程度保障您的帐号安全</h3>
+<span>手机号<input  type="text"/></span>
+    <button class="classbtn">确定绑定</button>
+</div>
+
+<div class="gsmobileverifysuccess classdiv">
+
+<div class="txhezhi2 ">
+<div></div><font>&#xe62b;</font><i>操作成功</i><div></div>
+</div>
+    <button class="classbtn">确定</button>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+    }
+</script>

@@ -1,0 +1,315 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+     <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body style="background: #f3f4f6;">
+
+
+
+   <header class="gsheader" id="aui-header">
+        <div class="gsheaderdivleft">
+            <a tapmode onclick="api.closeWin();" class="">
+                  <font>&#xe619;</font>
+            </a>
+        </div>
+        <h1>
+            <a href="#title-link" class="">
+                个人信息
+            </a>
+        </h1>
+
+        <div class="gsheaderdivright" tapmpde onclick="kefushow('profile');">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+    </header>
+
+
+<div id="gsshezhiuserlist01" style="display:block">
+<div class="gsshezhiuserlist">
+            <ul>
+                <li>帐号：<span>13043403750</span></li>
+                <li>性别：<span>女</span></li>
+                <li>生日：<span>1956-01-01</span></li>
+                <li>QQ：<span>690884370</span></li>
+                <li>邮箱：<span>690884370@qq.com</span></li>
+                 <li>姓名：<span>好太太</span></li>
+            </ul>
+ </div>
+ <button type="button" class="classbtn" onclick="infoqiehuan();"> 修改资料  </button>
+ </div>
+
+
+
+<script type="text/x-dot-template" id="profile-template">
+    <div class="gsshezhiuserlist">
+            <ul>
+                <li>帐号：<span>{{=it.user_name}}</span></li>
+                <li>性别：<span>{{? it.sex==1 }}男{{?? it.sex==2 }}女{{??}}未知{{?}}</span></li>
+                <li>生日：<span>{{=it.birth}}</span></li>
+                <li>QQ：<span>{{=it.qq}}</span></li>
+                <li>邮箱：<span>{{=it.email}}</span></li>
+                 <li>姓名：<span>{{=it.realname}}</span></li>
+            </ul>
+    </div>
+    <button type="button" class="gsshezhiuserlistbtn" onclick="infoqiehuan();"> 修改资料  </button>    
+</script>
+ 
+ <script type="text/x-dot-template" id="edit-template">
+  <div class="gsshezhiuserlisttwo classinput">
+            <ul>
+                <li ><strong>帐号：</strong><span><input type="text" class="am-form-field am-radius"   name="username" value="{{=it.user_name}}" id="username" disabled="disabled" /></span> </li>
+                <li><strong>姓名：</strong><span><input type="text" class="am-form-field am-radius"
+                    name="nickNames" id='realname' value="{{=it.realname}}"  /></span> </li>
+                <li><strong>性别：</strong><span>
+                    <input type="radio" id="radio-1-1" class="regular-radio" name="sex" value="1" {{? it.sex=="1" }} checked {{?}} />
+                     <label for="radio-1-1"></label><spanc>男</spanc>
+                     <input type="radio" id="radio-1-2" class="regular-radio" name="sex" value="2" {{? it.sex=="2" }} checked {{?}} />
+                     <label for="radio-1-2"></label><spanc>女</spanc>
+                </span>
+
+                </li>
+                <li ><strong>生日：</strong> <span>
+<!-- 
+<div class="dropdown" id="birth">
+  <select name="one" class="dropdown-select">
+    <option value="">Select…</option>
+    <option value="1">Option #1</option>
+    <option value="2">Option #2</option>
+    <option value="3">Option #3</option>
+  </select>
+</div> -->
+                    <input type="text" name="birth" value="{{=it.birth}}" class="am-form-field am-radius" id="birth" />    
+
+               </li>
+                <li><strong>QQ：</strong><span>
+                    <input type="text" name="userqq" value="{{=it.qq}}" class="am-form-field am-radius" id="qq" />
+                </span></li>
+                <li style="display:none;"><strong>邮箱：</strong><span>
+                    <input type="text" name="email" value="{{=it.email}}" id='email' class="am-form-field am-radius" disabled="disabled" /></span>
+                </li>
+            </ul>
+     </div>
+
+     <button type="button" class="gsshezhiuserlistbtn" onclick="infoqiehuan();"> 确定修改  </button>
+</script>
+
+
+
+
+
+
+ <div id="gsshezhiuserlist02" style="display:none">
+  <div class="gsshezhiuserlisttwo classinput">
+            <ul>
+                <li ><strong>帐号：</strong><span><input type="text" class="am-form-field am-radius"
+                    name="username" value="" disabled="disabled" /></span> </li>
+                <li><strong>昵称：</strong><span><input type="text" class="am-form-field am-radius"
+                    name="nickNames"  value=""  /></span> </li>
+                <li><strong>性别：</strong><span>
+                
+<input type="radio" id="radio-1-1" class="regular-radio" name="sex"/>
+     <label for="radio-1-1"></label><spanc>男</spanc>
+
+     <input type="radio" id="radio-1-2" class="regular-radio" name="sex"/>
+     <label for="radio-1-2"></label><spanc>女</spanc>
+
+                </span></li>
+                <li ><strong>生日：</strong> <span>
+
+
+                <div class="dropdown">
+      <select name="one" class="dropdown-select">
+        <option value="">Select…</option>
+        <option value="1">Option #1</option>
+        <option value="2">Option #2</option>
+        <option value="3">Option #3</option>
+      </select>
+    </div>
+               </li>
+                <li><strong>QQ：</strong><span>
+                    <input type="text" name="userqq" value="" class="am-form-field am-radius" />
+                </span></li>
+                <li style="display:none;"><strong>邮箱：</strong><span>
+                    <input type="text" name="email" value="" class="am-form-field am-radius" disabled="disabled" /></span>
+                </li>
+            </ul>
+     </div>
+
+     <button type="button" class="gsshezhiuserlistbtn" onclick="infoqiehuan();"> 确定修改  </button>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('profile');
+        }
+        user_info(userid_gs);
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            //window.location.reload();
+            var userid_gs=$api.getStorage('userid_gs');
+            if(userid_gs){
+               user_info(userid_gs); 
+            }
+            
+            api.refreshHeaderLoadDone();//通知顶部刷新数据加载完毕
+        });
+
+    }
+
+
+    function user_info(user_id){
+        if(!user_id || user_id<1){
+            showusercenter('profile');
+        }
+
+        api.showProgress({title: '用户信息加载中……', modal: true});
+            api.ajax({
+                url:serverUrl+'/user.php?act=user_info',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                data: {
+                    values:{
+                        user_id:user_id,
+                        supplier_id:SUPPLIER_ID
+                    }
+                },       
+                returnAll:false,
+            },function(ret,err){
+                if(ret){
+                    api.hideProgress();
+                //api.alert({msg:JSON.stringify(ret.data)});
+                    if(ret.code=='53'){
+                           var template = document.getElementById('profile-template').innerHTML;
+                           document.getElementById('gsshezhiuserlist01').innerHTML=doT.template(template)(ret.data);
+
+                       var template = document.getElementById('edit-template').innerHTML;
+                       document.getElementById('gsshezhiuserlist02').innerHTML=doT.template(template)(ret.data);
+                    }else{
+                            api.toast({msg: ret.msg});
+                            api.hideProgress();
+                            return false;
+                    }
+                }else{
+                    api.alert({
+                        msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                      });
+                }
+                
+           })  
+
+    }
+
+    function infoqiehuan() {
+        var one = document.getElementById('gsshezhiuserlist01');
+        var two = document.getElementById('gsshezhiuserlist02');
+        if (one.style.display == 'block') {
+            one.style.display = 'none';
+            two.style.display = 'block';            
+        } else {
+            one.style.display = 'block';
+            two.style.display = 'none';
+            //提交修改信息
+            var userid_gs=$api.getStorage('userid_gs');
+            if(!userid_gs){
+                // api.openWin({
+                //     name: 'login',
+                //     url: './login.html',
+                //     bounces: false,
+                //     pageParam: {back_act: 'profile'}
+                // });
+                showusercenter('profile');
+            }
+            var username = $api.val($api.byId('username')) ? $api.val($api.byId('username')) : '';
+            var realname = $api.val($api.byId('realname')) ? $api.val($api.byId('realname')) : '';
+            var New = document.getElementsByName("sex");
+            var qq = $api.val($api.byId('qq')) ? $api.val($api.byId('qq')) : '';
+            var strNew;
+            for (var i = 0; i < New.length; i++) {
+                if (New.item(i).checked) {
+                    strNew = New.item(i).getAttribute("value");
+                    break;
+                } else {
+                    continue;
+                }
+            }
+            var sex = strNew ? strNew : 0;
+            // var year = document.getElementById('year').value;
+            // var month = document.getElementById('month').value;
+            // var day = document.getElementById('day').value;
+            // var birth = year + '-' + month + '-' + day;
+            var birth=$api.val($api.byId('birth')) ? $api.val($api.byId('birth')) : '';
+            //var email = $api.val($api.byId('email')) ? $api.val($api.byId('email')) : '';
+
+            //alert(user_id+'aaa'+username+'bbb'+realname+'ccc'+sex+'ddd'+birth+'eeee'+email);
+            api.ajax({
+                url: serverUrl + '/user.php?act=edit_profile',
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                returnAll: false,
+                data: {
+                    values: { 
+                        user_id: userid_gs, 
+                        user_name: username,
+                        realname: realname, 
+                        sex: sex, 
+                        birth: birth,
+                        qq:qq,
+                        supplier_id:SUPPLIER_ID
+                        //email: email
+                    }
+                }
+            }, function (ret, err) {
+                if (ret) {
+                    //api.alert({msg:JSON.stringify(ret)});
+                    if(ret.code==76){
+                        api.toast({
+                            msg: ret.msg,
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        window.location.reload();
+                    }
+                    //api.alert({ msg: ret.msg });
+                } else {
+                    api.alert({
+                        msg: ('错误码：' + err.code + '；错误信息：' + err.msg + '网络状态码：' + err.statusCode)
+                    });
+                };
+            });
+        }
+    }
+
+
+</script>

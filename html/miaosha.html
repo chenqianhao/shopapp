@@ -1,0 +1,278 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body style="background-color: #f0f2f5;">
+
+
+   <header class="gsheader" id="header">
+        <div class="gsheaderdivleft">
+            <a tapmode onclick="api.closeWin();" class="">
+                  <font>&#xe619;</font>返回
+            </a>
+        </div>
+        <h1>
+            <a >
+                秒杀中心
+            </a>
+        </h1>
+    </header>
+
+
+<!--   
+  <div class="gsmiaoshashijian classdiv">
+      <ul>
+          <li class="on"><span>12:00</span><strong>抢购中</strong></li>
+          <li><span>16:00</span><strong>即将开始</strong></li>
+          <li><span>20:00</span><strong>即将开始</strong></li>
+          <li><span>00:00</span><strong>即将开始</strong></li>
+          <li><span>08:00</span><strong>即将开始</strong></li>
+      </ul>
+  </div>
+ -->
+
+    <div class="gsmiaoshagoods classdiv">
+        <ul id="miaoshalist">
+<!--
+             <li  class="on">
+    <div class="gsmiaoshagoodsimg">
+       <div class="gsmiaoshagoodsimgweilei">
+        <img src="http://httgo.com/images/201601/goods_img/17878_P_1452586222826.jpg" />
+       </div>
+     </div>
+ 
+    <div class="gsmiaoshagoodsinfo">
+        <h3>蚕丝面膜的水盈丝薄质地，紧密贴合面部轮廓，珍稀精华成分，密集灌注肌肤，持续释放水润活力</h3>
+        <div class="gsmiaoshagoodsinfoleft">
+            <em>￥5678</em></br> <i>￥5699</i>
+        </div>
+        <div class="gsmiaoshagoodsinforight">
+            <button>
+                已秒光</button></br> 
+            <strong><b>已售38%</b><div class="gsmiaoshagoodsinforightjingdu">
+                <font></font>
+            </div>
+            </strong>
+        </div>
+    </div>
+</li>
+        
+
+<li>
+    <div class="gsmiaoshagoodsimg">
+        <img src="http://httgo.com/images/201601/goods_img/17878_P_1452586222826.jpg" /></div>
+ 
+    <div class="gsmiaoshagoodsinfo">
+        <h3>蚕丝面膜的水盈丝薄质地，紧密贴合面部轮廓，珍稀精华成分，密集灌注肌肤，持续释放水润活力</h3>
+        <div class="gsmiaoshagoodsinfoleft">
+            <em>￥5678</em></br> <i>￥5699</i>
+        </div>
+        <div class="gsmiaoshagoodsinforight">
+            <button>
+                立即秒杀</button></br> 
+            <strong><b>已售38%</b><div class="gsmiaoshagoodsinforightjingdu">
+                <font></font>
+            </div>
+            </strong>
+        </div>
+    </div>
+</li>
+
+
+            <li>
+    <div class="gsmiaoshagoodsimg">
+        <img src="http://httgo.com/images/201601/goods_img/17878_P_1452586222826.jpg" /></div>
+ 
+    <div class="gsmiaoshagoodsinfo">
+        <h3>蚕丝面膜的水盈丝薄质地，紧密贴合面部轮廓，珍稀精华成分，密集灌注肌肤，持续释放水润活力</h3>
+        <div class="gsmiaoshagoodsinfoleft">
+            <em>￥5678</em></br> <i>￥5699</i>
+        </div>
+        <div class="gsmiaoshagoodsinforight">
+            <button>
+                立即秒杀</button></br> 
+            <strong><b>已售38%</b><div class="gsmiaoshagoodsinforightjingdu">
+                <font></font>
+            </div>
+            </strong>
+        </div>
+    </div>
+</li>
+ -->
+
+
+        </ul>
+    </div>
+
+
+    <script type="text/x-dot-template" id="body-template">
+        {{ for(var i=0,len=it.length;i<len;i++) { }}
+            <li tapmode onclick="opengoods({{=it[i].goods_id}});">
+                <div class="gsmiaoshagoodsimg">
+                    <img src="{{=serverUrl_img+'/'+it[i].goods_thumb}}" /></div>
+             
+                <div class="gsmiaoshagoodsinfo">
+                    <h3>{{=it[i].goods_name}}</h3>
+                    <div class="gsmiaoshagoodsinfoleft">
+                        <em>￥{{=it[i].market_price}}</em></br> <i>￥{{=it[i].msj}}</i>
+                    </div>
+                    <div class="gsmiaoshagoodsinforight">
+                        <button>
+                            立即秒杀</button></br> 
+                        <strong><!-- <b>已售38%</b --><div class="gsmiaoshagoodsinforightjingdu">
+                            <font></font>
+                        </div>
+                        </strong>
+                    </div>
+                </div>
+            </li>
+        {{ } }}
+
+
+    
+    </script>
+
+
+
+
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    apiready = function(){
+        // var header = $api.byId('main');
+        // $api.fixIos7Bar(header); 
+        // $api.fixStatusBar(header);
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+        miaosha(page);   
+
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新555',
+            textUp: '释放刷新555'  ,
+            showTime: true
+        }, function(ret, err){
+            page+=4;
+            miaosha(page);
+            api.refreshHeaderLoadDone();
+        });
+
+    }
+
+    function miaosha(page){
+        //alert(page);
+        api.showProgress({
+            title: '用户信息加载中...',
+            modal: false
+        });        
+        api.ajax({
+            url:serverUrl+'/index.php?act=miaosha',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                        supplier_id:SUPPLIER_ID,
+                        page:page
+                }
+            }
+        },function(ret,err){
+             //api.alert({msg:JSON.stringify(ret.info)});
+            //api.alert({msg:JSON.stringify(err)});
+            api.hideProgress();
+            //return ;
+            if (ret) {
+                    var aaa=document.getElementById('miaoshalist');
+                    var template = document.getElementById('body-template').innerHTML;
+                    if(ret.code==1205){
+                        aaa.innerHTML=doT.template(template)(ret.info);
+                    }else{
+                       aaa.innerHTML=ret.msg;
+                    }
+
+
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            }
+        });
+
+    }
+/*
+
+    function add_miaosha_buy(goods_id){
+
+        var usr = $api.getStorage('usr');
+        var logined = $api.getStorage('logined');
+        if(usr && logined){
+            var user_id=usr.user_id?usr.user_id:0;
+            api.showProgress({
+                title: '用户信息加载中...',
+                modal: false
+            });        
+            api.ajax({
+                url:serverUrl+'/app/cart.php',
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                returnAll:false,
+                data:{
+                    values: {
+                            act:"addto_cart_app",
+                            user_id:user_id,
+                            goods_id: goods_id,
+                            goods_number:1,
+                            goods_types:"miaosha",
+                            user_id:user_id,
+                            goods_parent:0,
+                            goods_spec:''
+                    }
+                }
+            },function(ret,err){
+                api.hideProgress();
+                if (ret) {
+                    api.alert({msg:JSON.stringify(ret)});
+                }else {
+                    api.alert({
+                        msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                    });
+                }
+            });
+         }else{
+            api.openWin ({
+                name: 'login',
+                url: 'login.html',
+                reload: true,
+                bounces: false,
+                delay:200
+            });
+            return;
+        }  
+
+    }
+
+
+*/
+
+
+        
+</script>

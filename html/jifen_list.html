@@ -1,0 +1,408 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../css/sweetalert.css"> -->
+    <style>
+    
+        .jifendiv{ width:100%; background:#01ddff; }
+        .jifenheader { width: 90%; margin: auto; display: block;  position: relative;}
+        .jifenheader img { width: 100%; }
+        .jifenheader em { position: absolute; left: 0px; top: 2rem; font-size: 2rem; background-color: #46c775; border-radius: 50%; width: 2.8rem; height: 2.8rem; color: #fff; text-align: center; }
+        .jifenxian {display: block; overflow: hidden; margin-top: 1rem; text-align: center; font-size: 1.4rem; color: #382828; }
+        .jifenxian span {display: inline-block; float: left; width: 28%; margin-top: 1.1rem; border: 1px dotted #353535; }
+        .jifenxian span:last-child {float: right; }
+        .jifenduihuan{ width: 100%;  margin-bottom: 2rem; }
+        .jifenduihuan li{ width: 90%; margin: auto; background-color: #aff2fb; border-radius: 7px; margin-top: 0.8rem;overflow: hidden;padding-bottom: 1rem;}
+        .jifendhimg{ width: 35%;float: left;}
+        .jifendhimg img{ width: 85%; border: 2px solid #01ddff; border-radius: 50%; display: block; margin: auto; margin-top: 8%;}
+        .jifenduihuan li span,.jifenduihuan li strong{ display:block;}
+        /*.jifenduihuan li span{white-space: nowrap;overflow: hidden;text-overflow: ellipsis; color:#222; margin-top:1.5rem;font-size: 1.4rem;}*/
+        .jifenduihuan li strong em{ color:#f6541d; font-size:1.4rem;float:left;margin-left: 0.5rem;}
+        .jifenduihuan li strong { margin-top: 0.5rem;}
+        .jifenduihuan li strong b{color:#f6541d; font-size:1.4rem; float:right;margin-right: 0.8rem;}
+        .jifenduihuan li button{background-color: rgb(254, 0, 0); border: medium none; color: rgb(255, 255, 255); border-radius: 5px; padding: 0.5rem 1rem; font-size: 1.3rem; width: 30%; margin-left: 17%; margin-top: 1rem;}   
+        .shixiao{background: -moz-linear-gradient(top, #c2c2c2, #777);background: -o-linear-gradient(top, #c2c2c2, #777);background: -webkit-gradient(linear, 0 0, 0 bottom, from(#c2c2c2), to(#777));}
+
+
+        .sweet-alert{ padding:0px;}
+        .sweet-alert h2{ font-size: 1.8rem;color: #4FBB0F; margin: 0px;}
+        .sweet-alert[data-has-confirm-button="false"][data-has-cancel-button="false"] {padding-bottom: 17px; }
+        .sweet-alert{ left:20px;  right:20px;}
+        .sweet-alert button{margin: 17px 5px 0 5px;}
+        .sweet-alert .sa-icon{margin: 15px auto;}
+        .dizhi h3{ color:#515151}
+        .dizhi span{background-color: #4FBB0F; color: white; border: none; box-shadow: none; font-size: 17px; font-weight: 500; -webkit-border-radius: 4px; border-radius: 5px; padding: 10px 32px; margin: 26px 5px 0 5px; cursor: pointer;display: inline-block;}
+        .dizhi i{ margin-top: 1.2rem;   display: block;}
+
+
+       .cancel{position: absolute; right: 9px; top: 12px; background-image: url("../img/chahao.png"); background-size: 100% 100%; width: 34px !important; height: 34px !important; background-color: transparent !important; padding: 0px !important; margin: 0px !important;}
+       .sweet-alert {padding-bottom: 15px;}
+       .confirm{ background-color:#4FBB0F !important;}
+       .jifenduihuan li span {overflow: hidden; text-overflow: ellipsis; color: #222; margin-top: 1.5rem; font-size: 1.4rem; height: 4rem; line-height: 2rem; }
+
+ 
+       
+       /*弹出框*/
+		.aui-dialog { width: 80%; text-align: center; position: fixed; z-index: 999; left: 50%; margin-left: -40%; margin-top: 0; top: 45%; border-radius: 0.3rem; opacity: 0; background-color: #ffffff; -webkit-transform: translate3d(0, 0, 0) scale(1.2); transform: translate3d(0, 0, 0) scale(1.2); -webkit-transition-property: -webkit-transform, opacity; transition-property: transform, opacity; }
+		.aui-dialog.aui-dialog-out { opacity: 0; -webkit-transition-duration: 300ms; transition-duration: 300ms; -webkit-transform: translate3d(0, 0, 0) scale(0.815); transform: translate3d(0, 0, 0) scale(0.815); }
+		.aui-dialog.aui-dialog-in { opacity: 1; -webkit-transition-duration: 300ms; transition-duration: 300ms; -webkit-transform: translate3d(0, 0, 0) scale(1); transform: translate3d(0, 0, 0) scale(1); }
+		.aui-dialog-header { padding: 1.5rem 0.75rem 0 0.75rem; text-align: center; font-size: 1.8rem; color: #212121; }
+		.aui-dialog-body { padding: 1.2rem 0.8rem; overflow: hidden; font-size: 1.6rem; color: #757575; }
+		.aui-dialog-footer { position: relative; font-size: 1em; display: -webkit-box; display: -webkit-flex; display: flex; -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center; }
+		.aui-dialog-footer::after { width: 100%; height: 1px; background-color: #dddddd; display: block; content: ''; position: absolute; top: 0; right: auto; bottom: auto; left: 0; z-index: 2; -webkit-transform-origin: 50% 100%; transform-origin: 50% 100%; }
+		.aui-dialog-btn { position: relative; display: block; width: 100%; padding: 0 0.25rem; height: 3.8rem; font-size: 1.7rem; line-height: 3.8rem; text-align: center; color: #0894ec; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-box-flex: 1; box-flex: 1; }
+		.aui-dialog-btn:first-child::after { width: 0; }
+		.aui-dialog-btn::after { width: 1px; height: 100%; background-color: #dddddd; display: block; content: ''; position: absolute; top: 0; right: auto; bottom: auto; left: 0; -webkit-transform-origin: 100% 50%; transform-origin: 100% 50%; }
+		.aui-mask { position: fixed; width: 100%; height: 100%; top: 0; left: 0; background: rgba(0, 0, 0, 0.3); opacity: 0; z-index: 8; visibility: hidden; -webkit-transition-duration: 300ms; transition-duration: 300ms; }
+		.aui-mask.aui-mask-in { visibility: visible; opacity: 1; }
+		.aui-mask { position: fixed; width: 100%; height: 100%; top: 0; left: 0; background: rgba(0, 0, 0, 0.3); opacity: 0; z-index: 8; visibility: hidden; -webkit-transition-duration: 300ms; transition-duration: 300ms; }
+				       
+       
+    </style>
+</head>
+<body style="background: #ffffff;">
+
+
+
+
+    <div  class="jifendiv">
+        <div class="jifenheader">
+            <img src="../img/jifen.png" />
+    <!--         <em><font>&#xe619;</font></em> -->
+        </div>
+
+    </div>
+
+
+    <div class="jifenxian">
+            <span></span><span></span>海量美味等你来兑
+    </div>
+
+    <div class="jifenduihuan">
+    <ul id="jfdhsp">
+
+    </ul>
+    </div>
+
+    <script type="text/x-dot-template" id="jfdh-template">
+        {{for(var i=0,len=it.length;i<len;i++){}}
+            <li>
+                <div class="jifendhimg"><img  src="{{=serverUrl_img+'/'+it[i].jifenimg}}"/></div>
+                <span>{{=it[i].exchange_name}}</span>
+                <strong><em>{{=it[i].exchange_integral}}积分</em><b>仅剩:{{=it[i].goods_number}}个</b></strong>
+
+            {{? it[i].goods_number==0}}
+<button class="shixiao">兑换结束</button>
+             {{??}}
+                <button tapmode onclick="exchange_goods({{=it[i].goods_id}},'{{=serverUrl_img+'/'+it[i].jifenimg}}');">立即兑换</button>
+          {{?}}
+
+            </li>
+        {{}}}    
+    </script>
+
+
+
+</body>
+</html>
+
+
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<!-- <script type="text/javascript" src="../script/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../script/sweetalert.min.js"></script> -->
+<script type="text/javascript" src="../script/aui-dialog.js"></script>
+<script type="text/javascript">
+    page=4;
+    apiready = function(){
+        api.parseTapmode();
+        jifen_goods();
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+            api.hideProgress();
+            page+=4;
+            jifen_goods(page);
+            api.refreshHeaderLoadDone();
+        });  
+    }
+
+    function jifen_goods(){
+        api.ajax({
+            url: serverUrl+'/user.php?act=jifen_goods',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID,page:page}
+            }
+        },function(ret,err){
+           // api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==1223){
+                   var template = document.getElementById('jfdh-template').innerHTML;
+                   document.getElementById('jfdhsp').innerHTML=doT.template(template)(ret.exchange);                  
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+    }
+
+    function duihuan(user_id,goods_id,address_id){
+     
+        if(!user_id || user_id<1){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+            showusercenter('jifen');
+            return false;
+        }        
+
+        if(!goods_id){
+            api.toast({
+                msg: '该兑换商品不存在！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        if(!address_id){
+            api.toast({
+                msg: '您还没有填写默认收获地址！',
+                duration: 2000,
+                location: 'bottom'
+            });
+
+            api.openWin({
+                name: 'address',
+                url: 'address.html',
+                bounces: false,
+                pageParam: { }
+            });
+            return false;
+        }
+
+
+        api.ajax({
+            url: serverUrl+'/user.php?act=jifen_duihuan',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID,user_id:user_id,goods_id:goods_id,address_id:address_id}
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==1323){
+  
+      //swal("Good!", "兑换商品成功!", "success");
+                    jifen_goods();
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+
+                    jifen_goods();
+
+                   
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+      
+    }
+
+    function exchange_goods(goods_id,goods_img){
+        var user_id=$api.getStorage('userid_gs');
+        if(!user_id || user_id<1){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+            showusercenter('jifen');
+            return false;
+        }
+
+        //获取用户的默认收获地址
+        api.ajax({
+            url: serverUrl+'/cart.php?act=get_user_default_address',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {user_id:user_id,supplier_id:SUPPLIER_ID,page:page}
+            }
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==678){
+                    if(ret.address.address_id>0){
+/*
+                        var dialogBox = api.require('dialogBox');
+                        dialogBox.alert ({
+                            texts: {
+                                title: '确认收获地址',          
+                                content:'您的收获地址:'+ret.address.address+';收获人：'+ret.address.consignee+';联系电话：'+ret.address.mobile+';您确定兑换商品后配送到此地址么？',           
+                                leftBtnTitle: '修改成其他地址',   
+                                rightBtnTitle: '确认配送到此地址'
+                            },
+                            styles:{
+                                bg: '#fff',
+                                w: 300,
+                                title:{   
+                                    marginT : 20,
+                                    icon : goods_img,
+                                    iconSize : 40,
+                                    titleSize : 14,
+                                    titleColor : '#000'
+                                },
+                                content:{  
+                                    color: '#000',         
+                                    size: 14          
+                                },
+                                left:{            
+                                    marginB: 7,      
+                                    marginL: 20,     
+                                    w: 130,           
+                                    h: 35,
+                                    corner: 2,       
+                                    bg: '#12D14A', 
+                                    color:"#ffffff",  
+                                    size: 12    
+                                },
+                                right:{            
+                                    marginB: 7,      
+                                    marginL: 10,      
+                                    w: 130,           
+                                    h: 35,
+                                    corner: 2,       
+                                    bg: '#12D14A',  
+                                    color:"#ffffff", 
+                                    size: 12
+                                }
+                            }
+                        },function(rets){
+                            var dialogBox = api.require('dialogBox');
+                            dialogBox.close ({
+                                dialogName: 'alert'
+                            });
+                            if (rets.eventType == 'right') {
+                                //alert(ret.address.address_id);
+                                duihuan(user_id,goods_id,ret.address.address_id);
+                            }else{
+                                api.openWin({
+                                    name: 'address',
+                                    url: 'address.html',
+                                    bounces: false,
+                                    pageParam: { }
+                                });
+                            }
+                        });
+
+*/
+/*
+                        swal({
+                            title: "是否配送到这个地址！",
+                            text: '    <div class="dizhi"> <h3>' + ret.address.address + '</h3> <span tapmode onclick="duihuan(' + user_id + ',' + goods_id + ',' + ret.address.address_id + ');">确定</span> <span tapmode onclick="openaddress();">修改</span></div>',
+                            imageUrl: "../img/dizhi.png",
+                            html: true,
+                            showCancelButton: true,
+                            showConfirmButton: false
+                        });
+*/
+
+
+				        var dialog = new auiDialog();
+				        dialog.alert({
+				            title: "是否配送这个地址？",
+				            msg: ret.address.address,
+				            buttons: ['确定', '修改']
+				        }, function (rets) {
+				            //api.alert({msg:JSON.stringify(ret)});
+				            if(rets.buttonIndex==1){
+				            	//alert(ret.address.address_id);
+				            	duihuan(user_id,goods_id,ret.address.address_id);
+				            }else{
+				            	openaddress();
+				            }
+				            
+				        });
+
+
+
+                    }else{
+                        api.toast({
+                            msg: '没有获取到用户的默认收货地址',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+
+                        api.openWin({
+                            name: 'address',
+                            url: 'address.html',
+                            bounces: false,
+                            pageParam: { }
+                        });
+                    }
+              
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return ;
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+    }
+
+
+
+
+    function openaddress(){
+        api.openWin({
+            name: 'address',
+            url: 'address.html',
+            bounces: false,
+            pageParam: { }
+        });        
+    }
+</script>

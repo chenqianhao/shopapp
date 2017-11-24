@@ -1,0 +1,223 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+
+</head>
+<body style="background: #f3f4f6;">
+
+
+   <header class="gsheader" id="aui-header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        <a>
+            修改密码
+        </a>
+    </h1>
+
+            <div class="gsheaderdivright">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+
+
+</header>
+
+
+<div class="gseditpwdlist classdiv">
+<ul>
+<li><span>原密码</span><input placeholder="请再次输入新的密码" type="password" id="opass" /></li>
+<li><span>新密码</span><input placeholder="请再次输入新的密码"  type="password" id="npass" /></li>
+<li><span>确认密码</span><input  placeholder="请再次输入新的密码" type="password" id="cnpass" /></li>
+</ul>
+<spanc><i style=" color:#f23030">提示：</i>密码由6-20位英文字母,数字或符号组成</spanc>
+</div>
+
+     <button type="button" class="gsshezhiuserlistbtn" tapmode onclick="update_pwd();">修改密码</button>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+        
+    }
+
+    function update_pwd() {
+        var user_id=$api.getStorage('userid_gs');
+        if(!user_id || user_id<1){
+            showusercenter('editpwd');
+        }
+
+        var opass = $api.val($api.byId('opass')) ? $api.val($api.byId('opass')) : '';
+        var npass = $api.val($api.byId('opass')) ? $api.val($api.byId('npass')) : '';
+        var cnpass = $api.val($api.byId('opass')) ? $api.val($api.byId('cnpass')) : '';
+
+        if (opass == '') {
+            api.toast({
+                msg: '请先输入原密码！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        if (npass == '') {
+            api.toast({
+                msg: '请先输入新密码！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        if (cnpass == '') {
+            api.toast({
+                msg: '请先输入确认密码！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        if (npass.length < 6) {
+            api.toast({
+                msg: '密码至少大于等于6位！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        var reg = /^[0-9a-zA-Z]+$/;
+        if (!reg.test(npass)) {
+            api.toast({
+                msg: '密码只能由数字和字母组成！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        //alert(npass+'aaa'+cnpass);
+        if (npass != cnpass) {
+            api.toast({
+                msg: '两次输入的密码不一致！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        //api.alert({msg: opass+'$'+npass+'&'+cnpass});
+        //return false;
+
+/*        api.ajax({
+            url: serverUrl + 'user.php?act=update_pwd',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll: false,
+            data: {
+                values: { 
+                    user_id: user_id, 
+                    opass: opass, 
+                    npass: npass, 
+                    cnpass: cnpass, 
+                    supplier_id:SUPPLIER_ID
+                }
+            },
+        }, function (ret, err) {
+            if (ret) {
+                api.alert({msg:JSON.stringify(ret)});
+                if(ret.code==87){
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    api.closeWin();
+                }else{
+                    api.alert({ msg: ret.msg })
+                }
+            } else {
+                api.alert({
+                    msg: ('错误码：' + err.code + '；错误信息：' + err.msg + '网络状态码：' + err.statusCode)
+                });
+            };
+        });
+*/
+
+            api.showProgress({title: '密码修改中……', modal: false});
+            api.ajax({
+                url:serverUrl+'/user.php?act=update_pwd',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                data:{
+                    values:{
+                        user_id: user_id,
+                        opass: opass, 
+                        npass: npass, 
+                        cnpass: cnpass, 
+                        supplier_id:SUPPLIER_ID
+                    }
+                },       
+                returnAll:false,
+            },function(ret,err){
+                if(ret){
+                    //api.alert({msg:JSON.stringify(ret)});
+                     if(ret.code==87){//密码修改成功
+                        api.toast({msg: ret.msg});
+                        api.hideProgress();
+
+                        $api.rmStorage('userid_gs');
+                        $api.rmStorage('username_gs');
+                        $api.rmStorage('avator_gs');
+                          api.sendEvent({
+                              name: 'layout',
+                              extra: {layout:"layout"}
+                          });
+
+
+                          // api.openWin({
+                          //     name: 'login',
+                          //     url: './login.html',
+                          //     bounces: false,
+                          //     pageParam: {bac_act : 'editpwd'}
+                          // });
+
+                          showusercenter('editpwd');
+
+            //document.getElementById("login_start").style.display="block";
+            //document.getElementById("center_start").style.display="none";
+
+
+
+                     }else{
+                        api.toast({msg: ret.msg});
+                        api.hideProgress();
+                        return false;
+                    }
+                }else{
+                    api.toast({msg: "密码修改失败！"});
+                }
+                api.hideProgress();
+           })  
+
+    }
+      
+
+</script>

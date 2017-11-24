@@ -1,0 +1,159 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body style="background: #fff;">
+
+   <header class="gsheader" id="aui-header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        <a href="#title-link" class="">
+            选中的商品详情
+        </a>
+    </h1>
+
+               <div class="gsheaderdivright" tapmpde onclick="kefushow('ordergoodslist');">
+          <a >
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+  </header>
+
+
+
+    <div class="classdiv ordergoodslist">
+        <ul id="select_xiangqing_list">
+<!--             <li>
+<div><img src="http://img10.360buyimg.com/n4/jfs/t1468/218/766133262/152360/f1862395/55b700f3N4391b5e6.jpg" /></div>
+<spanc>洞察秋毫单筒望远镜 高倍高清军用带指南针8x40非红外微光夜视观鸟镜瞄准镜 炫酷黑</spanc>
+<em>￥95<i>×1</i></em>
+<span> <strong>满减</strong><lable>(满100元减30)</lable></span>      
+</li>
+<li>
+<div><img src="http://img10.360buyimg.com/n4/jfs/t1468/218/766133262/152360/f1862395/55b700f3N4391b5e6.jpg" /></div>
+<spanc><i>赠品</i>洞察秋毫单筒望远镜 高倍高清军用带指南针8x40非红外微光夜视观鸟镜瞄准镜 炫酷黑</spanc>
+<em>￥0<i>×1</i></em>        
+</li>
+<li>
+<div><img src="http://img10.360buyimg.com/n4/jfs/t1468/218/766133262/152360/f1862395/55b700f3N4391b5e6.jpg" /></div>
+<spanc>洞察秋毫单筒望远镜 高倍高清军用带指南针8x40非红外微光夜视观鸟镜瞄准镜 炫酷黑</spanc>
+<em>￥95<i>×1</i></em>
+<span><strong>满送</strong><lable>(满100元有赠品)</lable></span>                
+</li>
+
+            <li>
+<div><img src="http://img10.360buyimg.com/n4/jfs/t1468/218/766133262/152360/f1862395/55b700f3N4391b5e6.jpg" /></div>
+<spanc>洞察秋毫单筒望远镜 高倍高清军用带指南针8x40非红外微光夜视观鸟镜瞄准镜 炫酷黑</spanc>
+<em>￥95<i>×1</i></em>
+<span><strong>折扣</strong><lable>(9.5折扣优惠)</lable></span>                
+</li> -->
+        </ul>
+    </div>
+
+<script id="select-xiangqing-template" type="text/x-dot-template">
+{{for(var i=0,len=it.length;i<len;i++){}}
+            <li tapmode onclick="opengoods({{=it[i].goods_id}});">
+            <div><img src="{{=serverUrl_img+'/'+it[i]['goods_thumb']}}" /></div>
+            <spanc>{{=it[i].goods_name}} {{=it[i].goods_attr}}</spanc>
+            <em>￥{{=it[i].goods_price}}<i>×{{=it[i].goods_number}}</i></em>
+<!--             <span> <strong>满减</strong><lable>(满100元减30)</lable></span> -->      
+            </li>
+{{}}}
+</script> 
+
+
+
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+
+        var app_store_id=api.pageParam.app_store_id;
+        var codes=api.pageParam.codes;
+        //alert(app_store_id);
+        //alert(codes);
+        if(!codes){
+            codes=0;
+        }
+        if(!app_store_id){
+          api.closeWin({
+              name: 'ordergoodslist',
+              animation: {
+                  type: 'flip',
+                  subType: 'from_bottom',
+                  duration: 500
+              }
+          });
+          return false;
+        }
+        get_goods_xiangqing(app_store_id,codes);
+
+    }
+
+
+    function get_goods_xiangqing(app_store_id,codes){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.closeWin();
+        }
+
+        api.ajax({
+            url:serverUrl+'/cart.php?act=get_goods_xiangqing',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    app_store_id:app_store_id,
+                    user_id:userid_gs,
+                    codes:codes,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                if(ret.code==724){
+                    var template = document.getElementById('select-xiangqing-template').innerHTML;
+                    document.getElementById('select_xiangqing_list').innerHTML=doT.template(template)(ret.data);
+ 
+                    //return false;
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+
+    }
+</script>

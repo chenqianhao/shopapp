@@ -1,0 +1,301 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/guoshi.css">
+    <meta name="format-detection" content="telephone=no">
+        <style>
+    .gsinfof{ position: fixed; bottom: 0; left: 0; border-top: 1px solid #bfbfbf; width: 100%; padding: 10px; background-color: #fff;}
+    .gsinfof input{ float: left; width: 70%; height: 3rem; background-color: #fff; border-color: #dbdbdb; font-size:1.4rem;}
+    .gsinfof input[placeholder]{ color:#a7a7a7}
+    .gsinfof span{ float:right; margin-right:0.8rem;}
+    .gsinfof span button{background-color: #fff; color: #2b61bf; border-radius: 5px; border: 1px solid #ccd6e9; padding: 0.4rem 1.5rem;}
+    </style>
+</head>
+<body   style="background-color:#fff;">
+
+  <header class="gsheader" id="header">
+      <div class="gsheaderdivleft">
+          <a tapmode onclick="api.closeWin();">
+                <i> <font>&#xe619;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a >
+              最新资讯
+          </a>
+      </h1>
+                  <div class="gsheaderdivright" tapmpde onclick="kefushow('guoshiinfo');">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+  </header>
+
+
+<!--   <div id="article_info_list">
+    
+  </div>
+
+
+
+  <script id="article-list-template" type="text/x-dot-template">
+
+
+    <div class="classdiv gsguoshiinfo">
+    <article>
+      <h1 class="classtestover">{{=it.title}}</h1>
+      <img  src="{{=serverUrl_img+'/'+it.luoboimg}}"/>
+      {{=it.content}}
+    </article>
+
+     
+<spanc><img src="img/qq1.png" /><img src="img/qq2.png" /><img src="img/qq4.png" /><em>+56</em><b>喜欢</b> <i>15条回复</i> </spanc>
+
+
+
+
+    <ul>
+                
+        <li><div  class="gsguoshiinfoimg"><img src="img/qq4.png" /></div>
+          <div class="gsguoshiinforight">浩浩荡荡<span>呵呵呵哈哈哈哈</span></div></li>
+
+ 
+        <li><div  class="gsguoshiinfoimg"><img src="img/qq1.png" /></div>
+        <div class="gsguoshiinforight">TuniuDesign<span>长滩岛之美丽，有如它的名字，那是长达七公里的银色沙滩。清晨，从小旅馆中散步而出，坐在椰子树下，清凉的海风送来阵阵茉莉花香。</span></div></li>
+
+        <li><div  class="gsguoshiinfoimg"><img src="img/qq2.png" /></div>
+       <div class="gsguoshiinforight">浩浩荡荡<span>第一眼的爱尔兰因全国草地遍布，被人们美誉为“绿岛”、“绿宝石”和“翡翠岛国"。这座岛国拥有着迷人的自然美景，属于欧洲的天涯海角，古老充满传奇色彩的古堡建筑和不失现代与活力的繁华大都市，。</span></div></li>
+
+        <li><div  class="gsguoshiinfoimg"><img src="img/qq4.png" /></div>
+        <div class="gsguoshiinforight">浩浩荡荡<span>这是楼主第一次写游记，有不足之处还请见谅刚毕业不久，虽然已经进入职场，但是由于习惯了和男朋友每几个月都出去旅行放松一下，这次就申请积攒几天假和男票商量着要去海边转转。</span></div></li> 
+
+    </ul>
+
+
+
+    </div>
+
+  </script>
+
+ -->
+
+
+
+
+
+  <div id="footer">
+<!--     <div style="width:100%;height:3rem;"></div>
+
+<div class="gsinfof">
+<input  type="text" placeholder=" 我也说两句" id="content" /><span><button tapmode onclick="fabiao();">发表</button></span>
+</div> -->
+  </div>
+
+</body>
+
+</html>
+
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+    
+
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+
+        
+        var article_id=api.pageParam.article_id?api.pageParam.article_id:0;
+        if(article_id<0){
+          api.toast({
+              msg: '此文章页面不存在！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          api.closeWin();
+          return false;
+        }
+        open_guoshi_info(article_id);
+
+/*        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+          get_guoshi_infos(article_id);
+          api.refreshHeaderLoadDone();
+        });*/
+
+
+
+
+      var inputField = api.require('inputField');
+      inputField.open({
+          bgColor:'#ffffff',//输入视图背景色设置
+          lineColor:'#bfbfbf',//输入框视图最上边的分割线色设置
+          fileBgColor:'#ffffff',//输入框背景色设置
+          borderColor:'#a7a7a7',//输入框边框色设置
+          sendImg:'widget://img/fsxx1.png',//发送按钮的背景图片
+          sendImgHighlight:'widget://img/fsxx.png',//发送按钮的高亮背景图片
+          maxLines:5,
+          fixedOn: api.frameName,
+          placeholder:'我也说两句'
+      }, function(ret, err){   
+          //alert( JSON.stringify( ret ) );
+          fabiao(ret.msg);
+      });
+
+
+    }
+
+
+    function open_guoshi_info(article_id){
+        var header = $api.byId('header');
+        var headerPos = $api.offset(header);
+        var footer = $api.byId('footer');
+        var footerPos = $api.offset(footer);
+
+        api.openFrame({
+            name: 'guoshiinfo_list',
+            url: 'guoshiinfo_list.html',
+            reload:true,
+            bounces: false,
+            fixedOn: api.frameName,
+            pageParam: {article_id : article_id},
+            rect: {
+                x: 0,
+                y: headerPos.h+5,
+                w: 'auto',//
+                h: api.winHeight-headerPos.h-footerPos.h-50
+            }
+        });
+
+    }
+
+/*
+    function get_guoshi_infos(article_id){
+        if(article_id<0){
+          api.toast({
+              msg: '此文章页面不存在！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          return false;
+        }
+
+        api.ajax({
+            url: serverUrl+'/article.php?act=get_guoshi_infos',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                  supplier_id:SUPPLIER_ID
+                }
+            }            
+        }, function (ret, err) {
+
+ 
+            //api.alert({msg:JSON.stringify(ret.article)});
+            //return false;
+            if (ret) {
+                if(ret.code==1303){
+
+                    var template = document.getElementById('article-list-template').innerHTML;
+                    document.getElementById('article_info_list').innerHTML=doT.template(template)(ret.article);
+                    
+                }else{
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+    }
+*/
+
+
+
+  function fabiao(content){
+
+      var userid_gs=$api.getStorage('userid_gs');
+      if(!userid_gs){
+          showusercenter('guoshiinfo');
+          return false;
+      }
+
+      var article_id=api.pageParam.article_id?api.pageParam.article_id:0;
+      if(article_id<0){
+        api.toast({
+            msg: '此文章页面不存在！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        api.closeWin();
+        return false;
+      }
+
+      //var content=$api.val($api.byId('content'));
+
+
+      if(content=='' || content==undefined){
+          api.toast({
+              msg: '评论的内容不能为空！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          return false;
+      }
+      api.ajax({
+          url: serverUrl+'/article.php?act=get_article_pinglun',
+          method: 'post',
+          timeout: 30,
+          dataType: 'json',
+          returnAll:false,
+          data:{
+            values: {
+              supplier_id:SUPPLIER_ID,
+              user_id:userid_gs,
+              article_id:article_id,
+              content:content
+            }
+          }             
+      },function(ret,err){
+          //api.alert({msg:JSON.stringify(ret)});
+          if (ret) {
+              if(ret.code==2306 || ret.code==2307){
+                window.location.reload();
+              }else{
+                api.toast({
+                    msg: ret.msg,
+                    duration: 3000,
+                    location: 'bottom'
+                });
+              }
+          } else {
+              api.alert({
+                  msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+              });
+          };
+      });
+
+  }
+</script>

@@ -1,0 +1,268 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body style="background-color: #e42e20;">
+
+<!-- 
+    <header class="gsheader">
+      <div class="gsheaderdivleft">
+          <a>
+                <i> <font>&#xe618;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">
+      好货天天团
+          </a>
+      </h1>
+      <div class="gsheaderdivright">
+          <a>
+                <i><font>&#xe62a;</font></i>
+          </a>
+      </div>
+  </header>
+
+ -->
+    <header class="gsheader" id="header">
+        <div class="gsheaderdivleft">
+            <a tapmode onclick="api.closeWin();" class="">
+                  <font>&#xe619;</font>
+            </a>
+        </div>
+        <h1>
+            <a >
+                  好货天天团
+            </a>
+        </h1>
+
+                          <div class="gsheaderdivright" tapmpde onclick="kefushow();">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+    </header>
+
+
+  <div class="classimg">
+  <img src="http://httgo.com/themes/68ecshopcom_360buy/images/lcallzuanti/tiantiantuangou.jpg" />
+  </div>
+
+  <div class="classdivtitle gsgroupbytitle">
+  今日团购
+  </div>
+
+
+   <div class="classdivleftright gsgroupbygoods">
+  <ul id="groupbylist">
+<!-- 
+
+ <li><div class="classdivleftrightimg"><img src="http://httgo.com/images/201601/thumb_img/20191_thumb_G_1454051035829.jpg"/></div>
+ <p>超萌卡通动物形象亲子早教手偶毛绒玩具公仔讲故事安抚手套玩超萌卡通动物形象亲子早教手偶毛绒玩具公仔讲故事安抚手套玩</p>
+ <div class="classdivleftrightright">
+ <div class="classdivleftrightright01"><span>￥499</span></br><strong><font>&#xe66e;</font>299</strong></div>
+  <div class="classdivleftrightright02"><span>71人买</span></div>
+ </div>
+ </li>
+ <li><div class="classdivleftrightimg"><img src="http://httgo.com/images/201601/thumb_img/20191_thumb_G_1454051035829.jpg"/></div>
+ <p>超萌卡通动物形象亲子早教手偶毛绒玩具公仔讲故事安抚手套玩</p>
+ <div class="classdivleftrightright">
+ <div class="classdivleftrightright01"><span>￥499</span></br><strong><font>&#xe66e;</font>299</strong></div>
+  <div class="classdivleftrightright02"><span>71人买</span></div>
+ </div>
+ </li>
+ <li><div class="classdivleftrightimg"><img src="http://httgo.com/images/201601/thumb_img/20191_thumb_G_1454051035829.jpg"/></div>
+ <p>超萌卡通动物形象亲子早教手偶毛绒玩具公仔讲故事安抚手套玩</p>
+ <div class="classdivleftrightright">
+ <div class="classdivleftrightright01"><span>￥499</span></br><strong><font>&#xe66e;</font>299</strong></div>
+  <div class="classdivleftrightright02"><span>71人买</span></div>
+ </div>
+ </li>
+ -->
+
+
+  </ul>
+  </div>
+
+
+
+
+
+<script type="text/x-dot-template" id="body-template">
+{{ for(var i=0,len=it.length;i<len;i++) { }}
+
+
+ <li tapmode onclick="opengoods({{=it[i].goods_id}});"><div class="classdivleftrightimg"><img src="{{=serverUrl_img+'/'+it[i].goods_thumb}}"/></div>
+ <p>{{=it[i].goods_name}}</p>
+ <div class="classdivleftrightright">
+ <div class="classdivleftrightright01"><span>￥{{=it[i].market_price}}</span></br><strong><font>&#xe66e;</font>{{=it[i].tuangoujia}}</strong></div>
+  <div class="classdivleftrightright02"><span><!-- 71人买 --></span></div>
+ </div>
+ </li>
+
+
+
+<!-- 
+
+    <li >
+        <div class="cpimg" tapmode onclick="opengoods({{=it[i].goods_id}});">
+
+            {{if(it[i].start_status==0){}}
+                未开始
+            <img src="http://www.httgo.com/app/images/userlc/weikaishi.png" style="position: absolute;
+                width: 54px;">
+
+            {{}else if(it[i].start_status==1){}}
+                已结束
+              <img src="http://www.httgo.com/app/images/userlc/yijieshu.png" style="position: absolute;
+             width: 54px;">
+            {{}else if(it[i].start_status==2){}}
+                进行中
+
+            <img src="http://www.httgo.com/app/images/userlc/tuangoujiaobiao.png" style="position: absolute;
+                width: 54px;">
+            {{}}}
+            <img src="{{=serverUrl+'/'+it[i].original_img}}"
+                style="width: 100%; height: 155.5px;"></div>
+        <div class="cpinfo" tapmode onclick="add_group_buy({{=it[i].group_buy_id}});">
+            <span class="ms">{{=it[i].goods_name}}</span>
+            <div class="pro_item">
+                <span>￥{{=it[i].tuangoujia}}</span> <strong class="strongimg">立即抢购</strong>
+            </div>
+        </div>
+    </li>
+
+ -->
+
+{{ } }}
+</script>
+
+
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    apiready = function(){
+        var header = $api.byId('header');
+        fixStatusBar(header);
+        api.parseTapmode();
+
+        tuango(page);   
+
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新555',
+            textUp: '释放刷新555'  ,
+            showTime: true
+        }, function(ret, err){
+            page+=4;
+            tuango(page);
+            api.refreshHeaderLoadDone();
+        });
+
+    }
+
+    function tuango(page){
+        //alert(page);
+        api.showProgress({
+            title: '用户信息加载中...',
+            modal: false
+        });        
+        api.ajax({
+            url:serverUrl+'/index.php?act=group_buy',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                        page:page,
+                        supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            api.hideProgress();
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                var a=document.getElementById('groupbylist');
+                var template = document.getElementById('body-template').innerHTML;    
+
+                if(ret.code==1202){
+                  a.innerHTML=doT.template(template)(ret.info);
+                }else{
+                  a.innerHTML=ret.msg;
+                }
+
+
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            }
+        });
+
+    }
+
+
+/*
+    function add_group_buy(group_buy_id){
+        //alert('aaaa');
+        //判断用户是否登陆
+        var user_id=$api.getStorage('userid_gs');
+        if(user_id && user_id>0){
+            //var user_id=usr.user_id?usr.user_id:0;
+            api.showProgress({
+                title: '用户信息加载中...',
+                modal: false
+            });        
+            api.ajax({
+                url:serverUrl+'/user.php?act=add_group_buy',
+                method: 'post',
+                timeout: 30,
+                dataType: 'json',
+                returnAll:false,
+                data:{
+                    values: {
+                            types:1,
+                            user_id:user_id,
+                            group_buy_id:group_buy_id
+                    }
+                }
+            },function(ret,err){
+                api.hideProgress();
+                if (ret) {
+                    api.alert({msg:JSON.stringify(ret)});
+                }else {
+                    api.alert({
+                        msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                    });
+                }
+            });
+         }else{
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+    }
+    
+*/
+
+</script>

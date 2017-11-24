@@ -1,0 +1,190 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+            .toppiclist{ width:100%; display:block; overflow:hidden;}
+            .toppiclist li{ width:94%; float:left; margin:auto;margin: 0.5rem 3% 0.5rem 3%; position:relative;}
+            .toppiclist li span{ position:absolute; background-color:rgba(0,0,0,0.3); bottom:0px; left:0px; color:#eeeff1; width:100%;  padding:0.3rem 0.5rem 0.2rem 0.5rem;}
+            .toppiclist li span em{ font-size:1.4rem;}
+            .toppiclist li span b{ font-size:1.3rem;  float:right;margin-top: 0.2rem;}
+            .toppiclist img{ width:100%;margin: 0px;padding: 0px;display: block;}
+    </style>
+    <style>
+        
+    </style>
+</head>
+<body style="background-color: #fff;">
+<!--     <header class="gsheader" id="header">
+  <div class="gsheaderdivleft">
+    <a tapmode onclick="api.closeWin();" class="">
+        <font>&#xe619;</font>
+    </a>
+  </div>
+  <h1>
+      <a href="#title-link" class="">活动专题</a>
+  </h1>
+<div class="gsheaderdivright" tapmode onclick="kefushow('collection');">
+    <a>
+        <i><font>&#xe635;</font></i>
+    </a>
+</div>
+  </header> -->
+
+    <div class="toppiclist">
+        <ul id="activity_list">
+<!--             <li><img src="http://httgo.com/data/afficheimg/20160308xiccog.jpg"/><span><em>天天来抢购</em><b>活动时间:2016/03/04—2016/03/05</b></span></li>
+            <li><img src="http://httgo.com/data/afficheimg/20160308xiccog.jpg"/><span><em>天天来抢购</em><b>活动时间:2016/03/04—2016/03/05</b></span></li>
+            <li><img src="http://httgo.com/data/afficheimg/20160308xiccog.jpg"/><span><em>天天来抢购</em><b>活动时间:2016/03/04—2016/03/05</b></span></li> -->
+        </ul>
+    </div>
+
+
+
+<script type="text/x-dot-template" id="activity-template">
+    {{ for(var i=0,len=it.length;i<len;i++){ }}
+        <li onclick="openbanner({{=it[i].topic_id}});"><img src="{{=serverUrl_img+'/'+it[i].topic_img}}"/><span><em>{{=it[i].title}})</em><b>活动时间:{{=getDates(it[i].start_time,'/')}}—{{=getDates(it[i].end_time,'/')}}</b></span></li>
+    {{ } }}
+</script>
+
+</body>
+</html>
+
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+
+<script type="text/javascript">
+    page=0;
+    apiready = function(){
+        api.parseTapmode();
+        // var header = $api.byId('header');
+        // fixStatusBar(header);
+        get_activity_list();
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            api.showProgress({modal: true });
+            page+=1;
+            get_activity_list(page);
+            api.refreshHeaderLoadDone();
+        });
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+                api.showProgress({modal: true });
+                page+=1;
+                get_activity_list();
+                api.refreshHeaderLoadDone();
+        });
+   }
+    function get_activity_list(){
+
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+        api.ajax({
+            url:serverUrl+'/index.php?act=get_activity_list',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {page:page,size:6,supplier_id:SUPPLIER_ID}
+            }
+        },function(ret,err){
+            if(ret){
+                //api.hideProgress();
+                //api.alert({msg:JSON.stringify(ret)});
+                //return ;
+                  if(ret.code==1232){
+                    var template = document.getElementById('activity-template').innerHTML;
+                    document.getElementById('activity_list').innerHTML=doT.template(template)(ret.data);
+                  }else{
+                    api.toast({
+                         msg: ret.msg,
+                         duration: 2000,
+                         location: 'bottom'
+                     }); 
+                  }
+
+            }else{
+                api.alert({
+                    msg:(err.msg)
+                  });
+            }
+            api.hideProgress();
+       })
+    }
+/*    function get_activity_list_tj(){
+
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+        api.ajax({
+            url:serverUrl+'/app/supplier.php',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {act:'get_activity_list_tj',page:4}
+            }
+        },function(ret,err){
+            if(ret){
+                  //api.alert({msg:JSON.stringify(ret)});
+                  if(ret!=''){
+                   var template = document.getElementById('activity-template-tj').innerHTML;
+                   document.getElementById('activity_list_tj').innerHTML=doT.template(template)(ret);
+                  }else{
+                        api.alert({
+                            msg:('没有促销专题！')
+                          });
+                  }
+
+            }else{
+                api.alert({
+                    msg:(err.msg)
+                  });
+            }
+            api.hideProgress();
+       })
+    }*/
+
+    function openbanner(id){
+        if(!id){
+            api.toast({
+                msg: '此活动不存在',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        //api.alert({msg: id});
+
+        api.openWin({
+            name: 'banner',
+            url: './banner.html',
+            pageParam:{topic_id:id},
+            bounces: false
+        });
+
+    }
+
+
+ 
+</script>

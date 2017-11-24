@@ -1,0 +1,351 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+        .tuangouheader { width: 100%; margin: auto; display: block; position: relative; padding-top:1re;}
+        .tuangouheader img { width: 100%;display: block; }
+       /* .tuangouheader em { position: absolute;left: 5%;top: 2rem; font-size: 2rem; background-color: #46c775; border-radius: 50%; width: 2.8rem; height: 2.8rem; color: #fff; text-align: center; }*/
+        .tuangoujb{ background-color:#edf8f2;padding: 0.8rem; position:relative;}
+        .tuangoujb::before{ content: ""; position: absolute; left: 0px; width: 20%; height: 2px; background-color: #20201e; top: 50%; border-bottom: 1px solid #bfc5bf;}
+        .tuangoujb::after{content: ""; position: absolute; right: 0px; width: 20%; height: 2px; background-color: #20201e; top: 50%; border-bottom: 1px solid #bfc5bf;}
+        .tuangoujb span{ color:#5d887f; display:block; width:100%; text-align:center;}
+        .tuangoujb strong{position: absolute; background: url("img/tuangousj.png") repeat-x; left: 0px; bottom: -60px; height: 60px; width: 100%; background-size: 22px;}
+        .tuangoulist{ width:90%; margin:auto;margin-top: 4rem;display: block;overflow: hidden;}
+        .tuangoulist li{ width:100%; float:left;margin-bottom: 1rem;}
+        .tuangoulistimg{ width:40%; float:left;height: 11rem;}
+        .tuangoulistimg img{ width:75%; display: block;margin: auto;}
+        .tuangoulistinfo{ width:60%; float:left; background-color:#e7f2ec; height:11rem;border-top-right-radius: 8px;border-bottom-right-radius: 8px;position: relative;}
+        .tuangoulistinfo span,.tuangoulistinfo strong{ display:block; width:100%;margin: 0 0.8rem;padding-right: 0.8rem;}
+        .tuangoulistinfo span{ margin-top:0.7rem;white-space: nowrap; overflow:hidden; text-overflow:ellipsis; font-size:1.6rem;}
+        .tuangoulistinfo strong{ margin-top:0.3rem; font-size:1.4rem;  color:#333;}
+        .tuangoulistinfo strong i{ color:#ff0101; font-weight:bold; font-size:1.6rem;}
+        .tuangoulistinfo strong b{ float:right; margin-right:0.8rem; text-decoration:line-through; font-size: 1.2rem;margin-top: 0.5rem;color: #777;}
+        .tuangoulistinfo em{ width:100%; background-color:#ffbbbc; display:block; border-radius:5px;overflow: hidden;position: absolute; left: 0px; bottom: 1rem;}
+        .tuangoulistinfo em cite{ color:#fff; line-height:3rem; font-size:1.3rem; padding-left:0.6rem;}
+        .tuangoulistinfo button{ border:none; background-color:#fe0000; color:#fff; height:3rem;border-radius: 5px; padding: 0.2rem 0.6rem; float: right; }
+        .tuangoulistinfo button.on{background: -moz-linear-gradient(top, #c2c2c2, #777);background: -o-linear-gradient(top, #c2c2c2, #777);background: -webkit-gradient(linear, 0 0, 0 bottom, from(#c2c2c2), to(#777));}
+        .tuangoudibu{ width:100%;  margin-top: 4rem;}
+        .tuangoudibu span{height: 3px; width: 100%; display: block; position: relative; border-bottom: 2px dashed #222;}
+        .tuangoudibu span img{position: absolute; top: -13px; width: 16%; left: 41%; overflow: hidden; background-color: rgb(255, 255, 255); padding-bottom: 2rem;}   
+    </style>
+</head>
+<body style="background: #ffffff;">
+
+
+
+
+
+    <div class="tuangouheader">
+        <img src="../img/tuangou.png" />
+<!--         <em><font>&#xe619;</font></em> -->
+    </div>
+
+    <div class="tuangoujb">
+     <span>每日精选商品</span>
+     <span>限时抢购，机不可失！</span>
+    <strong></strong> 
+    </div>
+
+    <div class="tuangoulist">
+    <ul id="groupbylist">
+
+<!--        <li>
+  <div class="tuangoulistimg"><img src="http://httgo.com/images/201605/thumb_img/20764_thumb_G_1463039892822.jpg" /></div>
+  <div class="tuangoulistinfo"><span>红颜奶油草莓 新鲜水果 约300g/盒</span><strong>团购价:<i>￥45</i><b>原价:￥45</b></strong><em><cite>还剩12:10:10:10</cite><button>立即参团</button></em></div>
+  </li>
+
+  <li>
+  <div class="tuangoulistimg"><img src="http://httgo.com/images/201605/thumb_img/20764_thumb_G_1463039892822.jpg" /></div>
+  <div class="tuangoulistinfo"><span>红颜奶油草莓 新鲜水果 约300g/盒</span><strong>团购价:<i>￥45</i><b>原价:￥45</b></strong><em><cite>距离开图12:10:10:10</cite><button>还未开团</button></em></div>
+  </li> -->
+
+<!--     <li>
+<div class="tuangoulistimg"><img src="http://httgo.com/images/201605/thumb_img/20764_thumb_G_1463039892822.jpg" /></div>
+<div class="tuangoulistinfo"><span>红颜奶油草莓 新鲜水果 约300g/盒</span><strong>团购价:<i>￥45</i><b>原价:￥45</b></strong><em><cite>还剩12:10:10结束</cite><button>立即参团</button></em></div>
+</li> -->
+
+  <!--   <li>
+  <div class="tuangoulistimg"><img src="http://httgo.com/images/201605/thumb_img/20764_thumb_G_1463039892822.jpg" /></div>
+  <div class="tuangoulistinfo"><span>红颜奶油草莓 新鲜水果 约300g/盒</span><strong>团购价:<i>￥45</i><b>原价:￥45</b></strong><em><cite>还剩12:10:10结束</cite><button>立即参团</button></em></div>
+  </li>
+  
+      <li>
+  <div class="tuangoulistimg"><img src="http://httgo.com/images/201605/thumb_img/20764_thumb_G_1463039892822.jpg" /></div>
+  <div class="tuangoulistinfo"><span>红颜奶油草莓 新鲜水果 约300g/盒</span><strong>团购价:<i>￥45</i><b>原价:￥45</b></strong><em><cite>还剩12:10:10结束</cite><button>立即参团</button></em></div>
+  </li>
+  
+   <li>
+  <div class="tuangoulistimg"><img src="http://httgo.com/images/201605/thumb_img/20764_thumb_G_1463039892822.jpg" /></div>
+  <div class="tuangoulistinfo"><span>红颜奶油草莓 新鲜水果 约300g/盒</span><strong>团购价:<i>￥45</i><b>原价:￥45</b></strong><em><cite>还剩12:10:10结束</cite><button>立即参团</button></em></div>
+  </li>
+   -->
+
+    </ul>
+    </div>
+
+
+    <div class="tuangoudibu">
+    <span><img src="../img/tuangouhua.png"/></span>
+    <strong></strong>
+    </div>
+
+
+
+<script type="text/x-dot-template" id="body-template">
+
+
+    {{ for(var i=0,len=it.length;i<len;i++) { }}
+        <li  {{? it[i]['start_status']==2 }} tapmode onclick="opengroupgoods({{=it[i].act_id}},{{=it[i].goods_id}});" {{?}}>
+        <div class="tuangoulistimg"><img src="{{=serverUrl_img+'/'+it[i].activity_img}}" /></div>
+        <div class="tuangoulistinfo"><span>{{=it[i].goods_name}}</span><strong>团购价:<i>￥{{=it[i].tuangoujia.toFixed(2)}}</i><b>原价:￥{{=it[i].market_price}}</b></strong>
+        <div id="tuan_list_{{=it[i].act_id}}">
+        {{? it[i]['start_status']==0 }}/*未开始*/
+        <em id="tuan_{{=it[i].act_id}}">
+            <cite>{{=show_time(it[i].start_time,it[i].act_id,it[i].start_status)}}</cite>
+            <button class="on">还未开团</button>
+        </em>
+        {{?? it[i]['start_status'] == 1}}/*已经结束*/
+        <em  id="tuan_{{=it[i].act_id}}">
+            <cite>{{=show_time(it[i].end_time,it[i].act_id,it[i].start_status)}}</cite>
+            <button class="on">已经结束</button>
+        </em>
+        {{?? it[i]['start_status'] == 2}}/*进行中*/
+        <em id="tuan_{{=it[i].act_id}}">
+            <cite>{{=show_time(it[i].end_time,it[i].act_id,it[i].start_status)}}</cite>
+            <button>立即参团</button>
+        </em>
+        {{?}}  
+        </div>
+        </div>
+        </li>
+    {{ } }}
+
+
+</script>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=1;
+    var timerID = null;
+    var timerRunning = false;    
+    apiready = function(){
+        api.parseTapmode();
+
+        tuango(page);
+        setInterval("tuangos(page)",1000);
+
+/*        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: '#ffffff',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: false
+        }, function(ret, err){
+            page+=4;
+            getallorder();
+            api.refreshHeaderLoadDone();
+        });
+
+        
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+            api.hideProgress();
+            page+=1;
+            //tuango(page);
+            setInterval("tuangos(page)",1000);
+            api.refreshHeaderLoadDone();
+        });
+*/
+
+
+    }
+
+ 
+
+/*
+
+    function show_time(endtime,act_id,type){
+        setInterval("show_times(endtime,act_id,type)",1000);
+    }
+*/
+
+
+    function show_time(endtime,act_id,type){
+
+        //var time_end = new Date(endtime);
+        var time_end=endtime;
+        var time_now = Math.round(new Date() / 1000);
+
+        if(type==0){
+            time_distance = time_end-time_now;
+        }else if(type==1){
+            time_distance = time_now-time_end;
+        }else if(type==2){
+            time_distance = time_end - time_now;
+        }
+        //alert(time_distance+'___'+act_id+'___'+type);
+        
+        if (time_distance > 0) {
+          int_day = Math.floor(time_distance / (60 * 60 * 24));
+          int_hour = Math.floor(time_distance / (60 * 60)) - (int_day * 24);
+          int_minute = Math.floor(time_distance / 60) - (int_day * 24 * 60) - (int_hour * 60);
+          int_second = Math.floor(time_distance) - (int_day * 24 * 60 * 60) - (int_hour * 60 * 60) - (int_minute * 60);
+          if (int_hour < 10)  int_hour = "0" + int_hour;
+          if (int_minute < 10) int_minute = "0" + int_minute;
+          if (int_second < 10) int_second = "0" + int_second;
+            if(type==0){
+                str_time = "距离开团"+int_day + "天" + int_hour + ":" + int_minute + ":" + int_second + "";
+            }else if(type==1){
+                str_time = "结束时间" + getDate(endtime).substr(0,10);
+            }else if(type==2){
+                str_time = "还剩"+int_day + "天" + int_hour + ":" + int_minute + ":" + int_second + "";
+            }
+
+            //alert(str_time);
+
+            return str_time;
+
+            //alert(act_id);
+
+            //return ;
+
+            //alert('tuan_'+act_id);
+/*            for(var i=0;i<10;i++){
+                document.getElementById('tuan_'+act_id).innerHTML=str_time+i;
+            }*/
+            
+        }
+
+    }
+
+
+    function tuango(page){
+        //alert(page);
+/*        api.showProgress({
+            title: '用户信息加载中...',
+            modal: false
+        }); */       
+        api.ajax({
+            url:serverUrl+'/index.php?act=group_buy',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    page:page,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            api.hideProgress();
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                var a=document.getElementById('groupbylist');
+                var template = document.getElementById('body-template').innerHTML;
+
+                if(ret.code==1202){
+                  a.innerHTML=doT.template(template)(ret.info);
+                }else{
+                  a.innerHTML=ret.msg;
+                }
+
+
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            }
+        });
+    }
+
+
+
+    function tuangos(page){
+        //alert(page);
+/*        api.showProgress({
+            title: '用户信息加载中...',
+            modal: false
+        }); */       
+        api.ajax({
+            url:serverUrl+'/index.php?act=group_buy',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    page:page,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            api.hideProgress();
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+                //var a=document.getElementById('groupbylist');
+                //var template = document.getElementById('body-template').innerHTML;
+                
+
+                for(var i=0,len=ret.info.length;i<len;i++) {
+                    var a=document.getElementById('tuan_list_'+ret.info[i]['act_id']);
+                    if(ret.code==1202){
+                      str='';
+                      if(ret.info[i]['start_status']==0){
+                            str+='<em id="tuan_"'+ret.info[i]["act_id"]+'>';
+                            str+='    <cite>'+show_time(ret.info[i].start_time,ret.info[i].act_id,ret.info[i].start_status)+'</cite>';
+                            str+='    <button class="on">还未开团</button>';
+                            str+='</em>';
+                      }else if(ret.info[i]['start_status']==1){
+                            str+='<em  id="tuan_"'+ret.info[i]["act_id"]+'>';
+                            str+='    <cite>'+show_time(ret.info[i].end_time,ret.info[i].act_id,ret.info[i].start_status)+'</cite>';
+                            str+='    <button class="on">已经结束</button>';
+                            str+='</em>';
+                      }else if(ret.info[i]['start_status']==2){
+                            str+='<em  id="tuan_"'+ret.info[i]["act_id"]+'>';
+                            str+='    <cite>'+show_time(ret.info[i].end_time,ret.info[i].act_id,ret.info[i].start_status)+'</cite>';
+                            str+='    <button>立即参团</button>';
+                            str+='</em>';
+                      }
+                      a.innerHTML=str;
+                    }else{
+                      a.innerHTML=ret.msg;
+                    }
+
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            }
+        });
+    }
+
+
+
+
+
+    function opengroupgoods(act_id,goods_id){
+        api.openWin({
+            name: 'tuangouinfo',
+            url: 'tuangouinfo.html',
+            reload:true,
+            bounces: false,
+            pageParam: {act_id:act_id,goods_id:goods_id}
+        });
+    }
+
+</script>

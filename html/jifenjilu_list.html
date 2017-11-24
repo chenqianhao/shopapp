@@ -1,0 +1,217 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+    .jifenlist{ background-color:#e0e0e0; padding:1rem;}
+    .jifenlist span { color:#4c4c4c;}
+    .jifenlist i{ color:#fe0002;}
+    .jifenlist b{ float:right; padding-right:0.8rem; color:#2CC18B;}
+    .jifennone{ width:100%;}
+    .jifennone img{display:block; width:35%; margin:auto;margin-top: 15%;}
+    .jifennone span,.jifennone strong{ display:block; text-align:center;}
+    .jifennone span{ color:#000; font-size:2rem; margin:0.8rem 0 0.3rem 0;}
+    .jifennone strong{ color:#222; font-size:1.5rem;}
+    .jifenjilu{ display:block; width:100%; overflow:hidden;}
+    .jifenjilu li{ width:100%;}
+    
+    .jifenjiluleft{ float:left; width:10%;}
+    .jifenjiluleft font{ font-size:2.3rem; margin-top: 57%; display:block;}
+    .jifenjiluright{ float:left; width:90%; border-bottom:1px solid #ebe7e7; padding:0.8rem;}
+    .jifenjiluright span,.jifenjiluright strong{ display:block;}
+    .jifenjiluright span b{ float:right; color:#de3939; font-size:1.4rem;}
+    .jifenjiluright strong{ color:#919191; font-size:1.4rem; margin-top:0.3rem;}
+    .jifenjiluright span em{ color:#262626;}
+    .jifenjilu{ padding:1rem;}
+    .font1{ color:#93bb62;}
+    .font2{ color:#cc5c68;}
+    .backgrounds{background: red}
+    </style>
+
+
+</head>
+<body style=" background-color:#fff;">
+<!-- 
+  <header class="gsheader" id="aui-header">
+       <div class="gsheaderdivleft">
+          <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+          </a>
+       </div>
+       <h1>
+          积分纪录
+       </h1>
+  </header> -->
+
+
+  <div class="jifenlist">
+  <span><em>当前积分：<i id="points">0积分</i><b tapmode onclick="api.openWin({
+      name: 'jifensm',
+      url: 'jifensm.html',
+      bounces: false
+  });;">积分规则</b></em></span>
+  </div>
+
+
+
+
+
+
+<div class="jifennone"  id="nonejifen" style="display:none;">
+<img src="../img/nojifen.png">
+<span>您还没有积分哦</span>
+<strong>Tip：签到和购买商品可以得到积分哦！</strong>
+</div>
+
+
+
+
+
+<div class="jifenjilu">
+<ul id="jifen_list">
+<!-- <li>
+<div class="jifenjiluleft">
+<font class="font1">&#xe6b8;</font>
+</div>
+<div class="jifenjiluright">
+<span><em>还款</em><b>2016/04/17</b></span>
+<strong>用户卢灿建抽奖一次扣除0积分</strong>
+</div>
+</li>
+
+
+<li>
+<div class="jifenjiluleft"><font  class="font2">&#xe6b8;</font></div>
+<div class="jifenjiluright">
+<span><em>还款</em><b>2016/04/17</b></span>
+<strong>用户卢灿建抽奖一次扣除0积分</strong>
+</div>
+</li> -->
+
+
+</ul>
+</div>
+
+
+<script type="text/x-dot-template" id="body-template">
+{{ for(var i=0,len=it.length;i<len;i++){ }}
+
+<li>
+<div class="jifenjiluleft"><font  class="font1">
+
+  {{ if(it[i]['expend']>0){ }}
+      &#xe6ba;
+  {{ }else{ }}
+    &#xe6b8;
+  {{ } }}
+
+</font></div>
+<div class="jifenjiluright">
+<span><em>
+    {{ if(it[i]['type']==1){ }}
+        下单
+    {{ }else if(it[i]['type']==2){ }}
+        签到
+    {{ }else if(it[i]['type']==3){ }}
+        抽奖
+    {{ }else if(it[i]['type']==4){ }}
+        积分兑换
+    {{ } }}
+</em><b>{{=getDate(it[i]['addtime'])}}</b></span>
+<strong>{{=it[i]['remark']}}</strong>
+</div>
+</li>
+
+{{ } }}
+</script>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=0;
+    apiready = function(){
+        api.parseTapmode();
+        // var header = $api.byId('aui-header');
+        // var headerPos = $api.offset(header);
+        // fixStatusBar(header);
+
+        get_user_jifen_log();
+
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+            page+=1;
+            //alert(page);
+            get_user_jifen_log();
+            api.refreshHeaderLoadDone();
+        });
+        
+
+    }
+
+    function get_user_jifen_log(){
+        var user_id=$api.getStorage('userid_gs');
+        if(!user_id || user_id<1){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+            showusercenter('choujianggoods');
+            return false;
+        }
+        api.ajax({
+            url: serverUrl+'/user.php?act=get_user_jifen_log',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {user_id:user_id,supplier_id:SUPPLIER_ID,page:page,size:10}
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            // return ;
+            if (ret) {
+                if(ret.code==3403){
+
+                   var  origin_html=document.getElementById('jifen_list').innerHTML;
+
+                   if(ret.data=='' && origin_html==''){
+                      document.getElementById('nonejifen').style.display="block";
+                   }
+
+                   var template = document.getElementById('body-template').innerHTML;
+                   document.getElementById('jifen_list').innerHTML=origin_html+doT.template(template)(ret.data);
+
+                   document.getElementById('points').innerHTML=ret.points+"积分";
+
+                   
+                    
+                }else{
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });      
+    }
+
+
+</script>

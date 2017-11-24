@@ -1,0 +1,115 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+    
+    </style>
+
+</head>
+<body style="background: #f3f4f6;">
+
+
+<header class="gsheader" id="aui-header">
+     <div class="gsheaderdivleft">
+         <a tapmode onclick="api.closeWin();" class="">
+               <font>&#xe619;</font>
+         </a>
+     </div>
+     <h1>
+        团购
+     </h1>
+
+      <div class="gsheaderdivright" tapmode onclick='kefushow("tuangou");'>
+          <a class="">
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+
+</header>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        var headerPos = $api.offset(header);
+        fixStatusBar(header);
+
+        var act_id=api.pageParam.act_id;
+        if(!act_id){
+            api.toast({
+                msg: '该团购活动不存在',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeWin({
+                name: 'tuangouinfo'
+            });
+            return;
+        }
+
+
+        var goods_id=api.pageParam.goods_id;
+        if(!goods_id){
+            api.toast({
+                msg: '该团购商品不存在',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeWin({
+                name: 'tuangouinfo'
+            });
+            return;
+        }
+        api.openFrame({
+            name: 'tuangou_info',
+            url: 'tuangou_info.html',
+            bounces: false,
+            fixedOn:'tuangouinfo',
+            reload:true,
+            pageParam: {act_id : act_id,goods_id:goods_id},
+            rect: {
+                x: 0,
+                y: headerPos.h+5,
+                w: 'auto',
+                h: api.winHeight-headerPos.h
+            }
+        });
+
+    }
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

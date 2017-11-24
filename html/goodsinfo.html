@@ -1,0 +1,269 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+
+</head>
+<body style="background:#fff;">
+<!--     <header class="gsheader gsgoodsheader">
+  <div class="gsheaderdivleft" tapmode onclick="guanbi();">
+      <a>
+            <i> <font>&#xe619</font></i>
+      </a>
+  </div>
+  <h1>
+      <a href="#title-link" class="">
+      <span tapmode onclick="openHtmlWins('goods')">商品</span> 
+      <span class="on" tapmode onclick="openHtmlWins('goodsinfo')">详情</span>
+      <span tapmode onclick="openHtmlWins('goodscomment')">评价</span>       
+      </a>
+  </h1>
+   <div class="gsheaderdivright">
+      <a>
+            <i><font>&#xe645</font></i>
+      </a>
+  </div>
+  </header> -->
+    <div class="classdiv gsgoodsinfoqiehuanlist">
+        <ul>
+            <li class="on" tapmode onclick="qiehuan(this,'spxq')">商品详情</li>
+            <li tapmode onclick="qiehuan(this,'ggcs')">规格参数</li>
+            <li tapmode onclick="qiehuan(this,'bzsh')">包装售后</li>
+        </ul>
+    </div>
+
+
+
+
+
+     <!--  for(var i=0,len=it.length;i<len;i++) -->
+
+
+    
+    <div class="gsgoodsinfoqiehuanlistxianshi" id="goods_desc_ct">
+
+    </div>
+
+    <script type="text/x-dot-template" id="goods-desc-template">
+        <ul style="display: block;" id="spxq">
+                {{=it.goods_desc}}
+
+<!--             <p>
+                <img src="http://img10.360buyimg.com/popWareDetail/jfs/t2032/266/1885573497/95837/b6af8314/568b9e27N63bb9b57.jpg" /></p>
+            <p>
+                <img src="http://img10.360buyimg.com/popWareDetail/jfs/t1921/265/1996844674/76982/1468102c/568b9e31N957a0a70.jpg" /></p>
+            <p>
+                <img src="http://img10.360buyimg.com/popWareDetail/jfs/t1936/9/1821793533/94469/849c364e/568b9e33N52a65b5c.jpg" /></p>
+            <p>
+                <img src="http://img10.360buyimg.com/popWareDetail/jfs/t2305/283/1936491282/92253/9e75ffdd/568b9e36N5ae1cf5f.jpg" /></p> -->
+        </ul>
+        <ul style="display: none;" id="ggcs">
+
+
+
+        {{if(it.properties && it.properties!=''){}}
+            {{for(var m in it.properties["商品属性"]){}}   
+                    <li><span>{{=it.properties["商品属性"][m]["name"]}}：</span><strong>{{=it.properties["商品属性"][m]["value"]}}</strong></li>
+            {{}}}
+        {{}}}
+
+
+
+
+
+            <li><span>上架时间：</span><strong>{{=it.add_time}}</strong></li>
+            <li><span>商品单位：</span><strong>{{=it.goods_unit}}</strong></li>
+            <li><span>总库存数：</span><strong>{{=it.goods_number}}</strong></li>
+            <li><span>商品编号：</span><strong>{{=it.goods_sn}}</strong></li>
+        </ul>
+    
+
+
+        <ul style="display:none" id="bzsh">
+            <div>
+                <h3>
+                    售后保障</h3>
+                <span>保质期:</span> <span>售后服务电话：0714-8637228</span> <span>品牌官方网站：http://www.httgo.com/guoshu</span>
+            </div>
+            <div>
+                <h3>   服务承诺</h3>
+                <span>  果好恰向您承诺所售商品均经过严格的供应商资质审查、商品审查、入库全检、出货全检流程。由于部分商品存在厂家更换包装、不同批次、不同生产日期、不同生产工厂等情况，导致商品实物与图片存在微小差异，因此请您以收到的商品实物为准，同时我们会尽量做到及时更新，由此给您带来不便尽请谅解，谢谢！</span>
+                <h3>   商品签收</h3>
+              <span>     若您收到的商品存在任何质量问题或单货不符，请当场拒收商品，果好恰将为您办理退换货服务。您也可以先对整个商品做签收，再针对异常的商品做退换货处理，果好恰支持商品送达后24小时内申请退换货，客服人员会根据您反映的实际状况为您做出相应处理；为了保护您的权益，建议尽量不要委托他人代为签收；如由他人代为签收商品而没有在配送人员在场的情况下验货，则视为您所订购商品无任何问题。</span>
+              <span> 大冶城区2小时内送货到家，送货时间：周一至周日8:00-17:00。</span>
+     <h3>   以下情况不予办理退换货</h3>
+              <p>1、任何非果好恰出售的商品；</p>
+
+
+                            <p>2、换货商品只能针对同一商品、同一价位的更换，不支持商品间换货及差价换货；</p>
+                                   <p>3、任何已使用过的商品，有质量问题的除外；</p>
+                                                        <p>4、任何因您个人原因导致超过保质期的商品；</p>
+                                                          <p>4、任何因您个人原因导致超过保质期的商品；</p>
+                                                            <p>5、未经授权的误用、疏忽、滥用、事故、改动、不正确的使用方法所造成的商品质量问题，或撕毁、涂改标贴、防伪标记的商品不予退换货；</p>
+                                                                                       <p>6、任何因非正常使用及保管导致出现质量问题的商品。</p>
+            </div>
+            <div>
+                <h3>
+                    权利声明</h3>
+                <span> 果好恰app上的所有商品信息、客户评价、商品咨询、网友讨论等内容，是果好恰商城重要的经营资源，未经许可，禁止非法转载使用。注：本站商品信息均来自于厂商，其真实性、准确性和合法性由信息拥有者（厂商）负责。本站不提供任何保证，并不承担任何法律责任。</span>
+            </div>
+        </ul>
+
+        </script>
+
+
+
+
+
+
+
+
+
+
+
+
+<!--     <div class="gsgoodsbuttom">
+    <div class="gsgoodsbuttomleft">
+        <ul>
+            <li><span><i>购物车</i><em class="gsgoodscardnum">15</em></span></li>
+            <li><span><i>收藏</i></span></li>
+            <li><span><i>客服</i></span></li>
+        </ul>
+    </div>
+    <div class="gsgoodsbuttomrigth">
+        <button>
+            加入购物车</button>
+        <button>
+            立即购买</button>
+    </div>
+</div> -->
+
+
+<!-- 
+    <script>
+    var divul = document.querySelectorAll(".gsgoodsinfoqiehuanlistxianshi ul");
+    var divli = document.querySelectorAll(".gsgoodsinfoqiehuanlist li");
+    var index = 0;
+    for (var i = 0; i < divli.length; i++) {
+        divli[i].index = i;
+        divli[i].onclick = function () {
+            index = this.index;
+            for (var j = 0; j < 3; j++) {
+                divli[j].className = "";
+                divul[j].style.display = "none";
+            }
+            this.className = "on";
+            divul[index].style.display = "block";
+        }
+    }
+</script> -->
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<!-- <script type="text/javascript" src="../script/TouchSlide.1.0.js"></script> -->
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        //var goods_id=$api.getStorage("goods_id");
+
+		goods_next(api.frameName);
+		
+        var goods_id=api.pageParam.goods_id;
+        if(!goods_id){
+            api.toast({
+                msg: '请重新选择商品',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeWin();
+            return false;
+        }
+        //获取商品描述和规格
+        get_goods_desc(goods_id);
+    }
+
+    function get_goods_desc(goods_id){
+        if(!goods_id || goods_id<1){
+            api.toast({
+                msg: '请重新选择商品！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+/*        api.showProgress({
+            text: '加载中……',
+            modal: true
+        });*/
+        api.ajax({
+            url: serverUrl+'/goods.php?act=get_goods_desc',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    goods_id:goods_id,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret,err){
+            api.hideProgress();
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+               if(ret.code==183){
+                    var template = document.getElementById('goods-desc-template').innerHTML;
+                    document.getElementById('goods_desc_ct').innerHTML=doT.template(template)(ret.goods);
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+        api.hideProgress();
+    }
+
+
+
+    function guanbi(){
+        api.closeWin({name: 'goodscomment'});
+        api.closeWin({name: 'goods'});
+        api.closeWin({name: 'goodsinfo'});
+    }
+
+
+    function qiehuan(el,byid){
+        var allli=el.parentNode.childNodes;
+        if(!$api.hasCls(el, 'on')){
+            $api.addCls(el, 'on');
+        }
+        for(var i=0,len=allli.length;i<len;i++){
+            if(allli[i]!=el){
+              $api.removeCls(allli[i], 'on');
+            }
+        }  
+        var divul = document.querySelectorAll(".gsgoodsinfoqiehuanlistxianshi ul");
+        for(var i=0,len=divul.length;i<len;i++){
+            if(divul[i].id==byid){
+                divul[i].style.display="block";
+            }else{
+                divul[i].style.display="none";
+            }
+        }
+    }
+</script>

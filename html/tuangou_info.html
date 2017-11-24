@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <title>title</title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+<!--     <link rel="stylesheet" href="../css/shuigou.css"> -->
+    <style type="text/css">
+         .tuangouifzhifu div{ margin-top:0px;padding: 0.3rem;}
+    </style>
+        
+
+    <style>
+
+        .swipe { overflow: hidden; position: relative; }
+        .swipe-wrap { overflow: hidden; position: relative;}
+        .swipe-wrap div { float: left; width: 100%; position: relative;  background-color: #fff; height: 18rem;}      
+        .swipe-wrap img { height: 18rem; width: 70%; margin:auto;  display: block;}     
+        #pointer { position: absolute; left: 40%; bottom: 20px; overflow: hidden; }
+        #pointer li { float: left; list-style: none; }
+        #pointer li a { display: inline-block; width: 6px; height: 6px; border-radius: 6px;  margin-right: 4px; background-color: rgba(0, 0, 0, 0.5);-webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);}
+        #pointer li a.active { background-color: #55abce; }
+
+
+      .tuangouifem{position: absolute; top: 12px; left: 17px; z-index: 9999; background-color: #4bc486; color: #fff; border-radius: 5px; padding: 0.2rem 0.5rem; opacity: 0.5; font-size: 1.4rem;}
+      .tuangouifcite{ position: absolute; top: 12px; right: 17px; z-index: 9999;}
+      .tuangouifcite font{background-color: rgb(184, 226, 206); color: rgb(255, 255, 255); width: 3.2rem; height: 3.2rem; display: block; text-align: center; font-size: 2.1rem; border-radius: 50%; line-height: 3rem;}
+      .tuangouifi{position: absolute; bottom: 7px; right: 17px; font-size: 1.45rem; z-index: 999; color:#372727;}
+      .tuangouifzhifu{ width:100%; display:block; overflow:hidden; padding:1rem;}
+      .tuangouifzhifu span{color: #372727; font-size: 1.8rem; display: block; font-weight: bold;}
+      .tuangouifzhifu strong{ margin-top: 0.5rem; display: block;padding-left: 0.8rem;;}
+      .tuangouifzhifu strong i{ color:#ff0100; font-weight:bold;font-size: 2rem;}
+      .tuangouifzhifu strong em{ margin-left:1rem; text-decoration:line-through; font-size:1.6rem;}
+      .tuangouifzhifu button{ background-color:#fe0000; color:#fff;  padding:0.3rem 0.8rem; border-radius:5px; border:none; font-size:1.7rem; width:30%; margin-left: 35%; margin-top:1.5rem;}
+      .tuangouifzhifu div{ color:#352726; padding:0.5rem;font-size: 1.5rem; margin-top:0.5rem;}
+      .tuangouifimgif h3{ text-align:center; background-color:#b8e2ce; color:#372727; padding:0.6rem 0; font-size:1.8rem; font-weight:bold;}
+      .tuangouifimgif ul p img {margin: 0; border: 0; float: left; display: block; margin: auto; padding: 0px; max-width: 100%;}
+
+
+    </style>
+
+</head>
+<body>
+
+
+
+
+
+
+
+
+            <div id='slide' class='swipe'>
+                <div class='swipe-wrap' id="banner-content">
+                </div>
+                <ul id="pointer">
+                </ul>
+                <em class="tuangouifem" id="total_num">已有5人购买</em>
+                <i class="tuangouifi" id="total_nums">累计销量：20件</i>
+            </div>
+
+
+
+
+    <div id="bcontent"></div>
+
+
+
+
+    
+
+
+  <script type="text/x-dot-template" id="body-template">
+     <div class="tuangouifzhifu">
+     <span>{{=it.goods_name}}</span>
+     <strong>团购价：<i id="tuan_price">￥{{=it.goods_price}}</i><em>市场价：{{=it.market_price}}元</em></strong>
+
+    <div id="guigesx">
+
+    </div>
+
+
+     <button tapmode onclick="add_to_cart();">立即购买</button>
+     <div>支付即可开团，邀请{{=it.limit_number}}人参团即可发货，人数不满自动退款，开团成功后三小时内发货</div>
+     </div>
+
+     <div class="tuangouifimgif">
+        <h3>图文详情</h3>
+        <ul style="display: block;">
+        {{=it.goods_desc}}
+<!--        <p style="text-align: center"><img src="http://www.httgo.com/includes/ueditor/php/../../../bdimages/upload1/20160323/1458708415326286.jpg" style="" title="红颜奶油草莓_02.jpg"></p>
+      <p style="text-align: center"><img src="http://www.httgo.com/includes/ueditor/php/../../../bdimages/upload1/20160323/1458708416300005.jpg" style="" title="红颜奶油草莓_03.jpg"></p> -->
+        </ul>
+     </div>
+
+  </script>
+
+
+
+</body>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+
+<script type="text/javascript" src="../script/swipe.js"></script>
+<script type="text/javascript">
+
+
+
+    apiready = function(){
+        var act_id=api.pageParam.act_id;
+        if(!act_id){
+            api.toast({
+                msg: '该活动不存在',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeWin({
+                name: 'tuangouinfo'
+            });
+            return;
+        }   
+
+        var goods_id=api.pageParam.goods_id;
+        if(!goods_id){
+            api.toast({
+                msg: '该商品不存在',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeWin({
+                name: 'tuangouinfo'
+            });
+            return;
+        }   
+
+
+        //alert(act_id);
+        get_tuangou_info(act_id,goods_id);
+        
+    };
+
+
+    function get_tuangou_info(act_id,goods_id){
+        api.ajax({
+            url:serverUrl+'/index.php?act=get_tuangou_info',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                    act_id:act_id,
+                    goods_id:goods_id,
+                    supplier_id:SUPPLIER_ID
+                }
+            }              
+        },function(ret,err){
+          //api.alert({msg:JSON.stringify(ret.data)});
+          
+          //api.alert({msg:JSON.stringify(ret.code)});
+          //api.alert({msg:JSON.stringify(ret.data['properties'])});// 商品属性
+          //api.alert({msg:JSON.stringify(ret.data['specification'])});// 商品规格
+
+            if (ret) {
+              if(ret.code==1232){
+                var template = document.getElementById('body-template').innerHTML;
+                document.getElementById('bcontent').innerHTML=doT.template(template)(ret.data);
+
+                document.getElementById('total_num').innerHTML="已有"+ret.data.total_num+"人购买";
+                document.getElementById('total_nums').innerHTML="累计销量："+ret.data.total_nums+"件";
+
+                 var img=ret.data.picture;
+                       var str=''; 
+                       var str1='';
+                            
+                      for(var i=0;i<img.length;i++){
+                        str +="<div><img src=\""+serverUrl_img+""+img[i]+"\"></div>";
+                          if(i==0)
+                          {
+                                  str1 +="<li><a class=\"active\"></a></li>";
+                          }
+                          else
+                          {
+                                      str1 +="<li><a ></a></li>";
+                          } 
+                      }
+                document.getElementById('banner-content').innerHTML=str;
+                document.getElementById('pointer').innerHTML=str1;
+
+
+                var str3='';
+                if(ret.data.specification && ret.data.specification!=''){
+                    //api.alert({msg:JSON.stringify(ret.goods.specification)});
+                    
+                    for(a in ret.data.specification){  
+
+                        str3+='<div class="gsgoodsshuxingdiv">';
+                        str3+=' <spanc>'+ret.data.specification[a]["name"]+'</spanc>';
+                        str3+='    <strong>';
+                        for(b in ret.data.specification[a]["values"]){
+                            str3+=' <a  id="'+ret.data.specification[a]["values"][b]["id"]+'" tapmode onclick="selectattr(this,'+ret.data.specification[a]["values"][b]["id"]+');">'+ret.data.specification[a]["values"][b]["label"]+'</a>';
+                        }
+                        str3+='    </strong>';
+                        str3+='</div>';
+
+                    }
+                }
+                //alert(str3);
+
+                document.getElementById('guigesx').innerHTML=str3;
+
+
+                //第一个规格选中状态
+                var shuxing=document.getElementsByClassName('gsgoodsshuxingdiv');
+                for(var z=0,len=shuxing.length;z<len;z++){
+                    shuxing[z].getElementsByTagName("a")[0].className="on";
+                }
+
+                //获取选中的规格，改变库存的值
+                changekucun();
+
+                initSlide();
+
+
+
+/*                for(var i=0;i<it.picture.length;i<len;i++){
+                  it.picture[i]=serverUrl_img+'/'+it.picture[i];
+                }
+
+                var uiscrollPicture = api.require('UIScrollPicture');
+                  var picPaths = it.picture;
+                  var picCaptions = ['title1', 'title2', 'title3', 'title4', 'title5','title6', 'title7'];       
+                  uiscrollPicture.open({
+                      rect: { x: 0, y: 0, w: api.winWidth, h: 200 },
+                      data: { paths: picPaths, captions: picCaptions },
+                      styles: {
+                          caption: {
+                              height: 35,
+                              color: '#E0FFFF',
+                              size: 13,
+                              bgColor: '#696969',
+                              position: 'bottom'
+                          },
+                          indicator: {
+                              align: 'center',
+                              color: '#FFFFFF',
+                              activeColor: '#DA70D6'
+                          }
+                      },
+                      placeholderImg: 'widget://scrollpic/loading.gif', //网络图片未加载完毕时，模块显示的占位图片
+                      contentMode: 'scaleToFill',
+                      interval: 3,
+                      loop: true,
+                      fixedOn: '',
+                      fixed: false
+                  }, function(ret, err){
+                       if(ret.status){
+                          if(ret.eventType == 'click'){
+                              //点击图片的操作
+                              alert(ret.index);
+                          }
+                       }
+                  });
+*/
+
+
+              }else{
+                api.toast({
+                    msg: ret.msg,
+                    duration: 3000,
+                    location: 'bottom'
+                });
+              }
+            } else {
+                // api.alert({
+                //     msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                // });
+            };
+        });
+    }
+
+
+
+
+//获取选中的属性值
+    function getatt_goods_value(){
+        //var guigesx=$api.byId('guigesx').parentNode.childNodes;
+        var goods_specss=$api.getStorage('goods_specs');
+        if(goods_specss){
+            $api.rmStorage('goods_specs');
+        }
+        var guigesx=$api.byId('guigesx').getElementsByTagName("a");
+        var arr = new Array();
+        for(var i=0,len=guigesx.length;i<len;i++){
+            if($api.hasCls(guigesx[i], 'on')){
+                //alert(guigesx[i].id);
+                arr.push(guigesx[i].id);
+            }
+        } 
+        var goods_spec=arr.join(",");
+        if(!goods_spec || goods_spec==''){
+            goods_specs='';
+        }else{
+            goods_specs=goods_spec
+        }
+        //alert(goods_specs);
+        $api.setStorage('goods_specs',goods_specs);
+        return goods_specs;
+    }
+
+
+
+    function add_to_cart(){
+       var goods_spec=getatt_goods_value()?getatt_goods_value():'';
+       //alert(goods_spec);
+
+       var act_id=api.pageParam.act_id;
+        var goods_id=api.pageParam.goods_id;
+        if(!goods_id){
+            api.toast({
+                msg: '该商品不存在',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeWin({
+                name: 'tuangouinfo'
+            });
+            return;
+        }    	
+
+
+
+        var user_id=$api.getStorage('userid_gs');
+        if(!user_id || user_id<1){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+
+            showusercenter('tuangou',goods_id);
+            return false;
+        }
+       //alert(act_id);
+
+        //alert(goods_id);
+        //return;
+
+        api.showProgress({
+            title: '正在加入购物车中...',
+            modal: false
+        });
+            api.ajax({
+                url:serverUrl+'/cart.php?act=add_to_cart',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                returnAll:false,
+                data:{
+                    values: {
+                        goods_id: goods_id,
+                        //goods_types:1,
+                        goods_number:1,
+                        type:0,
+                        act_id:act_id,
+                        user_id:user_id,
+                        goods_spec:goods_spec,
+                        supplier_id:SUPPLIER_ID
+                    }
+                }           
+            },function(ret,err){
+                //api.alert({msg:JSON.stringify(ret)});
+                api.hideProgress();
+                if(ret.code==509){
+                  //更新购物车
+                  api.sendEvent({
+                      name: 'cart',
+                      extra: {user_id:user_id}
+                  });        
+
+                  showcart();          
+
+                  //api.toast({msg:'加入购物车成功',duration:1000,location:'bottom'});
+                }else{
+                       if(ret.code>0){
+                           api.alert({title: '加入购物车失败！',msg: ret.msg});                     
+                       }else{
+                           api.alert({
+                            msg:("网络不稳定，无法获取到数据")
+                           });  
+                       }
+
+                }
+                
+           })
+
+    }
+
+
+
+
+//进入首页的购物车
+    function showcart(){
+
+        //api.closeFrameGroup({name: 'group_goods'});
+
+
+        var jsfun = 'setgroupindex(3);';
+        api.execScript({
+            name: 'root',
+            script: jsfun
+        });
+
+        api.openWin({
+            name: 'root',
+            url: '../index.html',
+            bounces: false,
+            pageParam: {"aaa" : 3}
+        });
+    }
+
+
+
+
+      function initSlide() {
+         var slide = $api.byId('slide');
+         var pointer = $api.domAll('#pointer a');
+         window.mySlide = Swipe(slide, {
+             // startSlide: 2,
+             auto: 5000,
+             continuous: true,
+             disableScroll: true,
+             stopPropagation: true,
+             callback: function (index, element) {
+              //alert(index);
+                 var actPoint = $api.dom('#pointer a.active');
+                 $api.removeCls(actPoint, 'active');
+                 $api.addCls(pointer[index], 'active');
+             },
+             transitionEnd: function (index, element) {
+     
+             }
+         });
+     }
+
+
+
+    function selectattr(el,id){
+        //alert(id);
+        var allli=el.parentNode.childNodes;
+        if(!$api.hasCls(el, 'on')){
+            $api.addCls(el, 'on');
+        }
+        for(var i=0,len=allli.length;i<len;i++){
+            if(allli[i]!=el){
+              $api.removeCls(allli[i], 'on');
+            }
+        }  
+
+        changekucun();
+
+    }
+
+//计算团购商品库存
+    function changekucun(){
+        var goods_spec=getatt_goods_value();
+        var act_id=api.pageParam.act_id;
+        var goods_id=api.pageParam.goods_id;
+        //alert(goods_spec);
+/*
+        alert(goods_spec);
+        alert(goods_id);
+        alert(SUPPLIER_ID);
+*/
+
+
+        api.ajax({
+            url: serverUrl+'/cart.php?act=get_goods_kucun_tuan',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {goods_spec:goods_spec,goods_id:goods_id,act_id:act_id,supplier_id:SUPPLIER_ID}
+            }
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            //return false;
+            if(ret.code==515){
+              var kucun=ret.kucun?ret.kucun:0;
+              var shopprice=ret.shopprice?ret.shopprice:0;
+              //alert(kucun);
+              //document.getElementById("kucun").innerHTML=kucun;
+              document.getElementById("tuan_price").innerHTML='￥'+shopprice;            
+            }else{
+
+                api.toast({
+                    msg: ret.msg,
+                    duration: 3000,
+                    location: 'bottom'
+                });
+            }
+
+        });
+
+
+
+    }
+
+
+</script>
+</html>

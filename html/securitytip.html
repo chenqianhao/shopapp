@@ -1,0 +1,67 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+
+
+</head>
+<body style="background: #f3f4f6;">
+
+
+   <header class="gsheader" id="aui-header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        <a href="#title-link" class="">
+            安全Tips
+        </a>
+    </h1>
+
+                          <div class="gsheaderdivright">
+          <a >
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+</header>
+
+<div class="gssecuritytip classdiv">
+<span><em>一、设置密码</em><i>密码的设置要做到复杂又好记。请尽量使用数字,字母或符号的组合,以免被轻易的破解;请避免与生日,车牌等个人信息相同,以免被轻易猜到;为了支付安全,建议支付密码和登录密码不要相同。
+</i></span>
+<span><em>二、密码保存</em><i>请勿将密码保存在手机中,也请勿轻易向人透露自己的密码;定期修改密码,是一个好习惯。
+</i></span>
+<span><em>三、安全等级</em><i>为了保障您的帐号安全,我们建议您开启手机验证和支付密码,同时,将登录密码和支付密码设为高强度的复杂密码,提高帐号的安全等级。
+</i></span>
+<span><em>四、联系客服</em><i>当您发现手机丢失或者帐号被盗,可立即拨打我们的电话:</i></span>
+</div>
+
+
+
+<a class="classbtn gssecuritytipbtn"   href="tel:0714-8637228 ">客服电话<i>:</i>0714-8637228</a>
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        fixStatusBar(header);
+
+    }
+
+
+    // function callphone(){
+    //     api.call({
+    //             type : 'tel',
+    //             number : 07148637228
+    //     });
+    // }
+</script>

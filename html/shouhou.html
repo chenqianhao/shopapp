@@ -1,0 +1,473 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+    <style>
+    .shouhuo{ width:100%; display:block;  background-color:#fff; overflow:hidden; padding:0.8rem;border-bottom: 1px solid #e1e1e1;}
+    .shouhuo img{  float:left; width:30%}
+    .shouhuof{ width:70%; float:left;}
+    .shouhuof span,.shouhuof strong{ display:block;}
+    .shouhuof span{ font-size:1.5rem; color:#333; margin-top:5%;}
+     .shouhuof strong{ margin-top:0.5rem;}
+     .shouhuof strong em{ color: rgb(255, 102, 72); margin-right:1rem;}
+    .shouhuolx,.shouhuonum,.shouhousm,.shouhouscimg{ width:100%; display:block; margin-top:0.8rem; background-color:#fff;border: 1px solid #e1e1e1; padding:1.2rem;}
+    .shouhuolx h3,.shouhuonum h3,.shouhousm h3,.shouhouscimg h3{ color:#333; margin-bottom:1rem;}
+    .shouhuolx span{color: #bdbcbc; border:1px solid #cacaca; padding:0.2rem 1.5rem; font-size:1.5rem;  margin-right:0.5rem; }
+    .shouhuolx span.on{ position:relative; border-color:#f0ae21; color:#f0ae21;}
+     .shouhuolx span.on::before{ position:absolute;  content:"\e666";right: 0px;bottom: -1px;}
+     .shouhuonum input{ width:3rem; height:3rem; float:left;margin-right:1rem; border-color:#e1dfdf; padding:0; text-align:center; color:#8e8e8e;}
+     .shouhuonum font{ background-color:#f3f3f3;color:#7e7e7e; width:3rem; height:3rem; text-align:center; float:left; line-height:3.2rem; margin-right:1rem; border:1px solid #f1ece9;}
+     .shouhuonum font.on{ background-color:#ff6266; color:#fff; border-color:#ecc3c1;}
+     .shouhuonum div,.shouhouscimg{display: block;width: 100%;overflow: hidden; margin-bottom:0.5rem;}
+     .shouhuonum strong{ font-size:1.5rem; color:#333;}
+     .shouhuonum span{ display:block;font-size: 1.5rem;color: #333;}
+     .shouhuonum span i{color: red;}
+     .shouhousm textarea{ height:6rem; border-color:#e6e3e3;}
+     .shouhouscimg img{ width: 7rem;margin-right: 0.5rem; float:left; height:8rem;}
+     .shouhouscimg strong{ width:8rem; float:left;border: 2px dashed #666; color:#666;height:8rem;}
+     .shouhouscimg strong font,.shouhouscimg strong i,.shouhouscimg strong em{ display:block;  text-align:center;}
+     .shouhouscimg strong i,.shouhouscimg strong em{ font-size:1.4rem;}
+     .shouhouscimg strong font{ font-size:3rem; color:#666;}
+     .shouhoubtn{ margin-bottom:3rem;}
+
+
+    }
+
+    </style>
+
+</head>
+<body style="background: #f3f4f6;">
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft">
+          <a  tapmode onclick="api.closeWin();">
+                <i> <font>&#xe619;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="">
+           申请售后服务
+          </a>
+      </h1>
+      <div class="gsheaderdivright">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+  </header>
+
+  <div id="tuihuo_goods">
+  <!--
+    <div class="shouhuo">
+       <img  src="http://httgo.com/images/201509/thumb_img/2512_thumb_G_1442708446861.jpg" />
+      <div class="shouhuof">
+        <span>奥利奥夹心巧克力味家庭装390g 美味特浓</span>
+      <strong><em>￥89</em><em>数量 : 1</em></strong>
+      </div> 
+    </div>
+  -->
+  </div>
+
+
+  <div class="shouhuolx">
+  <h3>售后类型</h3>
+  <span  class="on" tapmode onclick="tui_huan_select(this,1);">退货</span>  <span  tapmode onclick="tui_huan_select(this,2);">换货</span>
+  </div>
+
+<!--
+  <div class="shouhuonum">
+  <h3>申请数量</h3>
+  <div><font>&#xe6ac;</font><input type="text" value="1" /><font class="on">&#xe6ad;</font></div>
+    <strong>最多可提交数量为1个</strong>
+    <span>退款金额 <i>￥100</i> <em>(含运费￥3)</em></span>
+  </div> 
+-->
+
+  <div class="shouhousm">
+  <h3>退换货说明</h3>
+  <div>
+  <textarea name="shouming" id="shuoming"></textarea>
+  </div>
+  </div>
+
+
+  <div class="shouhouscimg">
+  <h3>上传凭证(收货单为必传)</h3>
+  <div>  
+  <img  src="../img/upload.jpg" tapmode onclick="upload_tuihuo(this,1)" id="img_1" />
+  <img  src="../img/upload.jpg" tapmode onclick="upload_tuihuo(this,2)" id="img_2" />
+  <img  src="../img/upload.jpg" tapmode onclick="upload_tuihuo(this,3)" id="img_3" />
+  
+    <strong><font>&#xe63e;</font><i>上传凭证</i><em>最多三张</em></strong>
+  </div>
+
+  <input type="hidden" value="" id="img_value_1" />
+  <input type="hidden" value="" id="img_value_2" />
+  <input type="hidden" value="" id="img_value_3" />
+
+  </div>
+    <button class="shouhoubtn classbtn" tapmode onclick="shouhou_sq();">提交申请</button>
+</body>
+</html>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+    var order_id=0;
+    var goods_id=0;
+    tuihuo_type=1;//默认是退货
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        var headerPos = $api.offset(header);
+        fixStatusBar(header);
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('shouhou');            
+            return false;
+        }
+
+        var order_ids=api.pageParam.order_id;
+        var goods_ids=api.pageParam.goods_id;
+        if(order_ids && order_ids>0){
+          order_id=order_ids;
+        }
+        if(goods_ids && goods_ids>0){
+          goods_id=goods_ids;
+        }
+
+        if(order_id<1 || goods_id<1){
+          api.toast({
+              msg: '非法订单！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          api.closeWin();
+
+        }
+
+        check_shouhou(goods_id,order_id,userid_gs);
+    }
+
+
+    function check_shouhou(goods_id,order_id,userid_gs){
+
+        api.ajax({
+            url: serverUrl+'/user.php?act=tuihuo_info_checkout',
+            method : 'POST',
+            timeout : '30',
+            dataType : 'json',
+            returnAll : false,
+            cache :true,
+            data:
+            {
+                values:{
+                    order_id:order_id,
+                    user_id:userid_gs,
+                    goods_id:goods_id,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret, err){
+                //api.alert({msg:JSON.stringify(ret.info)});
+                // api.alert({
+                //     title: 'title', 
+                //     msg: ret.msg
+                // });
+                if (ret){
+                    if(ret.code==933){
+                          if(ret.info==''){
+                              api.toast({
+                                  msg: "数据非法，请检查网络",
+                                  duration: 8000,
+                                  location: 'bottom'
+                              });
+                              return false;
+                          }else{
+                            var str='';
+                              str+=' <div class="shouhuo">';
+                              str+='   <img  src="'+serverUrl_img+'/'+ret.info.goods_thumb+'" />';
+                              str+='  <div class="shouhuof">';
+                              str+='    <span>'+ret.info.goods_name+'</span>';
+                              str+='  <strong><em>￥'+ret.info.goods_price+'</em><em>数量 : '+ret.info.goods_number+'</em></strong>';
+                              str+='<input type="hidden" id="tui_goods_number" value="'+ret.info.goods_number+'" />';
+                              str+='  </div> ';
+                              str+='</div>';
+                          
+                            $api.html($api.byId('tuihuo_goods'),str);                            
+                          }
+
+                    }else{
+                      api.toast({
+                          msg: ret.msg,
+                          duration: 8000,
+                          location: 'bottom'
+                      });
+                      setTimeout(api.closeWin(),10000);
+                                         
+                    }
+                }
+                else{
+                    api.alert({msg:JSON.stringify(err)});
+                }
+        })
+
+
+    }
+
+
+
+    function tui_huan_select(obj,id){
+      if(id<1 || id>2){
+        api.toast({
+            msg: '非法入口！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      var nn = obj.parentNode.childNodes;
+      for(var i=0,len=nn.length;i<len;i++){
+         if(nn[i]!=obj){
+            $api.removeCls(nn[i], 'on');
+         }else{
+            if($api.hasCls(obj, 'on')){
+              //$api.removeCls(nn[i], 'on');
+            }else{
+              $api.addCls(obj, 'on');
+              //$api.removeCls(nn[i], 'on');
+            }
+         }
+
+      }
+      //alert(id);
+      tuihuo_type=id;
+    }
+
+
+
+
+    function  upload_tuihuo(el,id){
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs || userid_gs<1){
+            showusercenter('shouhou');
+            return false;
+        }
+
+        if(!id){
+            api.toast({
+                msg: '非法操作',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        // api.actionSheet({
+        //     title: '底部弹出框测试',
+        //     cancelTitle: '这里是取消按钮',
+        //     destructiveTitle: '红色警告按钮',
+        //     buttons: ['1','2','3']
+        // }, function(ret, err){
+        //     if( ret ){
+        //          alert( JSON.stringify( ret ) );
+        //     }else{
+        //          alert( JSON.stringify( err ) );
+        //     }
+        // });
+
+        api.actionSheet({
+                title : '选择图片来源',
+                buttons : ['优雅自拍', '浏览相册']
+        }, function(ret, err) {
+                var index = ret.buttonIndex;
+                //alert(index);
+                //api.alert({msg:JSON.stringify(ret)});
+                if(ret.buttonIndex == 1){
+                    sourceType="camera";
+                }else if(ret.buttonIndex == 2){
+                    sourceType="library";
+                }else{
+                    api.toast({
+                        msg: '选取图片失败！',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    return false;
+                }
+                api.getPicture({
+                    sourceType: sourceType,
+                    encodingType: 'jpg',
+                    mediaValue: 'pic',
+                    destinationType: 'base64',
+                    allowEdit: true,
+                    quality: 50,
+                    targetWidth:640,
+                    targetHeight:640,
+                    saveToPhotoAlbum: false
+                }, function(rets, err){ 
+                    if (rets) {
+                        api.showProgress({title: '图片上传中……', modal: false});
+                        //alert(rets.base64Data);
+                        api.ajax({
+                            url:serverUrl+'/daili.php?act=upload_avator',
+                            method:'post',
+                            cache:false,
+                            timeout:30,
+                            dataType:'json',
+                            data: {
+                                values:{
+                                    type:id,
+                                    user_id:userid_gs,
+                                    supplier_id:SUPPLIER_ID,
+                                    idcard:rets.base64Data
+                                }
+                            },       
+                            returnAll:false,
+                        },function(ret,err){
+                            //api.alert({msg:JSON.stringify(ret)});
+                            if(ret){
+                                
+                                 if(ret.code==1073){//头像上传成功
+                                    // alert(ret.data);
+                                    
+                                    document.getElementById("img_"+ret.type).src = serverUrl+'/'+ret.idcard;  
+                                    document.getElementById("img_value_"+ret.type).value= ret.idcard;
+                                    
+                                    api.toast({msg: "图片上传成功"});
+                                    //改变用户中心的头像（暂时不做，可以发送监听事件）
+                                    api.hideProgress();
+                                 }else{
+                                    api.toast({msg: ret.msg});
+                                    api.hideProgress();
+                                    //window.location.reload();
+                                    return false;
+                                }
+                            }else{
+                                api.toast({msg: "获取图片失败！"});
+                            }
+                            api.hideProgress();
+                       })  
+
+                    } else{
+                        //api.alert({msg:err.msg});
+                        api.toast({msg: "上传图片失败！"});
+                    };
+                }); 
+
+
+
+
+        });
+
+    }
+
+
+    function shouhou_sq(){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('shouhou');            
+            return false;
+        }      
+
+        var shuoming=document.getElementById("shuoming").value; 
+        var img_value_1=document.getElementById("img_value_1").value; 
+        var img_value_2=document.getElementById("img_value_2").value; 
+        var img_value_3=document.getElementById("img_value_3").value;
+        var tui_goods_number=document.getElementById("tui_goods_number").value;
+
+        if(order_id<0){
+            api.toast({
+                msg: '订单非法！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        if(goods_id<0){
+            api.toast({
+                msg: '商品非法！',
+                duration: 2000,
+                location: 'bottom'
+            });   
+            return false;      
+        }
+
+
+        if(!img_value_1 || img_value_1==''){
+            api.toast({
+                msg: '请先传入收货单！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        var imgs=img_value_1;
+        if(img_value_2 && img_value_2 != ''){
+          imgs+=','+img_value_2;
+        }
+        if(img_value_3 && img_value_3 != ''){
+          imgs+=','+img_value_3;
+        }
+        api.ajax({
+            url: serverUrl+'/user.php?act=tuihuo_info_submit',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            data: {
+                values:{
+                    order_id:order_id,
+                    user_id:userid_gs,
+                    goods_id:goods_id,
+                    back_reason:shuoming,
+                    supplier_id:SUPPLIER_ID,
+                    tui_goods_number:tui_goods_number,
+                    imgs:imgs,
+                    back_type:tuihuo_type
+                }
+            },             
+            returnAll:false
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==930){
+                  api.toast({
+                      msg: '申请退换货成功，请等待后台审核！',
+                      duration: 100000,
+                      location: 'bottom'
+                  });
+                  api.sendEvent({
+                      name: 'shouhou'
+                  });
+                  api.closeWin({
+                      name: 'shouhou'
+                  });
+                }else{
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+
+
+
+
+
+    }
+</script>

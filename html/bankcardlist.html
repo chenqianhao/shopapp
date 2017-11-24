@@ -1,0 +1,213 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/daili.css">
+</head>
+<body style="background: #f1f1f1;">
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft" tapmoe onclick="api.closeWin();">
+          <a>
+                <i> <font>&#xe619;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a>
+           提现方式列表
+          </a>
+      </h1>
+            <div class="gsheaderdivright" tapmpde onclick="kefushow('bankcardlist');">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+  </header>
+    <div class="bankcardlist">
+        <ul id="bank_list_app">
+<!--             <li class="on"><font class="fontgs">&#xe680;</font><span><em>工商银行</em></br><b>尾号4403</b></span></li>
+            <li><font class="fontjs">&#xe67c;</font><span><em>建设银行</em></br><b>尾号4403</b></span></li>
+            <li><font class="fontzg">&#xe682;</font><span><em>中国银行</em></br><b>尾号4403</b></span></li>
+            <li><font class="fontzz">&#xe67b;</font><span><em>招商银行</em></br><b>尾号4403</b></span></li>
+            <li><font class="fontjt">&#xe67e;</font><span><em>交通银行</em></br><b>尾号4403</b></span></li>
+            <li><font class="fontxy">&#xe681;</font><span><em>兴业银行</em></br><b>尾号4403</b></span></li>
+            <li><font class="fontyz">&#xe67a;</font><span><em>邮政银行</em></br><b>尾号4403</b></span></li>
+            <li><font class="fontgf">&#xe67d;</font><span><em>广发银行</em></br><b>尾号4403</b></span></li>
+            <li><font class="fontny">&#xe67f;</font><span><em>农业银行</em></br><b>尾号4403</b></span></li> -->
+        </ul>
+    </div>
+    <div class="bankcardlistadd" tapmode onclick="addbank();">添加提现方式</div>
+
+<script id="bank-template" type="text/x-dot-template">
+
+{{for(var i=0,len=it.length;i<len;i++){}}
+
+    {{if(it[i]['type']==1){}}<!--微信-->
+        <li><span  {{if(it[i].status==1){}} class="on" {{}else{}} class="del"  {{}}} tapmode onclick="default_bank('{{=it[i].id}}')"></span><font class="font_20"></font><span><em>微信</em></br><b>尾号{{=it[i].nid}}</b></span></li>
+
+    {{}else if(it[i]['type']==2){}}
+        <li><span  {{if(it[i].status==1){}} class="on" {{}else{}} class="del"  {{}}} tapmode onclick="default_bank('{{=it[i].id}}')"></span><font class="font_30"></font><span><em>支付宝</em></br><b>尾号{{=it[i].nid}}</b></span></li>
+    {{}else{}}
+
+    <li><span  {{if(it[i].status==1){}} class="on" {{}else{}} class="del"  {{}}} tapmode onclick="default_bank('{{=it[i].id}}')"></span><font class="font_{{=it[i].bank_ids}}"></font><span><em>{{=it[i].bankname}}</em></br><b>尾号{{=it[i].nid}}</b></span></li>
+    {{}}} 
+{{}}} 
+
+</script> 
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            // api.openWin ({
+            //     name: 'login',
+            //     url: 'login.html',
+            //     reload: true,
+            //     bounces: false,
+            //     pageParam: {back_act: 'addbank'},
+            //     delay:200
+            // });
+            showusercenter('bankcardlist');
+            return false;
+        }
+        get_bank_list(userid_gs);
+        api.addEventListener({
+            name: 'addbank'
+        }, function(ret, err){
+            get_bank_list(userid_gs);
+        });
+
+    }
+
+    function get_bank_list(user_id){
+
+        if(!user_id){
+            api.toast({
+                msg: '请先登陆！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        api.ajax({
+            url: serverUrl+'/daili.php?act=get_bank_list',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                  supplier_id:SUPPLIER_ID,
+                  user_id:user_id
+                }
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==1016){
+                    api.openWin({
+                        name: 'addbank',
+                        url: 'addbank',
+                        bounces: false,
+                        pageParam: {addbank: 'addbank'}
+                    });
+
+                }else if(ret.code=1017){
+                    var template = document.getElementById('bank-template').innerHTML;
+                    document.getElementById('bank_list_app').innerHTML=doT.template(template)(ret.info);
+                }else{
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });      
+
+
+    }
+
+
+    function default_bank(bank_id){
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('bankcardlist');
+            return false;
+        }
+
+        if(!bank_id || default_bank<1){
+            api.toast({
+                msg: '该银行卡不存在，请重新添加！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        api.ajax({
+            url: serverUrl+'/daili.php?act=default_bank',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {
+                  bank_id:bank_id,
+                  supplier_id:SUPPLIER_ID,
+                  user_id:userid_gs
+                }
+            }            
+        },function(ret,err){
+            //api.alert({msg:JSON.stringify(ret)});
+            //return ;
+            if (ret) {
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                if(ret.code==1213){
+                    get_bank_list(userid_gs);
+                }
+            } else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });  
+
+    }
+
+
+
+
+
+    function addbank(){
+
+      api.openWin({
+          name: 'addbank',
+          url: 'addbank.html',
+          reload:true,
+          bounces: false
+      });
+
+    }
+</script>

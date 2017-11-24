@@ -1,0 +1,598 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title></title>
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../css/shuigou.css">
+
+</head>
+<body style="background-color: #fff">
+
+    <header class="gsheader gsgoodsheader" id="header">
+      <div class="gsheaderdivleft" tapmode onclick="guanbis();">
+          <a >
+                <i> <font>&#xe619</font></i>
+          </a>
+      </div>
+      <h1 id="selectspan">
+          <em>
+          <span class="on" tapmode onclick="randomSwitchBtn(this,'0');">商品</span>
+          <span tapmode onclick="randomSwitchBtn(this,'1');">详情</span>
+          <span tapmode onclick="randomSwitchBtn(this,'2');">评价</span>     
+          </em>
+      </h1>
+  </header>
+
+
+
+
+
+<div id="main">
+
+</div>
+
+
+
+
+
+
+<footer id="footer">
+    <div class="gsgoodsbuttom">
+        <div class="gsgoodsbuttomleft">
+            <ul>
+                <li tapmode onclick="showcart();"><span><i>购物车</i><em class="gsgoodscardnum" id="countnums">0</em></span></li>
+                <li tapmode onclick="collect();"><span><i>收藏</i></span></li>
+                <li tapmode onclick="kefushow('goods');"><span><i>客服</i></span></li>
+            </ul>
+        </div>
+        <div class="gsgoodsbuttomrigth">
+            <button tapmode onclick="add_to_cart();">
+                加入购物车</button>
+            <button tapmode onclick="go_to_cart();">
+                    立即购买
+            </button>
+        </div>
+    </div>
+</footer>
+
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript">
+    //var mkeyTime=new Date().getTime();
+    goods_id=0;
+    apiready = function () {
+        api.parseTapmode();
+        var header = $api.byId('header');
+        var headerPos = $api.offset(header);
+
+        fixStatusBar(header);
+
+        var goods_ids=api.pageParam.goods_id;
+        if(!goods_ids || goods_ids<1){
+            api.toast({
+                msg: '请先选择商品',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeWin({name: 'goods'});
+        }
+        goods_id=goods_ids;
+
+/*        api.openWin({
+            name: 'load',
+            url: 'load.html'
+        });
+        return ;
+
+*/
+        //alert(goods_id);
+        $api.setStorage("numberss",1);
+
+        cart_number();
+        api.addEventListener({
+            name: 'cart'
+        }, function(ret, err){
+            //alert(JSON.stringify(ret.value.user_id));
+            cart_number();
+        });
+        api.addEventListener({
+            name: 'login'
+        }, function(ret, err){
+            cart_number();
+        });
+
+        api.addEventListener({
+            name: 'layout'
+        }, function(ret, err){
+            if(JSON.stringify(ret.value)){
+                cart_number();
+            }
+        });
+
+        //alert(goods_id);
+        
+        opengoodsgroup_list();
+
+        api.openFrame({
+            name: 'load',
+            url: './load.html',
+            rect: {
+                x: 0,
+                y: headerPos.h,
+                w: api.winWidth,
+                h: api.winHeight- headerPos.h
+            },
+            pageParam: {
+                name: 'test'
+            },
+            bounces: false,
+            bgColor: 'rgba(0,0,0,0)',
+            vScrollBarEnabled: true,
+            hScrollBarEnabled: true
+        });
+
+    }
+
+
+
+    function opengoodsgroup_list(goods_ids){
+
+        var header = $api.byId('header');
+        var headerPos = $api.offset(header);
+        var footer_h = $api.offset($api.byId('footer')).h;
+
+		if(goods_ids>0){
+			goods_id=goods_ids;
+			//alert(goods_id);
+		}
+
+
+	   api.openFrame({
+	       name: 'goods_canshu',
+	       url: 'goods_canshu.html',
+           bounces:true,
+           reload:true,	       
+	       pageParam:{goods_id:goods_id},
+	       rect: {
+		       x:0,
+		       y:headerPos.h,
+               w: 'auto', 
+               h: api.winHeight - footer_h - headerPos.h- footer_h - headerPos.h+25
+	       }
+       });
+       
+       
+
+/*
+        api.closeFrameGroup({
+            name: 'group_goods'
+        });
+
+        api.openFrameGroup ({
+            name: 'group_goods',
+            background: '#fff',
+            scrollEnabled: false,
+            slidBackEnabled:false,
+            rect: {
+                 x: 0, 
+                 y:  headerPos.h, 
+                 w: 'auto', 
+                 h: api.winHeight - footer_h - headerPos.h- footer_h - headerPos.h+25
+            },
+            index: 0,
+            frames: [{
+                name: 'goods_canshu',
+                url: 'goods_canshu.html',
+                slidBackEnabled:false,
+                reload:true,
+                bounces:true,
+                pageParam:{goods_id:goods_id}
+            }, {
+                name: 'goodsinfo',
+                url: 'goodsinfo.html',
+                slidBackEnabled:false,
+                reload:true,
+                bounces:false,
+                pageParam:{goods_id:goods_id}
+            }, {
+                name: 'goodscomment',
+                slidBackEnabled:false,
+                bounces:false,
+                reload:true,
+                pageParam:{goods_id:goods_id},
+                url: 'goodscomment.html'
+            }]
+        }, function( ret, err ){
+            var selectspan=document.getElementById("selectspan").getElementsByTagName("span");
+            for(var i=0,len=selectspan.length;i<len;i++){
+                $api.removeCls(selectspan[i], 'on');
+            }
+            
+            $api.addCls(selectspan[ret.index], 'on');
+        });
+*/
+
+    }
+
+
+
+/*
+    function openxihuan_goods(goods_ids){
+        //alert(goods_ids);
+        goods_id=goods_ids;
+        api.closeFrameGroup({
+            name: 'group_goods'
+        });
+        api.openWin({
+            name: 'goods',
+            url: 'goods.html',
+            reload:true,
+            bounces: false,
+            pageParam: {goods_id : goods_id }
+        });
+    }
+*/
+
+
+    function guanbis(){
+        api.closeFrameGroup({name: 'group_goods'});
+        api.closeWin({name: 'goods'});
+    }
+
+
+	function exec_goods(id){
+        var selectspan=document.getElementById("selectspan").getElementsByTagName("span");
+        for(var i=0,len=selectspan.length;i<len;i++){
+            $api.removeCls(selectspan[i], 'on');
+        }
+        $api.addCls(selectspan[id], 'on');
+
+	
+	}
+
+
+    function randomSwitchBtn(obj,index) {
+        //alert(index);
+        var selectspan=document.getElementById("selectspan").getElementsByTagName("span");
+        for(var i=0,len=selectspan.length;i<len;i++){
+            $api.removeCls(selectspan[i], 'on');
+        }
+
+        $api.addCls(obj, 'on');
+
+        var header = $api.byId('header');
+        var headerPos = $api.offset(header);
+        var footer_h = $api.offset($api.byId('footer')).h;
+        //alert(index);
+        
+        if(index==0){
+		   api.openFrame({
+		       name: 'goods_canshu',
+		       url: 'goods_canshu.html',
+	           bounces:true,
+	           reload:true,	       
+		       pageParam:{goods_id:goods_id,gundong_show:1},
+		       rect: {
+			       x:0,
+			       y:headerPos.h,
+	               w: 'auto', 
+	               h: api.winHeight - footer_h - headerPos.h- footer_h - headerPos.h+25
+		       }
+	       });
+               
+        }else if(index==1){
+        
+	 	   api.openFrame({
+		       name: 'goods_canshu',
+		       url: 'goods_canshu.html',
+	           bounces:true,
+	           reload:true,	       
+		       pageParam:{goods_id:goods_id,gundong_show:2},
+		       rect: {
+			       x:0,
+			       y:headerPos.h,
+	               w: 'auto', 
+	               h: api.winHeight - footer_h - headerPos.h- footer_h - headerPos.h+25
+		       }
+	       });
+              
+        
+        
+        }else if(index==2){
+        
+		   api.openFrame({
+		       name: 'goodscomment',
+		       url: 'goodscomment.html',
+	           bounces:true,
+	           reload:true,	       
+		       pageParam:{goods_id:goods_id},
+		       rect: {
+			       x:0,
+			       y:headerPos.h,
+	               w: 'auto', 
+	               h: api.winHeight - footer_h - headerPos.h- footer_h - headerPos.h+25
+		       }
+	       });
+        }
+        /*
+        api.setFrameGroupIndex({
+            name: 'group_goods',
+            index: index
+        });
+        */
+    }
+
+
+
+
+    function add_to_cart(){
+      
+        //var goods_spec=getatt_goods_value();
+        
+        var goods_spec=$api.getStorage('goods_specs');
+        if(!goods_spec){
+          goods_spec='';
+        }
+
+
+        var jsfun = 'get_kucun_value();';
+        api.execScript({
+            name: 'goods',
+            frameName: 'goods_canshu',
+            script: jsfun
+        });
+
+        var number=$api.getStorage('numberss')?$api.getStorage('numberss'):1;
+        //var number=$api.val($api.byId('number'))?$api.val($api.byId('number')):1;
+
+
+        //alert(number);
+        //alert(goods_id);
+        var user_id=$api.getStorage('userid_gs');
+        //alert(user_id);
+
+        if(!user_id || user_id<1){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+
+            showusercenter('goods',goods_id);
+            return false;
+        }
+
+        api.showProgress({
+            title: '正在加入购物车中...',
+            modal: false
+        });
+            api.ajax({
+                url:serverUrl+'/cart.php?act=add_to_cart',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                returnAll:false,
+                data:{
+                    values: {
+                        goods_id: goods_id,
+                        goods_number:number,
+                        type:1,
+                        user_id:user_id,
+                        goods_spec:goods_spec,
+                        supplier_id:SUPPLIER_ID
+                    }
+                }           
+            },function(ret,err){
+                //api.alert({msg:JSON.stringify(ret)});
+                api.hideProgress();
+                if(ret.code==509){
+                  //更新购物车
+                  
+                  api.sendEvent({
+                      name: 'cart_goods'
+                  });  
+                  cart_number();                
+
+                    api.toast({msg:'加入购物车成功',duration:1000,location:'bottom'});
+                }else{
+                       if(ret.code>0){
+                           api.alert({
+                            msg:(ret.msg)
+                           });                          
+                       }else{
+                           api.alert({
+                            msg:("网络不稳定，无法获取到数据")
+                           });  
+                       }
+                }
+           })
+
+    }
+
+
+
+    function go_to_cart(){
+        //var goods_spec=getatt_goods_value();
+        
+        var goods_spec=$api.getStorage('goods_specs');
+        if(!goods_spec){
+          goods_spec='';
+        }
+
+        var jsfun = 'get_kucun_value();';
+        api.execScript({
+            name: 'goods',
+            frameName: 'goods_canshu',
+            script: jsfun
+        });
+
+        var number=$api.getStorage('numberss')?$api.getStorage('numberss'):1;
+
+        //var number=$api.val($api.byId('number'))?$api.val($api.byId('number')):1;
+        //alert(number);
+        //alert(goods_id);
+        var user_id=$api.getStorage('userid_gs');
+        //alert(user_id);
+
+        if(!user_id || user_id<1){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+            showusercenter('goods',goods_id);
+            return false;
+        }
+
+        api.showProgress({
+            title: '正在加入购物车中...',
+            modal: false
+        });
+            api.ajax({
+                url:serverUrl+'/cart.php?act=add_to_cart',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                returnAll:false,
+                data:{
+                    values: {
+                        goods_id: goods_id,
+                        goods_number:number,
+                        type:1,
+                        user_id:user_id,
+                        goods_spec:goods_spec,
+                        supplier_id:SUPPLIER_ID
+                    }
+                }           
+            },function(ret,err){
+                //api.alert({msg:JSON.stringify(ret)});
+                api.hideProgress();
+                if(ret.code==509){
+                  //更新购物车
+                  api.sendEvent({
+                      name: 'cart',
+                      extra: {user_id:user_id,goods:'1'}
+                  });        
+
+                  showcart();          
+
+                  //api.toast({msg:'加入购物车成功',duration:1000,location:'bottom'});
+                }else{
+                       if(ret.code>0){
+                           api.alert({
+                            msg:(ret.msg)
+                           });                          
+                       }else{
+                           api.alert({
+                            msg:("网络不稳定，无法获取到数据")
+                           });  
+                       }
+
+                }
+                
+           })
+    }
+
+
+
+
+
+//进入首页的购物车
+    function showcart(){
+
+        //api.closeFrameGroup({name: 'group_goods'});
+
+
+        var jsfun = 'closegroup(3);';
+        api.execScript({
+            name: 'root',
+            script: jsfun
+        });
+
+        api.openWin({
+            name: 'root',
+            url: '../index.html',
+            bounces: false,
+            pageParam: {"aaa" : 3}
+        });
+    }
+
+
+
+
+    //添加商品收藏
+    function collect(){
+        //alert(goods_id);
+        if(!goods_id || goods_id<1){
+            api.toast({
+                msg: '请先选择要收藏的商品！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            // api.openWin ({
+            //     name: 'login',
+            //     url: 'login.html',
+            //     reload: true,
+            //     bounces: false,
+            //     pageParam: {back_act: 'goods',goods_id:goods_id},
+            //     delay:200
+            // });
+            showusercenter('goods',goods_id);
+            return false;
+        }
+
+        api.showProgress({
+            text: '添加收藏中……',
+            modal: true
+        });
+        api.ajax({
+            url: serverUrl+'/user.php?act=add_collect',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {user_id:userid_gs,goods_id:goods_id,supplier_id:SUPPLIER_ID}
+            }
+        },function(ret,err){
+            api.hideProgress();
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+               if(ret.code==123){
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });                
+                    window.location.reload();
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+        api.hideProgress();
+    }
+
+
+
+
+</script>
+</html>

@@ -1,0 +1,206 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/daili.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body style=" background:#f0f0f0;">
+    <header class="gsheader" id="header">
+      <div class="gsheaderdivleft">
+          <a tapmode onclick="api.closeWin();">
+                <i> <font>&#xe619;</font></i>
+          </a>
+      </div>
+      <h1>
+          <a href="#title-link" class="" id="headertitle">
+              设置支付密码
+          </a>
+      </h1>
+
+                        <div class="gsheaderdivright" tapmpde onclick="kefushow('set_pwd');">
+          <a >
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+
+  </header>
+
+
+  <div class="setpassword  classinputf">
+  <h3>请设置一个6位数字的提现密码</h3>
+  <ul>
+  <li><span>支付密码</span><input  type="password"  id="pwd" placeholder="设置6位数字的支付密码"/></li>
+  <li><span>确认密码</span><input  type="password"  id="re_pwd" placeholder="确定设置支付密码"/></li>
+  <li><span>登录密码</span><input  type="password"  id="log_pwd" placeholder="输入登录密码" /></li>
+  </ul>
+  </div>
+
+  <button class="classbtn" tapmode onclick="set_paypwd();">提交</button>
+
+</body>
+
+
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/md5.js" ></script>
+<script type="text/javascript">
+    fordailis=0;//1成为代理商
+    update_pwds=0;
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+        var fordaili=api.pageParam.fordaili;//成为代理商
+        //alert(fordaili);
+        if(fordaili){
+          fordailis=fordaili;
+        }
+        
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('set_pwd');
+            return false;
+        }
+
+        var update_pwd =api.pageParam.update_pwd;
+        if(update_pwd && update_pwd ==1){
+            update_pwds=1;
+            $api.html($api.byId('headertitle'),'修改支付密码');
+        }
+
+        
+    }
+
+
+    function set_paypwd(userid_gs){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            api.toast({
+                msg: '请先登陆!',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        var pwd=$api.val($api.byId("pwd"))?$api.val($api.byId("pwd")):'';
+        var re_pwd=$api.val($api.byId("re_pwd"))?$api.val($api.byId("re_pwd")):'';
+        var log_pwd=$api.val($api.byId("log_pwd"))?$api.val($api.byId("log_pwd")):'';
+
+        if(pwd==''){
+          api.toast({
+              msg: '请先输入支付密码！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          return false;
+        }
+
+        //支付密码必须是6位纯数字
+        var reg = new RegExp(/^\d{6}$/);
+        if(!reg.test(pwd)){
+            api.toast({
+                msg: '请先输入6位纯数字的支付密码！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        if(pwd != re_pwd){
+            api.toast({
+                msg: '两次输入的支付密码不一致!',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        if(log_pwd==''){
+          api.toast({
+              msg: '请先输入登陆密码！',
+              duration: 2000,
+              location: 'bottom'
+          });
+          return false;
+        }
+
+        var ec_salt=$api.getStorage("ec_salt")?$api.getStorage("ec_salt"):'';//没有此字段应该ajax去远程获取一下该字段
+        //alert(ec_salt);
+
+        var paypwd=hex_md5(pwd);
+        var re_paypwd=hex_md5(re_pwd);
+        var login_pwd=hex_md5(log_pwd+ec_salt);
+
+
+
+        //插入支付密码
+          api.ajax({
+              url: serverUrl+'/daili.php?act=reset_paypwd',
+              method: 'post',
+              timeout: 30,
+              dataType: 'json',
+              returnAll:false,
+              data:{
+                  values: {
+                    paypwd:paypwd,
+                    re_paypwd:re_paypwd,
+                    login_pwd:login_pwd,
+                    supplier_id:SUPPLIER_ID,
+                    user_id:userid_gs
+                  }
+              }            
+          },function(ret,err){
+              if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});             
+                if(ret.code==1208){
+                    api.toast({
+                        msg: '设置支付密码成功！',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    //var  fordaili=api.pageParam.fordaili;
+                    // alert(fordailis);
+                    // alert("bbbb");
+                    if(fordailis==1){
+                        api.sendEvent({
+                            name: 'fordaili'
+                        });
+                    }
+                    //api.closeWin();
+                  if(update_pwds==1){
+                      api.toast({
+                          msg: "修改支付密码成功！",
+                          duration: 8000,
+                          location: 'bottom'
+                      });    
+                      window.location.reload();                
+                  }
+                }else{
+
+
+                      api.toast({
+                          msg: ret.msg,
+                          duration: 5000,
+                          location: 'bottom'
+                      });
+                      window.location.reload();
+                  
+
+                }
+
+              } else {
+                  api.alert({
+                      msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                  });
+              };
+          });
+
+    }
+</script>

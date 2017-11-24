@@ -1,0 +1,231 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>商品收藏</title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+<!--     <script type="text/javascript" src="../script/hammer.min.js"></script> -->
+</head>
+<body style="background: #f3f4f6;">
+
+
+   <header class="gsheader" id="header">
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+                       <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        <a>
+              我的收藏
+        </a>
+    </h1>
+
+    <div class="gsheaderdivright" tapmode onclick="kefushow('collection');">
+        <a>
+            <i><font>&#xe635;</font></i>
+        </a>
+    </div>
+</header>
+
+ <div class="classdiv gsconllection" id="collect_list_goods">
+    <ul id="collectmain">
+<!--        <li><div><img src="http://httgo.com/images/201601/thumb_img/19816_thumb_G_1452818869268.jpg" /></div><span>婴爱喜学步车儿童多功能防侧翻U型学步车7-18个月宝宝婴儿学步车</span><strong>9.9￥</strong><em>&#xe62d;</em></li>
+<li><div><img src="http://httgo.com/images/201601/thumb_img/19816_thumb_G_1452818869268.jpg" /></div><span>婴爱喜学步车儿童多功能防侧翻U型学步车7-18个月宝宝婴儿学步车</span><strong>9.9￥</strong><em>&#xe62d;</em></li> -->
+   </ul>
+</div>
+
+
+    <script type="text/x-dot-template" id="body-template">
+
+        {{ for(var obj1 in  it) { }}
+
+    <li ><div><img src="{{= serverUrl_img+'/'+it[obj1]['goods_thumb'] }}" tapmode onclick="opengoods({{=it[obj1].goods_id}});" /></div><span  tapmode onclick="opengoods({{=it[obj1].goods_id}});">{{= it[obj1]['goods_name'] }}</span><strong>￥{{= it[obj1]['org_price'] }}</strong><em><font tapmode onclick="del_collection({{=it[obj1].rec_id}});">&#xe62d;</font></em></li>
+
+        {{ } }}
+
+    </script> 
+
+
+
+
+<div class="classdiv gsconllectionwgz" style="display:none;" id="collect_none_goods">
+<span>您未关注任何商品</span>
+<spanc>快去逛逛吧!</spanc>
+<strong tapmode onclick="guang();"><i>去逛逛更多商品</i></strong>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+        
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+
+            showusercenter('collection');
+            return false;
+        }
+
+        get_goods_collect(userid_gs,page);
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            page+=4;
+            var userid_gs=$api.getStorage('userid_gs');
+            get_goods_collect(userid_gs,page);
+            api.refreshHeaderLoadDone();
+        });
+
+
+
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+                api.showProgress({modal: true });
+                page+=4;
+                var userid_gs=$api.getStorage('userid_gs');
+                get_goods_collect(userid_gs,page);
+                api.refreshHeaderLoadDone();
+        });  
+
+/*
+        api.addEventListener({ 
+            name: 'swipeleft'  //swiperight 为向右轻扫
+        }, function(ret, err){
+            alert("向左滑动");
+        });
+*/
+
+
+    }
+
+    function get_goods_collect(user_id,page){
+        api.showProgress({
+            text: '收藏信息加载中……',
+            modal: true
+        });
+        api.ajax({
+            url: serverUrl+'/user.php?act=get_collect',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {supplier_ids:SUPPLIER_ID,user_id:user_id,page:page}
+            }
+        },function(ret,err){
+            if (ret) {
+                //api.alert({msg:JSON.stringify(ret)});
+
+                if(ret.code==113){
+
+                    var template = document.getElementById('body-template').innerHTML;
+                    document.getElementById('collectmain').innerHTML=doT.template(template)(ret.data);
+                
+                }else if(ret.code==114){
+                    document.getElementById('collect_list_goods').style.display="none";
+                    document.getElementById('collect_none_goods').style.display="block";
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+        api.hideProgress();  
+    }
+
+//删除关注商品
+    function del_collection(id){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('collection');
+            return false;
+        }
+
+        if(!id || id<1){
+            api.toast({
+                msg: '请先选择要删除的商品！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        api.showProgress({
+            text: '删除中……',
+            modal: true
+        });
+        api.ajax({
+            url: serverUrl+'/user.php?act=del_collect',
+            method: 'post',
+            timeout: 30,
+            dataType: 'json',
+            returnAll:false,
+            data:{
+                values: {user_id:userid_gs,collection_id:id,supplier_id:SUPPLIER_ID}
+            }
+        },function(ret,err){
+            api.hideProgress();
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret) {
+                if(ret.code==118){
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    window.location.reload();
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else {
+                api.alert({
+                    msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+                });
+            };
+        });
+
+        api.hideProgress();
+
+    }
+
+
+
+
+
+
+
+    function guang(){
+        api.toast({
+            msg: '暂未开发此功能！',
+            duration: 2000,
+            location: 'bottom'
+        });
+    }
+</script>

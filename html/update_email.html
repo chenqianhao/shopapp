@@ -1,0 +1,1038 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+
+</head>
+<body style="background-color: #f5f5f5;">
+    <header class="gsheader" id="header">
+     <div class="gsheaderdivleft">
+         <a tapmode onclick="api.closeWin();" class="">
+               <font>&#xe619;</font>
+         </a>
+     </div>
+     <h1 id="titlecontent">
+          绑定邮箱
+     </h1>
+
+      <div class="gsheaderdivright" tapmpde onclick="kefushow('update_email');">
+          <a>
+                <i><font>&#xe635;</font></i>
+          </a>
+      </div>
+
+
+</header>
+    <div class="gsfindpwdone">
+        <ol class="am-breadcrumb" id="parent">
+
+<!--
+            <li class="gsfindpwdoneon" id="yanzhe_1" onclick="forget_password(this,1);">1选择验证方式</li>
+            <li id="yanzhe_2" onclick="forget_password(this,2);">2安全验证</li>
+            <li id="yanzhe_3" onclick="forget_password(this,3);">3设置登录密码</li> 
+-->
+
+            <li class="gsfindpwdoneon" id="yanzhe_1">1选择验证方式</li>
+            <li id="yanzhe_2">2安全验证</li>
+            <li id="yanzhe_3">3设置邮箱</li>
+
+        </ol>
+    </div>
+
+    
+
+
+    <div id="yanzhe_11" style="display: block;">
+        <div class="gsfindpwddiyibu">
+            <span>邮箱验证</span> <a onclick="email_forward(document.getElementById('yanzhe_2'),2);">立即验证</a>
+        </div>
+
+        <div class="gsfindpwddiyibu" id="mobile_yanzhe" style="display:none;">
+            <span>手机验证</span> <a onclick="forget_password(document.getElementById('yanzhe_2'),2);">立即验证</a>
+        </div>
+
+    </div>
+
+    <input type="hidden" name="style_type" id="style_type" />
+
+
+
+    <div id="yanzhe_12" style="display: none;">
+        <div class="gsfindpwddierbu classinputf">
+            <ul>
+                <li>
+                    <input type="text" placeholder="请输入已经绑定手机号码" name="mobile" id="mobile" readonly />
+
+                    <button id="defaultyzm" type="button" class="gsfindpwddierbubtn1" tapmode onclick="hqyzm(this);">
+                        发送验证码</button>
+                
+                    <button id="huoquyzm" style="display:none;" type="button" class="gsfindpwddierbubtn1">
+                        重新获取验证码</button>
+
+                </li>
+                <li>
+                    <input type="text" placeholder="请输入手机短信中的验证码" name="vericode" id="vericode" /></li>
+            </ul>
+        </div>
+
+        <span class="gsfindpwddierbubtn2">
+            <button type="button" onclick="yanzheng_pwd();">
+                验证</button>
+        </span>
+    </div>
+
+    <input type='hidden'  name='yzid' id='yzid'  />
+    <input type='hidden'  name='pwd_user_id' id='pwd_user_id'  />
+    <input type='hidden'  name='verifycode' id='verifycode'  />
+
+
+        <input type='hidden'  name='yzid_email' id='yzid_email'  />
+
+    <div id="yanzhe_112" style="display: none;">
+        <div class="gsfindpwddierbu classinputf">
+            <ul>
+                <li>
+                    <input type="text" placeholder="请输入要绑定的邮箱号码" name="email" id="email" />
+
+                    <button id="defaultyzm_email" type="button" class="gsfindpwddierbubtn1" tapmode onclick="hqyzm_email(this);">
+                        发送验证码</button>
+                
+                    <button id="huoquyzm_email" style="display:none;" type="button" class="gsfindpwddierbubtn1">
+                        重新获取验证码</button>
+
+
+                </li>
+                <li>
+                    <input type="text" placeholder="请输入邮箱中的验证码" name="vericode_email" id="vericode_email" /></li>
+            </ul>
+        </div>
+
+        <span class="gsfindpwddierbubtn2">
+            <button type="button" onclick="yanzheng_email();">
+                验证</button>
+        </span>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div id="yanzhe_13" style="display: none;">
+        <div class="gsfindpwddisanbu classinputf">
+            <ul>
+                <li>
+                    <input type="text" placeholder="设置邮箱号码" name="approve_email" id="approve_email" />
+                <li>
+                    <input type="text" placeholder="再次输入新的邮箱号码" name="re_approve_email" id="re_approve_email" />
+                </li>
+            </ul>
+        </div>
+        <span class="gsfindpwddierbubtn2">
+            <button onclick="chongzhimima();" type="button">
+                绑定邮箱</button>
+        </span>
+    </div>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+    wait = 0;
+    waits=0;
+    email='';
+    phoness='';
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+
+        var b_email=api.pageParam.b_email;
+        if (b_email=='' || !checkEmail(b_email)) {
+            email='';
+        }else{
+            email=b_email;
+            $api.val($api.byId("email"),email);
+            $api.byId("email").readOnly=true;
+        }
+
+        var bangding=api.pageParam.bangding;
+        if (bangding==0 || !checkPhone(bangding)) {
+            phoness=0;
+        }else{
+            phoness=bangding;
+            $api.val($api.byId("mobile"),phoness);
+            $api.byId("mobile").readOnly=true;
+        }
+
+
+
+
+        var mobile_yanzhe=document.getElementById("mobile_yanzhe");
+
+        //alert(email);
+        if(email==''){
+            mobile_yanzhe.style.display="none";
+        }else{
+          mobile_yanzhe.style.display="block";
+          document.getElementById("titlecontent").innerHTML="修改绑定的邮箱";
+        }
+
+
+    }
+
+    function forget_password(obj,id){
+
+      $api.val($api.byId("style_type"),2);//1email 2phone
+
+      if(!id || id<1){
+        api.toast({
+            msg: '请先按照步骤选择操作！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      var parli=obj.parentNode.childNodes;
+      for(var i=0,len=parli.length;i<len;i++){
+         //$api.removeCls(parli[i], 'gsfindpwdoneon');
+         if(parli[i]==obj){
+            $api.addCls(obj, 'gsfindpwdoneon');
+         }else{
+           $api.removeCls(parli[i], 'gsfindpwdoneon');        
+         }
+      }
+
+     for(var j=1;j<4;j++){
+        if(j==id){
+            $api.dom('#yanzhe_1'+id).style.display="block";
+        }else{
+            $api.dom('#yanzhe_1'+j).style.display="none";
+        }
+     }
+
+
+    }
+
+
+
+    function email_forward(obj,id){
+
+      $api.val($api.byId("style_type"),1);//1email 2phone
+     
+
+      if(!id || id<1){
+        api.toast({
+            msg: '请先按照步骤选择操作！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      if(id==1){
+        document.getElementById("yanzhe_11").style.display="block";
+        document.getElementById("yanzhe_112").style.display="none";
+        document.getElementById("yanzhe_13").style.display="none";
+        document.getElementById("yanzhe_12").style.display="none";
+        $api.addCls(document.getElementById("yanzhe_1"), 'gsfindpwdoneon');
+        $api.removeCls(document.getElementById("yanzhe_2"), 'gsfindpwdoneon');
+        $api.removeCls(document.getElementById("yanzhe_3"), 'gsfindpwdoneon');
+      }else if(id==2){
+        document.getElementById("yanzhe_11").style.display="none";
+        document.getElementById("yanzhe_112").style.display="block";
+        document.getElementById("yanzhe_13").style.display="none";
+        document.getElementById("yanzhe_12").style.display="none";
+        //document.getElementById("yanzhe_2").className="gsfindpwdoneon";
+        $api.removeCls(document.getElementById("yanzhe_1"), 'gsfindpwdoneon');
+        $api.addCls(document.getElementById("yanzhe_2"), 'gsfindpwdoneon');     
+        $api.removeCls(document.getElementById("yanzhe_3"), 'gsfindpwdoneon');         
+      }else if(id==3){
+        document.getElementById("yanzhe_11").style.display="none";
+        document.getElementById("yanzhe_112").style.display="none";
+        document.getElementById("yanzhe_13").style.display="block";
+        document.getElementById("yanzhe_12").style.display="none";
+        $api.removeCls(document.getElementById("yanzhe_1"), 'gsfindpwdoneon');
+        $api.removeCls(document.getElementById("yanzhe_2"), 'gsfindpwdoneon');     
+        $api.addCls(document.getElementById("yanzhe_3"), 'gsfindpwdoneon');   
+        //document.getElementById("yanzhe_3").className="gsfindpwdoneon";
+
+      }
+
+
+      
+
+
+/*      var parli=obj.parentNode.childNodes;
+      for(var i=0,len=parli.length;i<len;i++){
+         //$api.removeCls(parli[i], 'gsfindpwdoneon');
+         if(parli[i]==obj){
+            $api.addCls(obj, 'gsfindpwdoneon');
+         }else{
+           $api.removeCls(parli[i], 'gsfindpwdoneon');        
+         }
+      }
+
+     for(var j=1;j<4;j++){
+        if(j==id){
+            obj.style.display="block";
+        }else{
+            $api.dom('#yanzhe_1'+j).style.display="none";
+        }
+     }*/
+
+
+    }
+
+
+
+    function hqyzm_email(o){
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('update_email');
+        }
+
+      var emails=$api.val($api.byId("email"))?$api.val($api.byId("email")):'';
+      if(emails==''){
+        api.toast({
+            msg: '请先输入邮箱号码！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+
+      if(checkEmail(emails)==false){
+        api.toast({
+            msg: '邮箱号码格式不正确！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      times(o);
+
+      // alert(mobile);
+      // return false;
+
+      api.ajax({
+          url: serverUrl+'/user.php?act=approve_email_app',
+          method: 'post',
+          timeout: 30,
+          dataType: 'json',
+          data: {
+              values:{supplier_id: SUPPLIER_ID,email:emails,user_id:userid_gs}
+          },
+          returnAll:false
+      },function(ret,err){
+          //api.alert({msg:JSON.stringify(ret)});
+          //api.alert({msg:JSON.stringify(err)});
+          if (ret) {
+              if(ret.code==2606){
+                  document.getElementsByName("yzid_email")[0].value=ret.email_id;
+                  api.toast({
+                      msg: ret.msg,
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+              }else{
+                api.alert({
+                    msg: ret.msg
+                });
+              }
+
+          } else {
+              api.alert({
+                  msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+              });
+          };
+      });
+
+
+
+    }
+
+
+
+
+
+    function hqyzm(o){
+
+        // var style_type=$api.val($api.byId("style_type"))?$api.val($api.byId("style_type")):'';
+        // alert(style_type);
+       
+
+
+      var mobile=$api.val($api.byId("mobile"))?$api.val($api.byId("mobile")):'';
+      if(mobile==''){
+        api.toast({
+            msg: '请先输入手机号码！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+
+      if(checkPhone(mobile)==false){
+        api.toast({
+            msg: '手机号码格式不正确！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      time(o);
+
+      // alert(mobile);
+      // return false;
+
+      api.ajax({
+            url:serverUrl_img+'/sms/sms.php?act=approve_phone_app',
+            method:'POST',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            data: {
+                  values:{supplier_id: SUPPLIER_ID,mobile:mobile}
+            },
+            returnAll:false,
+            },function(ret,err){
+              //api.alert({msg:JSON.stringify(ret)});
+            if(ret){
+               document.getElementsByName("yzid")[0].value=ret.id;
+             if(ret.code==2){
+              api.alert({
+                  msg: '验证码发送成功！'
+              });
+             }
+          }else{
+              api.alert({
+                      msg:('验证码发送失败，请重新发送！')
+                      });
+                }
+        }); 
+
+
+    }
+
+    function yanzheng_pwd(){
+      var userid_gs=$api.getStorage('userid_gs');
+      if(!userid_gs){
+          showusercenter('update_email');
+      }
+      var mobile=$api.val($api.byId("mobile"))?$api.val($api.byId("mobile")):'';
+      if(mobile==''){
+        api.toast({
+            msg: '请先输入手机号码！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      var vericode=$api.val($api.byId("vericode"))?$api.val($api.byId("vericode")):'';
+
+      if(vericode==''){
+        api.toast({
+            msg: '请先输入手机验证码！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      var yzid = $api.val($api.byId('yzid'))? $api.val($api.byId('yzid')):'';
+      if(yzid=='' ){
+          api.toast({msg: '请先获取手机验证码！', location: 'middle'});
+          return;       
+      }
+
+      api.ajax({
+          url:serverUrl+'/user.php?act=approve_phone_apps',
+          method:'post',
+          cache:false,
+          timeout:30,
+          dataType:'json',
+          data:{
+              values:{
+                mobile:mobile,
+                vericode:vericode,
+                yzid:yzid,
+                user_id:userid_gs,
+                supplier_id:SUPPLIER_ID
+              }
+            },
+          returnAll:false,
+          },function(ret,err){
+          if(ret){
+
+            //api.alert({msg:JSON.stringify(ret)});
+            //return false;
+
+            if(ret.code==1506){//验证验证码通过
+                if(ret.pwd_user_id>0){
+                  $api.val($api.byId('pwd_user_id'),ret.pwd_user_id);
+                  var verifycode=ret.vericode?ret.vericode:0;
+                  $api.val($api.byId('verifycode'),verifycode);
+                  email_forward(document.getElementById('yanzhe_3'),3);
+                  $api.val($api.byId("style_type"),2);
+
+                }else{
+                  api.toast({
+                      msg: '重置密码失败！',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+                }
+                
+            }else{
+              api.toast({msg: ret.msg, location: 'middle'});
+                    api.hideProgress();
+                  return false;
+            }
+        }else{
+            api.alert({
+                    msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                    });
+              }
+      });
+
+
+
+    }
+
+
+
+
+    function  yanzheng_email(){
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('update_email');
+        }
+
+
+      var emails=$api.val($api.byId("email"))?$api.val($api.byId("email")):'';
+      if(emails==''){
+        api.toast({
+            msg: '请先输入邮箱号码！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      if(checkEmail(emails)==false){
+        api.toast({
+            msg: '邮箱格式不正确！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+
+      var vericode_email=$api.val($api.byId("vericode_email"))?$api.val($api.byId("vericode_email")):'';
+
+      if(vericode_email==''){
+        api.toast({
+            msg: '请先输入邮箱验证码！',
+            duration: 2000,
+            location: 'bottom'
+        });
+        return false;
+      }
+
+      var yzid_email = $api.val($api.byId('yzid_email'))? $api.val($api.byId('yzid_email')):'';
+      // alert(email);
+      // return ;
+
+      if(email!==''){//通过原邮箱验证绑定其他邮箱
+          if(yzid_email=='' ){
+              //api.toast({msg: '请先获取邮箱验证码！', location: 'middle'});
+              //return;  
+                   
+              api.confirm({
+                  title: '确定发送验证码',
+                  msg: '您确定今天已经发送过验证码了？',
+                  buttons: ['确定', '取消']
+              }, function(ret, err){
+                  if( ret.buttonIndex==1){
+                       //alert( JSON.stringify( ret ) );
+
+                    api.ajax({
+                        url:serverUrl+'/user.php?act=approve_email_update',
+                        method:'post',
+                        cache:false,
+                        timeout:30,
+                        dataType:'json',
+                        data:{
+                            values:{
+                              email:emails,
+                              vericode:vericode_email,
+                              //yzid:yzid_email,
+                              user_id:userid_gs,
+                              supplier_id:SUPPLIER_ID
+                            }
+                          },
+                        returnAll:false,
+                        },function(ret,err){
+                        if(ret){
+
+                          //api.alert({msg:JSON.stringify(ret)});
+                          //return false;
+
+                          if(ret.code==1806){//验证验证码通过
+                              if(ret.pwd_user_id>0){
+                                $api.val($api.byId('pwd_user_id'),ret.pwd_user_id);
+                                var verifycode=ret.vericode?ret.vericode:0;
+                                $api.val($api.byId('verifycode'),verifycode);
+                                email_forward(document.getElementById('yanzhe_3'),3);
+                                // api.toast({
+                                //     msg: '邮箱号码绑定成功！',
+                                //     duration: 2000,
+                                //     location: 'bottom'
+                                // });
+                                // api.sendEvent({
+                                //     name: 'approvemobile'
+                                // });
+                                // api.closeWin();
+                              }else{
+                                api.toast({
+                                    msg: '重置密码失败！',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                              }
+                              
+                          }else{
+                            api.toast({msg: ret.msg, location: 'middle'});
+                                  api.hideProgress();
+                                return false;
+                          }
+                      }else{
+                          api.alert({
+                                  msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                                  });
+                            }
+                    });
+
+
+                  }else{
+                       api.toast({
+                           msg: '请先发送邮箱验证码！',
+                           duration: 2000,
+                           location: 'bottom'
+                       });
+                       return;
+                  }
+              })
+
+
+          }else{
+
+            api.ajax({
+                url:serverUrl+'/user.php?act=approve_email_update',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                data:{
+                    values:{
+                      email:emails,
+                      vericode:vericode_email,
+                      //yzid:yzid_email,
+                      user_id:userid_gs,
+                      supplier_id:SUPPLIER_ID
+                    }
+                  },
+                returnAll:false,
+                },function(ret,err){
+                if(ret){
+
+                  //api.alert({msg:JSON.stringify(ret)});
+                  //return false;
+
+                  if(ret.code==1806){//验证验证码通过
+                      if(ret.pwd_user_id>0){
+                        $api.val($api.byId('pwd_user_id'),ret.pwd_user_id);
+                        var verifycode=ret.vericode?ret.vericode:0;
+                        $api.val($api.byId('verifycode'),verifycode);
+                        email_forward(document.getElementById('yanzhe_3'),3);
+                        // api.toast({
+                        //     msg: '邮箱号码绑定成功！',
+                        //     duration: 2000,
+                        //     location: 'bottom'
+                        // });
+                        // api.sendEvent({
+                        //     name: 'approvemobile'
+                        // });
+                        // api.closeWin();
+
+                      }else{
+                        api.toast({
+                            msg: '重置密码失败！',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                      }
+                      
+                  }else{
+                    api.toast({msg: ret.msg, location: 'middle'});
+                          api.hideProgress();
+                        return false;
+                  }
+              }else{
+                  api.alert({
+                          msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                          });
+                    }
+            });
+
+          }
+
+
+
+      }else{//首次验证邮箱，验证成功直接修改用户的邮箱
+          if(yzid_email=='' ){
+              //api.toast({msg: '请先获取邮箱验证码！', location: 'middle'});
+              //return;  
+                   
+              api.confirm({
+                  title: '确定发送验证码',
+                  msg: '您确定今天已经发送过验证码了？',
+                  buttons: ['确定', '取消']
+              }, function(ret, err){
+                  if( ret.buttonIndex==1){
+                       //alert( JSON.stringify( ret ) );
+
+                    api.ajax({
+                        url:serverUrl+'/user.php?act=approve_email_apps',
+                        method:'post',
+                        cache:false,
+                        timeout:30,
+                        dataType:'json',
+                        data:{
+                            values:{
+                              email:emails,
+                              vericode:vericode_email,
+                              //yzid:yzid_email,
+                              user_id:userid_gs,
+                              supplier_id:SUPPLIER_ID
+                            }
+                          },
+                        returnAll:false,
+                        },function(ret,err){
+                        if(ret){
+
+                          //api.alert({msg:JSON.stringify(ret)});
+                          //return false;
+
+                          if(ret.code==1806){//验证验证码通过
+                              if(ret.pwd_user_id>0){
+                                // $api.val($api.byId('pwd_user_id'),ret.pwd_user_id);
+                                // var verifycode=ret.vericode?ret.vericode:0;
+                                // $api.val($api.byId('verifycode'),verifycode);
+                                // email_forward(document.getElementById('yanzhe_3'),3);
+                                api.toast({
+                                    msg: '邮箱号码绑定成功！',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                                api.sendEvent({
+                                    name: 'approvemobile'
+                                });
+                                api.closeWin();
+                              }else{
+                                api.toast({
+                                    msg: '重置密码失败！',
+                                    duration: 2000,
+                                    location: 'bottom'
+                                });
+                              }
+                              
+                          }else{
+                            api.toast({msg: ret.msg, location: 'middle'});
+                                  api.hideProgress();
+                                return false;
+                          }
+                      }else{
+                          api.alert({
+                                  msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                                  });
+                            }
+                    });
+
+
+                  }else{
+                       api.toast({
+                           msg: '请先发送邮箱验证码！',
+                           duration: 2000,
+                           location: 'bottom'
+                       });
+                       return;
+                  }
+              })
+
+
+          }else{
+
+            api.ajax({
+                url:serverUrl+'/user.php?act=approve_email_apps',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                data:{
+                    values:{
+                      email:emails,
+                      vericode:vericode_email,
+                      //yzid:yzid_email,
+                      user_id:userid_gs,
+                      supplier_id:SUPPLIER_ID
+                    }
+                  },
+                returnAll:false,
+                },function(ret,err){
+                if(ret){
+
+                  //api.alert({msg:JSON.stringify(ret)});
+                  //return false;
+
+                  if(ret.code==1806){//验证验证码通过
+                      if(ret.pwd_user_id>0){
+                        // $api.val($api.byId('pwd_user_id'),ret.pwd_user_id);
+                        // var verifycode=ret.vericode?ret.vericode:0;
+                        // $api.val($api.byId('verifycode'),verifycode);
+                        // email_forward(document.getElementById('yanzhe_3'),3);
+                        api.toast({
+                            msg: '邮箱号码绑定成功！',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                        api.sendEvent({
+                            name: 'approvemobile'
+                        });
+                        api.closeWin();
+
+                      }else{
+                        api.toast({
+                            msg: '重置密码失败！',
+                            duration: 2000,
+                            location: 'bottom'
+                        });
+                      }
+                      
+                  }else{
+                    api.toast({msg: ret.msg, location: 'middle'});
+                          api.hideProgress();
+                        return false;
+                  }
+              }else{
+                  api.alert({
+                          msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                          });
+                    }
+            });
+
+          }
+
+      }
+
+
+    }
+
+
+    function chongzhimima(){
+        //$api.val($api.byId("style_type"),1);//1email 2phone
+        var style_type=$api.val($api.byId("style_type"))?$api.val($api.byId("style_type")):'';
+
+        // alert(style_type);
+        // return ;
+
+        var verifycode=$api.val($api.byId("verifycode"))?$api.val($api.byId("verifycode")):'';
+        var approve_email=$api.val($api.byId("approve_email"))?$api.val($api.byId("approve_email")):'';
+        var re_approve_email=$api.val($api.byId("re_approve_email"))?$api.val($api.byId("re_approve_email")):'';
+        var pwd_user_id=$api.val($api.byId("pwd_user_id"))?$api.val($api.byId("pwd_user_id")):'';
+
+
+        if(style_type=='' || (style_type !=1 && style_type!=2)){//验证方式不对，邮箱or手机
+            api.toast({
+                msg: '非法验证入口！',
+                duration: 2000,
+                location: 'bottom'
+            });  
+            return false;           
+        }
+
+
+        if(verifycode == ''){
+            api.toast({
+                msg: '非法入口！',
+                duration: 2000,
+                location: 'bottom'
+            });  
+            return false;        
+        }
+
+        var yzid = $api.val($api.byId('yzid'))? $api.val($api.byId('yzid')):'';
+
+        if(style_type==2){
+          if(yzid=='' ){
+              api.toast({msg: '请先获取手机验证码！', location: 'middle'});
+              return;       
+          }          
+        }
+
+        if(approve_email==''){
+            api.toast({
+                msg: '请先设置邮箱号码！',
+                duration: 2000,
+                location: 'bottom'
+            });  
+            return false;        
+        }
+
+        if(approve_email != re_approve_email){
+            api.toast({
+                msg: '两次输入的邮箱号码不一致！',
+                duration: 2000,
+                location: 'bottom'
+            });  
+            return false;        
+        }
+
+        //alert(verifycode);
+
+        api.ajax({
+            url:serverUrl+'/user.php?act=reset_email_app',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            data:{
+                values:{
+                  pwd_user_id:pwd_user_id,
+                  email:approve_email,
+                  vericode:verifycode,
+                  re_email:re_approve_email,
+                  style_type:style_type,
+                  yzid:yzid,
+                  supplier_id:SUPPLIER_ID
+                }
+              },
+            returnAll:false,
+            },function(ret,err){
+            if(ret){
+              //api.alert({msg:JSON.stringify(ret)});
+              //return false;
+
+              if(ret.code==1608){
+                  api.toast({
+                      msg: '修改绑定邮箱号码成功！',
+                      duration: 2000,
+                      location: 'bottom'
+                  });
+
+                  api.sendEvent({
+                      name: 'approvemobile',
+                      extra: {
+                          email: ret.email
+                      }
+                  });                  
+
+                  api.closeWin();
+                  
+              }else{
+                api.toast({msg: ret.msg, location: 'middle'});
+                      api.hideProgress();
+                    return false;
+              }
+          }else{
+              api.alert({
+                      msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                      });
+                }
+        });
+
+    }
+
+
+  //验证码倒计时函数,要在开头定义时间wait=30
+  function time(o) {
+    if (wait == 0) {
+
+      document.getElementById('defaultyzm').style.display="block";
+      document.getElementById('huoquyzm').style.display="none";
+
+      wait = 30;
+      time(o);
+    } else {
+      document.getElementById('defaultyzm').style.display="none";
+      document.getElementById('huoquyzm').style.display="block";
+      document.getElementById('huoquyzm').innerHTML="重新发送(" + wait + ")";
+      //o.setAttribute("disabled", true);
+      //o.innerHTML="重新发送(" + wait + ")";
+      wait--;
+
+      setTimeout(function() {time(o)},1000);
+      
+    }
+    
+  }
+
+
+
+  function times(o) {
+    if (waits == 0) {
+
+      document.getElementById('defaultyzm_email').style.display="block";
+      document.getElementById('huoquyzm_email').style.display="none";
+
+      waits = 30;
+      //times(o);
+    } else {
+      document.getElementById('defaultyzm_email').style.display="none";
+      document.getElementById('huoquyzm_email').style.display="block";
+      document.getElementById('huoquyzm_email').innerHTML="重新发送(" + waits + ")";
+      //o.setAttribute("disabled", true);
+      //o.innerHTML="重新发送(" + wait + ")";
+      waits--;
+
+      setTimeout(function() {times(o)},1000);
+      
+    }
+    
+  }
+
+
+
+  //检测手机号是否正确
+  function checkPhone(phone){
+    var reg = /^1\d{10}$/;
+    return reg.test(phone);
+  }
+  //检测邮箱是否正确
+  function checkEmail(email){
+    var reg = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+    return reg.test(email);
+  }
+
+
+</script>
+        

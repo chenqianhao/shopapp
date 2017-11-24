@@ -1,0 +1,138 @@
+﻿<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title></title>
+		<link rel="stylesheet" href="../css/shuigou.css">
+		<style>
+header h1{line-height: initial;}
+header input{ height: 2.8rem !important; line-height: initial !important; font-size:1.5rem !important; margin-top:1rem !important;}
+header h1 font{top: 30px !important; font-size:1.8rem !important}
+.gsheaderdivright font{font-weight: 600;}
+input{outline:none;}
+		</style>
+	</head>
+	<body style="background-color: #fff;">
+	
+	
+	
+	
+	<header class="gsheader" id="header">
+	 <div class="gsheaderdivleft"><a tapmode onclick="api.closeWin();" class=""><font>&#xe619;</font></a></div>
+	 <h1 id='h1' style="display:none"><a id="headerh1" ></a></h1>
+	 <h1 id='h2' style="display:none"><a><input name="keywords" placeholder="搜索你想找的商品" value="" type="text" tapmode onclick="openHtmlWin('search')"><font>&#xe63f;</font></a></h1>
+	 <div class="gsheaderdivright"  id="right1" style="display:none"><a> <i><font></font></i> </a></div>
+	 <div class="gsheaderdivright"  id="right2" style="display:none" tapmode onclick="dianji()"><a id="righta2"> </a></div>
+	</header>
+		
+		
+
+
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+		apiready = function() {
+		
+		var canshuArray = api.pageParam.canshuArray;
+		
+
+/*         		
+		if(isArray(canshuArray)==true)
+		{
+		  var str='{';
+		  arraylength=canshuArray.length;	
+		  for(var i=1;i<=arraylength;i++)
+		  {
+
+		    str+='canshu'+i+' : '+canshuArray[i-1]+',';
+		  }
+		  str=str.substring(0,str.length-1);
+		  str=str+'}';  
+ 	      str=toObject(str);
+		}
+		else
+	    {
+	      if(canshuArray==''&&canshuArray==undefined) 
+	      {
+	        var str={};
+	      }
+	      else
+	      {	       
+	        var str={canshu1 : canshuArray};
+	      }
+	    }	
+*/		
+
+
+	   			
+		var headerh1 = api.pageParam.headerh1;
+		$api.byId("headerh1").innerHTML=headerh1;
+		var bodycolor = api.pageParam.bodycolor;
+		if(bodycolor!='')
+		{
+		  document.body.style.backgroundColor=bodycolor;
+		}
+        		
+		var winname = api.pageParam.winname;
+		var yangshi=parseInt(api.pageParam.yangshi);
+
+		var div=$api.byId('right'+yangshi);
+		var h1=$api.byId('h'+yangshi);
+		div.style.display="block";
+        h1.style.display="block";
+
+
+	    if(yangshi==2)
+	    {	       
+	        var diva=$api.byId('righta'+yangshi);
+	        var yangshiname = api.pageParam.yangshiname;
+	        diva.innerHTML=yangshiname;
+	    }
+	    
+		api.parseTapmode();
+		var header = $api.byId('header');
+		fixStatusBar(header);
+		var headerPos = $api.offset(header);
+		
+	    //api.alert({msg:JSON.stringify(canshuArray)});
+		api.openFrame({
+			name : winname,
+			url : winname+'.html',
+			bounces : false,
+			pageParam: {cansu:canshuArray},
+			rect : {
+				x : 0,
+				y : headerPos.h + 5,
+				w : 'auto',
+				h : 'auto'
+			}
+		});
+		
+ 
+			
+		
+	}
+	
+	function dianji()
+	{
+	   api.sendEvent({
+	        name: 'tijiaofy'
+	    });
+	}
+	
+
+	
+	
+
+    function isArray(obj) {
+        return obj && ( typeof obj === 'object') && (obj.constructor == Array);
+    }
+    
+</script>

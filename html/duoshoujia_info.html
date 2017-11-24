@@ -1,0 +1,196 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+        .doushoujiadiv{ width:100%; background:#01ddff; }
+        .doushoujiaheader { width: 100%; margin: auto; display: block;position: relative;}
+        .doushoujiaheader img { width: 100%; }
+        .doushoujiadiv span{  background-color:#ff8081; color:#fff; width:100%;display: block;  text-align:center;font-size: 1.7rem;font-weight: bold; padding:0.8rem 0;}
+        .doushoujiacp{ width:90%; display:block; overflow:hidden;margin: auto;margin-top: 2rem;}
+        .doushoujiacp li{ width:100%; float:left;margin-bottom: 2rem;}
+        .doushoujiacpimg{ width:50%; float:left; height:11rem; position:relative;}
+        .doushoujiacpimg i{ position:absolute; left:0px; top:0px; background-color:#fe0002; color:#fff; padding:0.2rem 0.5rem; font-size:1.15rem;}
+        .doushoujiacpimg img{ width:68%;height: 11rem;display: block;margin: auto;}
+        .doushoujiacpif{ width:50%;height:11rem; float:left; background-color:#ffdddc; padding: 0.8rem;}
+        .doushoujiacpif span,.doushoujiacpif strong,.doushoujiacpif em{ display:block; width:100%;margin-top:0.15rem;}
+        .doushoujiacpif span{white-space: nowrap;overflow: hidden;text-overflow: ellipsis;font-size: 1.5rem;font-weight: bold;}
+        .doushoujiacpif strong{ font-size:1.3rem;  text-decoration:line-through; color: #666;}
+        .doushoujiacpif em{ font-size:1.4rem;color: #333;}
+        .doushoujiacpif em b{ color:#fe0000; font-weight:bold;}
+        .doushoujiacpif button{ border:none; background-color:#fe0000; color:#fff; border-radius:5px; font-size:1.3rem; padding:0.2rem 0.5rem; width:50%; margin-left:25%; margin-top:0.6rem;}
+        .doushoujiacp li:nth-child(1) .doushoujiacpif span{color: #fb6800;}
+        .doushoujiacp li:nth-child(2) .doushoujiacpif span{color: #364b76;}
+        .doushoujiacp li:nth-child(3) .doushoujiacpif span{color: #18A7B7;}
+        .doushoujiacp li:nth-child(4) .doushoujiacpif span{color: #f87408;}
+        .doushoujiacp li:nth-child(5) .doushoujiacpif span{color: #fa1b6e;}
+        .doushoujiacp li:nth-child(6) .doushoujiacpif span{color: #3a9c2b;}
+        .doushoujiacp li:nth-child(7) .doushoujiacpif span{color: #6b86ed;}
+        .doushoujiacp li:nth-child(8) .doushoujiacpif span{color: #36bb3e;}
+        .doushoujiacp li:nth-child(9) .doushoujiacpif span{color: #fb4e84;}
+        .doushoujiacp li:nth-child(10) .doushoujiacpif span{color: #3eb454;}     
+    </style>
+</head>
+<body style="background: #ffffff;">
+
+
+<div  class="doushoujiadiv">
+    <div class="doushoujiaheader">
+        <img src="../img/doushoujia.png" />
+<!--         <em><font>&#xe619;</font></em> -->
+    </div>
+    <span>新鲜水果心动价别说我没告诉您</span>
+</div>
+
+<div class="doushoujiacp">
+<ul id="bcontent">
+
+<!-- <li><div class="doushoujiacpimg"><img  src="http://httgo.com/images/201605/thumb_img/20764_thumb_G_1463039892822.jpg" /><i>直降1.5元</i></div><div class="doushoujiacpif"><span>红颜奶油草莓 新鲜水果 约300g/盒</span><strong>市场价 ：3.5元</strong><em>剁手价：<b>2.0</b>元</em><button>立即购买</button></div></li> -->
+<!-- <li><div class="doushoujiacpimg"><img  src="http://httgo.com/images/201605/thumb_img/20764_thumb_G_1463039892822.jpg" /><i>直降1.5元</i></div><div class="doushoujiacpif"><span>红颜奶油草莓 新鲜水果 约300g/盒</span><strong>市场价 ：3.5元</strong><em>剁手价：<b>2.0</b>元</em><button>立即购买</button></div></li>
+<li><div class="doushoujiacpimg"><img  src="http://httgo.com/images/201605/thumb_img/20764_thumb_G_1463039892822.jpg" /><i>直降1.5元</i></div><div class="doushoujiacpif"><span>红颜奶油草莓 新鲜水果 约300g/盒</span><strong>市场价 ：3.5元</strong><em>剁手价：<b>2.0</b>元</em><button>立即购买</button></div></li>
+<li><div class="doushoujiacpimg"><img  src="http://httgo.com/images/201605/thumb_img/20764_thumb_G_1463039892822.jpg" /><i>直降1.5元</i></div><div class="doushoujiacpif"><span>红颜奶油草莓 新鲜水果 约300g/盒</span><strong>市场价 ：3.5元</strong><em>剁手价：<b>2.0</b>元</em><button>立即购买</button></div></li> -->
+
+
+</ul>
+</div>
+
+
+<script type="text/x-dot-template" id="body-template">
+{{ for(var i=0,len=it.length;i<len;i++) { }}
+<li tapmode onclick="opengoods({{=it[i].goods_id}});">
+    <div class="doushoujiacpimg">
+        <img  src="{{=serverUrl_img+'/'+it[i].thumb}}" />
+        <i>直降{{=jiangjia(it[i].market_price,it[i].shop_price)}}元</i>
+    </div>
+    <div class="doushoujiacpif">
+        <span>{{=it[i].goods_name}}</span>
+        <strong>市场价 ：{{=it[i].market_price}}元</strong>
+        <em>剁手价：<b>{{=it[i].shop_price}}</b>元</em>
+        <button>立即购买</button>
+    </div>
+</li>
+{{ } }}
+</script>
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    apiready = function(){
+        api.parseTapmode();
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+            api.hideProgress();
+            page+=4;
+            get_activity(1,page);
+            api.refreshHeaderLoadDone();
+        });
+        get_activity(1,page);
+
+    }
+
+
+    //获取促销的商品
+    function get_activity(cx_style,page){
+
+        //调用 疯狂抢购 热销排行   商城热卖  商城推荐  新品上市
+        //  if(type==1){
+        //      cx_type='is_promote';
+        //  }else if(type==2){
+        //      cx_type='is_volum';
+        //  }else if(type==3){
+        //      cx_type='is_hot';
+        //  }else if(type==4){
+        //      cx_type='is_best';
+        //  }else if(type==5){
+        //      cx_type='is_new';
+        //  }    
+
+        //alert(page);
+        api.showProgress({
+            title: '加载中...',
+            modal: false
+        });
+            api.ajax({
+                url:serverUrl+'/index.php?act=cuxiao',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                returnAll:false,
+                data:{
+                    values: {cx_style:cx_style,limit:page,supplier_id:SUPPLIER_ID}
+                }           
+            },function(ret,err){
+                if(ret){
+                     api.hideProgress();
+                    //api.alert({msg:JSON.stringify(ret)});
+                    if(!ret.data || ret.data==''){
+//                      api.toast({
+//                          msg: '此活动已经结束',
+//                          duration: 2000,
+//                          location: 'bottom'
+//                      });
+                        //api.closeWin({name:api.winName});
+                        $api.html($api.byId('bcontent'),"商城目前还没有剁手商品，请及时关注后期商品的上架！");
+                        return false;
+                    }
+
+                    var template = document.getElementById('body-template').innerHTML;
+                    document.getElementById('bcontent').innerHTML=doT.template(template)(ret.data);
+
+                }else{
+                    api.alert({
+                        msg:('错误码:'+err.code+':错误信息:'+err.msg+'网络状态码:'+err.statusCode)
+                        
+                      });
+                }
+                api.hideProgress();
+           })
+    }
+
+
+//模版显示减运算
+    function jiangjia(a,b){
+        var aa=parseFloat(a.substr(1));
+        var bb=parseFloat(b);
+        var cc=aa-bb;
+        return cc.toFixed(2);
+    }
+
+
+
+
+/*    function choujiang(){
+
+    api.ajax({
+        url: 'http://test6.httgo.com/lc001.php',
+        method: 'post',
+        timeout: 30,
+        dataType: 'json',
+        returnAll:false
+    },function(ret,err){
+        if (ret) {
+            api.alert({msg:JSON.stringify(ret)});
+        } else {
+            api.alert({
+                msg:('错误码：'+err.code+'；错误信息：'+err.msg+'网络状态码：'+err.statusCode)
+            });
+        };
+    });
+
+
+
+    }*/
+
+
+</script>

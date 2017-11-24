@@ -1,0 +1,97 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>商品收藏</title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+        body,html{ height:100%;}
+        .jifensm{ width:100%; display:block; overflow:hidden; margin-top:2rem;}
+        .jifensm h1{ text-align:center; color:#ff4c2e; font-size:2.8rem; font-weight:bold;}
+        .jifensm h2, .jifensmz1 h2{ background-color:#fec0cd; color:#fff; width:50%; border-radius:8px; text-align:center; margin:auto; padding:0.6rem 0; font-weight:bold;  font-size:1.8rem; margin-top:1.5rem;}
+        .jifensm ul{ width:100%; display:block; margin:auto; overflow:hidden; margin-top:0.8rem;}
+        .jifensm li { width:100%; float:left;margin-top:0.4rem;}
+        .jifensm li span{ display:block; float:left; width:30%; text-align:right;}
+        .jifensm li span,.jifensm li strong em{ font-size:1.5rem; color:#333;}
+        .jifensm li strong b{ font-size:1.4rem; color:#555;}
+        .jifensm li  strong{ width:70%; float:left; }
+        .jifensmz{ display:block; width:90%; overflow:hidden;  margin:auto}
+        .jifensmz h3{ color:#ff4c2c;font-size: 1.7rem; font-weight:bold;}
+        .jifensmz span{ display:block; color:#585858;text-indent:2em; font-size:1.4rem;margin-top:0.6rem;}
+        .jifensmz11{ padding-bottom: 2rem;}
+        .jifensmz1h2{ width:60% !important;}
+        .jifensmz1 span{ display:block; color:#585858; font-size:1.4rem;  width:90%; margin:auto; margin-top:0.3rem;}
+        
+    </style>
+</head>
+<body style="background:#fff url(../img/jfsm.png) repeat-y scroll 0% 4rem / 100% auto"  >
+    <header class="gsheader" id="header">
+        <div class="gsheaderdivleft">
+            <a tapmode onclick="api.closeWin();" class="">
+                           <font>&#xe619;</font>
+            </a>
+        </div>
+        <h1>
+            <a>
+                积分说明
+            </a>
+        </h1>
+
+        <div class="gsheaderdivright" tapmode onclick="kefushow('collection');">
+            <a>
+                <i><font>&#xe635;</font></i>
+            </a>
+        </div>
+    </header>
+
+
+
+  <div class="jifensm">
+  <h1>会员积分规则</h1>
+  <h2>积分获取途径</h2>
+    <ul>
+        <li><span>途径一：</span><strong><em>在果好恰上购买商品</em></br><b>获取积分的计算规则为10元=1积分;</br>根据订单金额会得到相应的积分数量;</b></strong></li>
+        <li><span>途径二：</span><strong><em>每日签到</em></br><b>每日连续签到积累也可获取相应积分;</b></strong></li>
+    </ul>
+  </div>
+
+  <div class="jifensmz">
+  <h3>注:</h3>
+  <span>1.进入用户中心—积分记录,查看每笔积分到账情况以及相应积分来源</span>
+  <span>2.订单完成结算后,本次订单的积分需在交易完成7天后比且没有发生任何退货的情况下才能转入积分帐户。</span>
+  </div>
+
+    <div class="jifensmz1">
+  <h2 class="jifensmz1h2">不享受积分情况说明</h2>
+  <span>1.选择购物券抵用支付的则不享受积分。</span>
+  <span>2.订单产生退换货的商品会减掉相应商品所对应的积分。</span>
+    <span>3.团购秒杀优惠活动商品不享受积分。</span>
+  </div>
+
+    <div class="jifensmz1 jifensmz11">
+  <h2>积分使用途径</h2>
+  <span>1.积分可以在APP抽奖使用,每次转一次扣除100积分</span>
+  <span>2.可以参加APP积分兑换商品活动</span>
+  </div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+        
+        
+    }
+
+</script>

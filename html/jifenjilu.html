@@ -1,0 +1,83 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+    .jifenlist{ background-color:#e0e0e0; padding:1rem;}
+    .jifenlist span { color:#4c4c4c;}
+    .jifenlist i{ color:#fe0002;}
+    .jifenlist b{ float:right; padding-right:0.8rem; color:#2CC18B;}
+    .jifennone{ width:100%;}
+    .jifennone img{display:block; width:35%; margin:auto;margin-top: 15%;}
+    .jifennone span,.jifennone strong{ display:block; text-align:center;}
+    .jifennone span{ color:#000; font-size:2rem; margin:0.8rem 0 0.3rem 0;}
+    .jifennone strong{ color:#222; font-size:1.5rem;}
+    .jifenjilu{ display:block; width:100%; overflow:hidden;}
+    .jifenjilu li{ width:100%;}
+    
+    .jifenjiluleft{ float:left; width:10%;}
+    .jifenjiluleft font{ font-size:2.3rem; margin-top: 57%; display:block;}
+    .jifenjiluright{ float:left; width:90%; border-bottom:1px solid #ebe7e7; padding:0.8rem;}
+    .jifenjiluright span,.jifenjiluright strong{ display:block;}
+    .jifenjiluright span b{ float:right; color:#de3939; font-size:1.4rem;}
+    .jifenjiluright strong{ color:#919191; font-size:1.4rem; margin-top:0.3rem;}
+    .jifenjiluright span em{ color:#262626;}
+    .jifenjilu{ padding:1rem;}
+    .font1{ color:#93bb62;}
+    .font2{ color:#cc5c68;}
+    .backgrounds{background: red}
+    </style>
+
+
+</head>
+<body style=" background-color:#fff;">
+
+  <header class="gsheader" id="aui-header">
+       <div class="gsheaderdivleft">
+          <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+          </a>
+       </div>
+       <h1>
+          积分记录
+       </h1>
+  </header>
+
+
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=0;
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('aui-header');
+        var headerPos = $api.offset(header);
+        fixStatusBar(header);
+
+        api.openFrame({
+            name: 'jifenjilu_list',
+            url: 'jifenjilu_list.html',
+            bounces: false,
+            reload:true,
+            rect: {
+                x: 0,
+                y: headerPos.h+5,
+                w: 'auto',
+                h: 'auto'
+            }
+        });
+        
+    }
+
+
+
+
+</script>

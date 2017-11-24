@@ -1,0 +1,401 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style>
+      .on{
+        display:block;
+        color:red;
+      }
+    </style>
+</head>
+<body style="background: #f0f0f0;">
+
+
+  <header class="gsheader" id="header">
+      <div class="gsheaderdivleft" tapmode onclick="api.closeWin();">
+          <a>
+                <i> <font>&#xe619</font></i>
+          </a>
+      </div>
+      <h1 tapmode onclick="opensearch();">
+          <a>
+            <input name="keywords" placeholder="搜索你想找的商品" value=""  style="position:relative;">
+            <font style="position: absolute;top:2.5rem;">&#xe63f</font>
+          </a>
+      </h1>
+      <div class="gsheaderdivright">
+          <a>
+                <i><font onclick="qiehuan();" id="qiehuan">&#xe642;</font></i>
+          </a>
+      </div>
+  </header>
+
+
+
+<div class="categorylistliangse" >
+<!--     <header class="gsheader">
+      <div class="gsheaderdivleft" tapmode onclick="api.closeWin();">
+          <a>
+                <i> <font>&#xe619</font></i>
+          </a>
+      </div>
+     <h1>
+          <a href="#title-link" class="">
+            <input name="keywords" placeholder="搜索你想找的商品" value=""><font>&#xe63f</font>
+          </a>
+      </h1>
+      <div class="gsheaderdivright">
+          <a>
+                <i><font onclick="qiehuan()" id="qiehuan">&#xe642;</font></i>
+          </a>
+      </div>
+  </header>
+ -->
+
+
+
+
+    <div class="headersearchpxlist gscategorylist" >
+        <ul id="lipaixu">
+            <li><span tapmode onclick="fenleiclick(this)">分类</span></li>        
+            <li id="lipaixus" tapmode onclick="paixu(this,'xiaoliang');"><span>销量</span> </li>        
+            <li onclick="paixu(this,'jiage');"><span>价格</span> </li>
+            <li onclick="paixu(this,'shangjia');"><span>上架</span> </li>
+        </ul>
+    </div>
+    </div>
+
+    <script type="text/x-dot-template" id="cat-list-template">
+            {{for(var i=0,len=it.length;i<len;i++){}}
+                 <li tapmode onclick="xzlm(this,{{=it[i].cat_id}});"><span>{{=it[i].cat_name}}({{=it[i].catnum}})</span></li>
+            {{}}}    
+    </script>
+
+
+
+        <div class="classdiv gscategoryname classtestoverspan" style="display:none;">
+            <ul id="cat-list-list">
+<!--                 <li class="on"><span>电信2G电信2G电信2G电信2G电信2G</span></li>
+                <li><span>电信2G</span></li>
+                <li><span>电信2G</span></li>
+                <li><span>电信2G</span></li>
+                <li><span>电信2G</span></li>
+                <li><span>电信2G</span></li> -->
+                <li>暂无分类</li>
+            </ul>
+        </div>
+
+    <div class="gssearchlistgoods" id="gssearchlistgoods">
+        <ul id="cat-list">
+<!--             <li>
+                <div>
+                    <img src="http://httgo.com/images/201505/thumb_img/6114_thumb_P_1422081829.jpg"></div>
+                <span>立白 冷水速效无磷洗衣粉1.588千克</span><strong> 16.80 </strong></li>
+            <li>
+                <div>
+                    <img src="http://httgo.com/images/201505/thumb_img/6114_thumb_P_1422081829.jpg"></div>
+                <span>雕牌 超效加酶无磷洗衣粉2 .438千克</span><strong> 22.60 </strong></li> -->
+
+        </ul>
+    </div>
+
+    <div class="gsnosearch" id="nonegooodslist" style="display:none;margin-top:10rem;">
+            <span><font class="iconfont">&#xe640</font></span> <strong>抱歉，没有找到符合条件的商品！</strong>
+    </div>
+
+    <script type="text/x-dot-template" id="cat-template">
+            {{for(var i=0,len=it.length;i<len;i++){}}
+                <li tapmode onclick="opengoods({{=it[i].goods_id}});">
+                    <div>
+                        <img src="{{=serverUrl_img+'/'+it[i].goods_thumb}}"></div>
+                    <span>{{=it[i].goods_name}}</span><strong> {{=it[i].shop_price}} </strong>
+
+                </li>
+            {{}}}    
+    </script>
+
+    <div class="zhengzhaoyingyin"></div>
+    <script>
+        function qiehuan() {
+            var div = document.getElementById("gssearchlistgoods");
+            var font = document.getElementById("qiehuan");
+            if (div.className == "gssearchlistgoods") {
+                div.className = "gssearchlistgoods1";
+                font.innerHTML = "&#xe641";
+            }
+            else {
+                div.className = "gssearchlistgoods";
+                font.innerHTML = "&#xe642;";
+            }
+
+        }
+
+        function fenleiclick(el) {
+
+          var liall= document.getElementById('lipaixu').getElementsByTagName('li');
+          for(var i=1;i<4;i++){
+            liall[i].style.display="none";
+          }
+
+            var yingyin = document.getElementsByClassName("zhengzhaoyingyin");
+            var catname = document.getElementsByClassName("gscategoryname");
+
+            if (el.className == "on") {
+                yingyin[0].style.display = "none";
+                catname[0].style.display = "none";
+                el.className = ""; 
+
+            }
+            else {
+                yingyin[0].style.display = "block";
+                catname[0].style.display = "block";
+                el.className = "on";
+            }
+            yingyin[0].onclick = function () {
+                yingyin[0].style.display = "none";
+                catname[0].style.display = "none";
+                el.className = ""; 
+
+                var liall= document.getElementById('lipaixu').getElementsByTagName('li');
+                  for(var i=1;i<4;i++){
+                    liall[i].style.display="block";
+                }
+
+
+            }
+
+        }
+    </script>
+</body>
+</html>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    types='xiaoliang';
+    order="ASC";
+    keywords='';
+    cat_id=0;
+    lm=2;
+    apiready = function(){
+        api.parseTapmode();
+        var header = $api.byId('header');
+        fixStatusBar(header);
+
+        var cat_ids=api.pageParam.cat_id;
+        if(!cat_ids || cat_ids<1){
+            api.toast({
+                msg: '商品的栏目不正确',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeWin();
+            return false;
+        }
+        cat_id=cat_ids;
+        var lms=api.pageParam.lm;
+        if(lms && lms>0){
+            lm=lms;
+        }
+
+
+        //alert(cat_id);
+        //alert(lm);
+
+
+        // if(lm==2){//如果是二级栏目，此处要加载出三级栏目出来
+
+        // }
+
+
+        searchcatlist(cat_id,lm,page,1);//此处的1是表示第一次进入
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            api.hideProgress();
+            page+=4;
+            searchcatlist(cat_id,lm,page);
+            api.refreshHeaderLoadDone();
+        });
+
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+                api.hideProgress();
+                page+=4;
+                searchcatlist(cat_id,lm,page);
+                api.refreshHeaderLoadDone();
+        });
+
+    }
+
+    function searchcatlist(cat_id,lm,page,id){
+        keywords = $api.val($api.byId('keywords'))?trim($api.val($api.byId('keywords'))):'';
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+          user_id=0;
+        }else{
+          user_id=userid_gs;
+        }
+
+        if(cat_id<1){
+            api.toast({
+                msg: '商品的栏目不正确',
+                duration: 2000,
+                location: 'bottom'
+            });
+            api.closeWin();
+            return false;            
+        }
+
+        api.showProgress({
+            title: '栏目商品加载中...',
+            modal: false
+        });
+        
+        if(id && id==1){
+          $api.addCls($api.byId('lipaixus'), 'on');
+          $api.addCls($api.byId('lipaixus'), 'sliangse');          
+        }
+
+      //alert(cat_id);
+      api.ajax({
+          url:serverUrl+'/category.php?act=cat_goods',
+          method:'post',
+          cache:false,
+          timeout:30,
+          dataType:'json',
+          data:{
+              values:{
+                order:order,
+                type:types,
+                page:page,             
+                user_id:user_id,
+                cat_id:cat_id,
+                keywords: keywords,
+                lm:lm,//2是二级栏目，3是三级栏目（目前只支持三级栏目）
+                supplier_id:SUPPLIER_ID
+              }
+            },
+          returnAll:false,
+          },function(ret,err){
+          if(ret){
+            api.hideProgress();
+           // api.alert({msg:JSON.stringify(ret)});
+            //alert(keywords);
+            if(ret.cat && ret.cat!=''){
+                var template = document.getElementById('cat-list-template').innerHTML;
+                document.getElementById('cat-list-list').innerHTML=doT.template(template)(ret.cat);
+            }
+            if(ret.code==132){//成功
+                //设置第一个li高亮显示
+                  document.getElementById('nonegooodslist').style.display="none";
+                  var template = document.getElementById('cat-template').innerHTML;
+                  document.getElementById('cat-list').innerHTML=doT.template(template)(ret.data);
+              
+
+            }else{
+     
+                document.getElementById('nonegooodslist').style.display="block";
+                    document.getElementById('cat-list').innerHTML="";
+
+              api.toast({msg: ret.msg, location: 'middle'});
+                    api.hideProgress();
+                  return false;
+            }
+        }else{
+            // api.alert({
+            //         msg:('错误码1:'+err.code+':错误信息1:'+err.msg+'网络状态码1:'+err.statusCode)
+            //         });
+           }
+      });
+
+    }
+
+
+    function paixu(e,type){
+      var allli=e.parentNode.childNodes;
+      if(!$api.hasCls(e, 'on')){
+        $api.addCls(e, 'on');
+      }
+
+      if(!$api.hasCls(e, 'xliangse')){
+        $api.removeCls(e, 'sliangse');
+        $api.addCls(e, 'xliangse');
+        order="ASC";
+        types=type;
+        //alert(type+order);
+        //search(type,order,page,keywords);
+        searchcatlist(cat_id,lm,page);
+      }else{
+        $api.removeCls(e, 'xliangse');
+        $api.addCls(e, 'sliangse');
+        order="DESC";
+        types=type;
+        //alert(type+order); 
+        //search(type,order,page,keywords); 
+        searchcatlist(cat_id,lm,page);      
+      }
+
+      //把其它li的样式清楚
+      for(var i=0,len=allli.length;i<len;i++){
+        if(allli[i]!=e){
+          $api.removeCls(allli[i], 'on');
+          $api.removeCls(allli[i], 'xliangse');
+          $api.removeCls(allli[i], 'sliangse');
+        }
+      }
+
+    }
+
+    function xzlm(el,catid){
+
+        document.getElementsByClassName("zhengzhaoyingyin")[0].style.display="none";
+        document.getElementsByClassName("gscategoryname")[0].style.display="none";
+        document.getElementById("lipaixu").getElementsByTagName("span")[0].className='';
+
+        
+        var allli=el.parentNode.childNodes;
+        if(!$api.hasCls(el, 'on')){
+            $api.addCls(el, 'on');
+        }
+        for(var i=0,len=allli.length;i<len;i++){
+            if(allli[i]!=el){
+              $api.removeCls(allli[i], 'on');
+            }
+        }  
+        cat_id=catid;
+        searchcatlist(catid,lm,page);
+
+          var liall= document.getElementById('lipaixu').getElementsByTagName('li');
+          for(var i=1;i<4;i++){
+            liall[i].style.display="block";
+          }
+
+    }
+
+
+    function opensearch(){
+        api.openWin({
+            name: 'search',
+            url: 'search.html',
+            reload:true,
+            bounces: false,
+            pageParam: {fromcat : 'fromcat'}
+        });
+    }
+
+</script>

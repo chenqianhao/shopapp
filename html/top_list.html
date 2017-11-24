@@ -1,0 +1,154 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <style type='text/css'>
+        .newlist {  background:#fcfcfc; width:96%; margin:auto; border:1px solid #e2e2e2; }
+        .newlist li {   border-bottom:1px solid #eceee3;  border-top:1px solid #fdfff9; padding:1.2rem;overflow: hidden;}
+        .newlist li:last-child {   border:none;}
+        .newlist_left {  width:23%; float:left; }
+        .newlist_left cite img{ display:block;  background-color:#a4db41;border-radius: 5px;width: 6rem;height: 4rem;text-align: center;border: 1px solid #b5ce7a; }
+        .newlist_left span, .newlist_left em {  display:block; color:#fff;}
+        .newlist_left span {  margin-top:0.8rem;font-size: 1.8rem;}
+        .newlist_left em {  font-size:1.1rem; margin-top:0.2rem;}
+        .newlist_right { width:77%; float:left;}
+        .newlist_right span, .newlist_right strong {  display:block;}
+        .newlist_right span {  color:#626262; margin-top:0.2rem;    white-space: nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .newlist_right strong em{ font-size:1.4rem; color: #f93;}       
+        .newlist_right strong { margin-top: 1rem;}
+        .newlist_right strong i {  float:right; font-size:1.4rem; color:#f66;}
+        .spannum span{  font-size:2.3rem !important;margin-top: 0.2rem !important;}
+        .spannum {background-color :#f4cf38 !important;  border:1px solid #e3d481 !important;}
+        .endspannum {  background-color:#46b2e0 !important;   border:1px solid #53cdfc;}
+    </style>
+</head>
+<body style="background: #f1f1f1;">
+
+
+    <div class="newlist">
+        <ul  id="ttkulist">
+
+        </ul>
+    </div>
+
+
+    <script type="text/x-dot-template" id="ttkb-template">
+
+
+        {{for(var i=0,len=it.length;i<len;i++){}}
+            <li tapmode onclick="opentitle({{=it[i].article_id}});">
+                <div class="newlist_left">
+                    <cite>
+                        <!-- <span>今天</span><em>发布</em> -->
+                        <img src="{{=serverUrl_img+'/'+it[i]['luoboimg']}}" alt="">
+                    </cite>  
+                </div>
+                <div class="newlist_right">
+                    <span>{{=it[i].title}}</span>
+                    <strong>
+                        <!-- <em>果友圈</em> -->
+                        <i>{{=getDates(it[i]['add_time'])}}</i>
+                    </strong>
+                </div>
+            </li>
+        {{}}}
+        
+    </script>
+
+
+</body>
+</html>
+
+
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+
+<script type="text/javascript">
+    page=8;
+    apiready = function(){
+        api.parseTapmode();
+    	get_top_list();
+/*
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            api.hideProgress();
+
+            api.refreshHeaderLoadDone();
+        });
+*/
+
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+            api.hideProgress();
+            page+=1;
+            get_top_list();
+            api.refreshHeaderLoadDone();
+        });
+
+    }
+
+
+    function get_top_list(){
+
+        api.ajax({
+            url:serverUrl+'/article.php?act=get_guoshi_top',
+            method:'post',
+            cache:false,
+            timeout:30,
+            dataType:'json',
+            returnAll:false,
+            data:{
+                values: {supplier_id:SUPPLIER_ID,page:page}
+            },
+        },function(ret,err){
+            if(ret){
+                //api.alert({msg:JSON.stringify(ret.article)});
+                if(ret.code==1701){
+                    if(ret.article && ret.article !=''){
+                        var template = document.getElementById('ttkb-template').innerHTML;
+                        document.getElementById('ttkulist').innerHTML=doT.template(template)(ret.article);
+                    }
+                }else{
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            }else{
+
+            }
+       });
+
+    }
+
+
+     function opentitle(article_id){
+
+        //alert(article_id);
+        api.openWin({
+            name: 'guoshiinfo',
+            url: 'guoshiinfo.html',
+            reload:true,
+            pageParam: {
+                article_id: article_id
+            }
+        });
+
+     }
+
+ 
+</script>

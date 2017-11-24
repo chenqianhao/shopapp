@@ -1,0 +1,481 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title></title>
+    <link rel="stylesheet" href="../css/shuigou.css">
+    <meta name="format-detection" content="telephone=no">
+</head>
+<body style="background: #f3f4f6;">
+
+<!-- <header class="gsheader" id="header">
+
+    <div class="gsheaderdivleft">
+        <a tapmode onclick="api.closeWin();" class="">
+              <font>&#xe619;</font>
+        </a>
+    </div>
+    <h1>
+        <a href="#title-link" class="">
+            售后商品详情
+        </a>
+    </h1>
+
+    <div class="gsheaderdivright" tapmode onclick='kefushow("orderinfo");'>
+        <a>
+            <i><font>&#xe635;</font></i>
+        </a>
+    </div>
+
+</header>
+ -->
+
+<script id="orderinfolist-template" type="text/x-dot-template">
+<div class="classdiv gsorderall gsorderall1">
+<ul>
+
+
+{{for(var i=0,len=it.length;i<len;i++){}}
+<li>
+    <span>订单编号：{{=it[i].order_sn}} <em><font tapmode onclick="add_to_cart('{{=it[i].goods_id}}','{{=it[i].goods_attr_id}}');">&#xe615;</font></em></span>
+
+{{for(var j=0,lens=it[i]['order_goods'].length;j<lens;j++){}}
+
+     <div class="gsorderallimgxhx">
+        <div class="gsorderalllist gsorderalllist1">
+
+        <div class="gsorderallimg gsorderallimgx" tapmode onclick="opengoods({{=it[i]['order_goods'][j].goods_id}})"><img src="{{=serverUrl_img+'/'+it[i]['order_goods'][j].goods_thumb}}" />
+        </div>
+
+        <spanc tapmode onclick="opengoods({{=it[i]['order_goods'][j].goods_id}})">{{=it[i]['order_goods'][j].goods_name}} {{=it[i]['order_goods'][j].goods_attr}}</spanc>
+
+          <em class="gsorderalllistggsl"><b>{{=it[i]['order_goods'][j].goods_attr}}  ×{{=it[i]['order_goods'][j].goods_number}}</b><label>￥{{=it[i]['order_goods'][j].goods_price}}</label></em>
+        </div>
+
+
+    <div class="orderinfobtn orderinfobtn1">   
+
+
+        {{if(it[i]['order_goods'][j].handler_code==1){}}
+            
+            
+            {{? it[i]['order_goods'][j].pingjia == 1}}
+            /*<button  class="dingdanquxiaobtn">已评价</button>*/
+            {{??}}
+            /*
+            <button  tapmode onclick="pinglun('{{=it[i]['order_goods'][j].rec_id}}','{{=it[i]['order_goods'][j].goods_id}}','{{=it[i]['order_goods'][j].goods_name}}','{{=it[i]['order_goods'][j].goods_thumb}}');">立即评论</button>
+            */
+            {{?}}
+
+            {{? it[i]['order_goods'][j].handler_id == 1}}
+            {{? it[i]['order_goods'][j].pingjia == 0}}
+
+            <button  tapmode onclick="tuihuo({{=it[i]['order_id'] }},{{=it[i]['order_goods'][j]['goods_id']}});">申请退换货</button> 
+
+
+            {{??}}
+
+            <button  tapmode onclick="tuihuo({{=it[i]['order_id'] }},{{=it[i]['order_goods'][j]['goods_id']}});">申请退换货</button> 
+
+            
+                /*<button  class="dingdanquxiaobtn">已经评价商品无法申请退换货</button>*/
+            {{?}}
+            {{??}}
+            <button  class="dingdanquxiaobtn">无法退换货</button>
+            {{?}}
+
+
+        {{}else if(it[i]['order_goods'][j].handler_code==2){}}
+                <button class="dingdanquxiaobtn">退换货完成</button>
+        {{}else if(it[i]['order_goods'][j].handler_code==3){}}
+                <button class="dingdanquxiaobtn">完成退换货</button>       
+        {{}else if(it[i]['order_goods'][j].handler_code==4){}}
+                <button class="dingdanquxiaobtn">退换货中……</button>
+        {{}}}
+
+
+
+    </div>
+
+
+
+
+   </div>
+  
+    {{}}}
+
+
+
+
+    <strong>
+    <b style="display: block;" class="orederxdtime"><font>下单时间：</font><i>{{=it[i]['add_time'] }}</i></b>
+ 
+  </strong>
+
+    {{if(it[i].handler_code==1 || it[i].handler_code==3){}}
+    <font class="fudong">&#xe62f;</font>
+    {{}}}
+
+
+
+</li>
+
+
+{{}}}
+
+</ul>
+</div>
+</script> 
+
+    <div class="classdiv gsorderallnone" id="noneorderlist" style=" display:none;">
+        <span><font>&#xe630;</font><i>您还没有相关订单</i></span>
+    </div>
+
+
+
+<div id="order_info_list_app">
+
+
+</div>
+
+
+</body>
+
+</html>
+
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript">
+    page=4;
+    order_id=0;
+    apiready = function(){
+        // var header = $api.byId('header');
+        // fixStatusBar(header);
+        api.parseTapmode();
+        var order_ids=api.pageParam.order_id;
+        if(order_ids && order_ids>0){
+            order_id=order_ids;
+        }
+        get_shouhou_list(order_id);
+
+        api.addEventListener({
+            name: 'shaidan'
+        }, function(ret, err){
+            get_shouhou_list(order_id);
+        });
+
+
+        api.setRefreshHeaderInfo({
+            visible: true,
+            bgColor: 'rgba(0,0,0,0)',
+            textColor: '#666',
+            textDown: '下拉刷新',
+            textUp: '释放刷新'  ,
+            showTime: true
+        }, function(ret, err){
+            page+=4;
+            get_shouhou_list(order_id);
+            api.refreshHeaderLoadDone();
+        });
+
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function() {
+                api.hideProgress();
+                page+=4;
+                get_shouhou_list(order_id);
+                api.refreshHeaderLoadDone();
+        });
+
+        api.addEventListener({
+            name: 'shouhou'
+        }, function() {
+            window.location.reload();
+        });
+
+        
+
+    }
+
+
+    function get_shouhou_list(order_id){
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('orderinfo',order_id);
+            return false;
+        }
+
+        api.ajax({
+            url: serverUrl + '/user.php?act=get_shouhou_list',
+            method: 'POST',
+            timeout: '30',
+            dataType: 'json',
+            returnAll: false,
+            cache: true,
+            data: {
+                values: {
+                    order_id: order_id,
+                    user_id: userid_gs,
+                    page: page,
+                    supplier_id: SUPPLIER_ID
+                }
+            }
+        }, function (ret, err) {
+            //api.alert({ msg: JSON.stringify(ret.order_goods) });
+            if (ret) {
+                if (ret.code == 934) {
+                    if (ret.order_goods) {
+                        var template = document.getElementById('orderinfolist-template').innerHTML;
+                        document.getElementById('order_info_list_app').innerHTML = doT.template(template)(ret.order_goods);
+                    }
+
+                    if (ret.order_goods == '') {
+
+                        document.getElementById('noneorderlist').style.display = "block";
+                    }
+
+                } else {
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
+            } else {
+                api.alert({ msg: JSON.stringify(err) });
+            }
+        })
+
+
+    }
+
+
+    function add_to_cart(goods_id,goods_attr_id){
+        if(!goods_attr_id){
+            goods_attr_id='';
+        }
+        if(!goods_id){
+            api.toast({
+                msg: '该商品不存在！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+        var number=1;
+
+        var user_id=$api.getStorage('userid_gs');
+
+        if(!user_id || user_id<1){
+            api.toast({
+                msg: '请先登陆',
+                duration: 2000,
+                location: 'bottom'
+            });
+            showusercenter('orderinfo',order_id);
+            return false;
+        }
+
+        api.showProgress({
+            title: '正在加入购物车中...',
+            modal: false
+        });
+            api.ajax({
+                url:serverUrl+'/cart.php?act=add_to_cart',
+                method:'post',
+                cache:false,
+                timeout:30,
+                dataType:'json',
+                returnAll:false,
+                data:{
+                    values: {
+                        goods_id: goods_id,
+                        goods_number:number,
+                        type:1,
+                        user_id:user_id,
+                        goods_spec:goods_attr_id,
+                        supplier_id:SUPPLIER_ID
+                    }
+                }           
+            },function(ret,err){
+                //api.alert({msg:JSON.stringify(ret)});
+                api.hideProgress();
+                if(ret.code==509){
+                  
+                  //更新购物车
+                  api.sendEvent({
+                      name: 'cart',
+                      extra: {user_id:user_id}
+                  });                  
+
+                    api.toast({msg:'加入购物车成功',duration:1000,location:'bottom'});
+                }else{
+                       if(ret.code>0){
+                           api.alert({
+                            msg:(ret.msg)
+                           });                          
+                       }else{
+                           api.alert({
+                            msg:("网络不稳定，无法获取到数据")
+                           });  
+                       }
+
+                }
+                
+           })
+
+
+    }
+
+
+    function tuihuo(order_id,goods_id){
+
+        if(!order_id || order_id<1){
+            api.toast({
+                msg: '订单有误！',
+                duration: 2000,
+                location: 'bottom'
+            });   
+            return false;         
+        }
+
+        if(!goods_id || goods_id<1){
+            api.toast({
+                msg: '该商品不存在！',
+                duration: 2000,
+                location: 'bottom'
+            });   
+            return false;         
+        }
+
+
+        var userid_gs=$api.getStorage('userid_gs');
+        if(!userid_gs){
+            showusercenter('orderinfo',order_id);
+            return false;
+        }
+
+
+        api.openWin({
+            name: 'shouhou',
+            url: 'shouhou.html',
+            reload:true,
+            bounces: false,
+            pageParam: {order_id:order_id,goods_id:goods_id}
+        });
+
+/*        api.ajax({
+            url: serverUrl+'/user.php?act=tuihuo_order',
+            method : 'POST',
+            timeout : '30',
+            dataType : 'json',
+            returnAll : false,
+            cache :true,
+            data:
+            {
+                values:{
+                    order_id:order_id,
+                    user_id:userid_gs,
+                    goods_id:goods_id,
+                    supplier_id:SUPPLIER_ID
+                }
+            }
+        },function(ret, err){
+                //api.alert({msg:JSON.stringify(ret)});
+                if (ret){
+                    api.toast({
+                        msg: ret.msg,
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                    getallorder();
+                }
+                else{
+                    api.alert({msg:JSON.stringify(err)});
+                }
+        })*/
+
+    }
+
+
+
+    function  pinglun(rec_id,goods_id,goods_name,goods_thumb){
+        //alert(goods_id);
+        if(!goods_id || goods_id<1){
+            api.toast({
+                msg: '该商品不存在！',
+                duration: 2000,
+                location: 'bottom'
+            });
+            return false;
+        }
+
+        api.openWin({
+            name: 'shaidan',
+            url: 'shaidan.html',
+            bounces: false,
+            pageParam: {rec_id:rec_id,goods_id: goods_id,goods_name:goods_name,goods_thumb:goods_thumb}
+        });
+    }
+
+
+
+
+
+function queren(order_id){
+
+    //alert(order_id);
+    if(!order_id || order_id<1){
+        api.toast({
+            msg: '订单有误！',
+            duration: 2000,
+            location: 'bottom'
+        });   
+        return false;         
+    }
+    var userid_gs=$api.getStorage('userid_gs');
+    if(!userid_gs){
+        showusercenter('allorder');
+        return false;
+    }
+
+    api.ajax({
+        url: serverUrl+'/user.php?act=queren_order',
+        method : 'POST',
+        timeout : '30',
+        dataType : 'json',
+        returnAll : false,
+        cache :true,
+        data:
+        {
+            values:{
+                order_id:order_id,
+                user_id:userid_gs,
+                supplier_id:SUPPLIER_ID
+            }
+        }
+    },function(ret, err){
+            //api.alert({msg:JSON.stringify(ret)});
+            if (ret){
+                api.toast({
+                    msg: ret.msg,
+                    duration: 2000,
+                    location: 'bottom'
+                });
+
+                get_shouhou_list(order_id);
+
+            }
+            else{
+                api.alert({msg:JSON.stringify(err)});
+            }
+    })
+
+
+}
+</script>
